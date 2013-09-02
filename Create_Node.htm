@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>SCI DevOps Portal - Create New Node</title>
+
+<link rel="stylesheet" href="css/jquery-ui.css">
+<link rel="stylesheet" href="css/tab_style.css">
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap-editable.css">
+
+</head>
+
+<body>
+	<div
+		class="ui-tabs ui-widget ui-widget-content">
+
+		<div 
+
+			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
+	 >
+			
+			<h2>Create New Node</h2>
+			<p></p>
+			<form name="form2" id="form2">
+				<table id="baseTable" summary="Speadsheet" border="0" width="40%">
+				<tbody>
+						<tr>
+							<td width="30%"><label> Node Name: </label></td>
+							<td><input name="nodeName"
+								type="text"></td>
+						</tr>
+						<tr>
+							<td id="subCategory"><label> Install NIC: </label></td>
+							<td><input name="installNIC"  type="text">
+							</td>
+						</tr>
+						<tr>
+							<td id="groupMin"><label> Install IP: </label></td>
+							<td><input name="installIP"  type="text"></td>
+						</tr>
+						<tr>
+							<td id="groupMax"><label> Install Gateway: </label></td>
+							<td><input name="installGateway" type="text"></td>
+						</tr>
+						<tr>
+							<td id="groupMax"><label> Net Mask: </label></td>
+							<td><input name="newMask" type="text"></td>
+						</tr>						
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td><input class="saveButton" value="SAVE NODE" type="button">
+							</td>
+							<td align="left"><input
+								class="refreshButton" id="0" value="CANCEL" type="button">
+							</td>							
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			
+		</div>
+</body>
+</html>
