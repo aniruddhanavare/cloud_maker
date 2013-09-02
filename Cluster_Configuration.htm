@@ -26,27 +26,35 @@
   
   $(document).ready(function() {
   
-	$('#tabs').tabs({ active: 2 });
+	$('#tabs').tabs({ active: 0 });
 	
 	$('.newNode').hide();
 	$('.existingNode').hide();
+	$('.loadBalancer').hide();
+	
+	var rows = $('#HAConfigurataion div');
+	//alert(rows[0].type);
+
+	rows.each(function() {
+
+		if(this.id)
+		{
+			$('#'+(this.id)).hide();	
+		}
+	
+	});
 	
 	$('#HAConfigurataion input:checkbox').change(function () {
-		
+
 		if(this.checked)
 		{
-
-			$('#haEnabledCheck1text').attr('disabled', '');
-			var vaaa = $('#haEnabledCheck1text').val();
-			
-			
+			$('#row'+this.name).show();
 		}
 		else
 		{
-			$(this.name).attr("disabled", "disabled"); 
+			$('#row'+this.name).hide();	
 		}
 		
-
 	});
 	 $('#tabs-1 input:radio').change(function () {
 			var selectedVal = $("#tabs-1 input:radio:checked").val();
@@ -68,7 +76,7 @@
 		
 	 });
 	 
-	 $('#basicConfiguration select').change(function () {
+	 $('#networkType').change(function () {
 
 			var options = $(this).val();
 			if(options=="0")
@@ -80,6 +88,7 @@
 				$('.Quantum').hide();	
 			}
 	  });
+
 	 
 	 $("#haEnabledCheck").click(function(e){
 		var isChecked = $('#haEnabledCheck:checked').val()?true:false;
@@ -140,8 +149,8 @@
 						<tr>
 							<td width="20%"><label> Select Option: </label></td>
 							<td><input id="selectOption" name="selectOption" value="New"
-								type="radio">&nbsp;Create New &nbsp;&nbsp;&nbsp;&nbsp;<input name="selectOption"  value="Exiting"
-								type="radio">&nbsp;Select Existing</td>
+								type="radio">&nbsp;Create New Cluster&nbsp;&nbsp;&nbsp;&nbsp;<input name="selectOption"  value="Exiting"
+								type="radio">&nbsp;Select Existing Cluster</td>
 						</tr>		
 						<tr>
 							<td>&nbsp;</td>
@@ -221,21 +230,21 @@
 							<td id="featureCodeCategory"><label> Database Type: </label></td>
 							<td>
 								
-								<select name="existingNodeSelect">
+								<select name="databaseType" >
 													<option>MySQL</option>
 													<option>DB2</option></select>
 								</td>
 						</tr>
 						<tr>
 							<td id="subCategory"><label> AMQP Type: </label></td>
-							<td>								<select name="existingNodeSelect">
+							<td>								<select name="amqpType">
 													<option>QPID</option>
 													<option>RabbitMQ</option></select>
 							</td>
 						</tr>
 						<tr>
 							<td id="groupMin"><label> Network Type: </label></td>
-							<td><select name="networkType" id="networkType">
+							<td><select name="networkType" id="networkType" id="networkType">
 													<option value="0">Quantum</option>
 													<option value="1">Nova-Network</option></select></td>
 						</tr>
@@ -265,7 +274,10 @@
 				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
 					<TR>
 						<TD width="15%" >Glance</TD>
-						<TD  width="25%">Image Upload</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD  width="25%">Image Upload</TD> <TD>
+						<input id="imageUpload" name="imageUpload" value="ImageYes"
+								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageUpload"  value="ImageNo"
+								type="radio">&nbsp;No</TD>
 					</TR>
 
 
@@ -285,7 +297,9 @@
 						<TD>Tunnel ID Range</TD> <TD><input name="nodeName" type="text"></TD>
 					</TR>
 					<TR>
-						<TD>Enable Tunneling</TD> <TD><input name="nodeName" type="text"></TD> 
+						<TD>Enable Tunneling</TD> <TD><input id="enableTuneling" name="enableTuneling" value="tunelYes"
+								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="enableTuneling"  value="tunelNo"
+								type="radio">&nbsp;No</TD> 
 					</TR>
 					<TR>
 						<TD>Bridge Mapping NIC</TD> <TD><input name="nodeName" type="text"></TD>
@@ -324,7 +338,7 @@
 						<tr>
 							<td width="28%"><label> HA Enabled: </label></td>
 							<td><input id="haEnabledCheck" name="haEnabledCheck" value="New"
-								type="checkbox" checked></td>
+								type="checkbox" ></td>
 						</tr>		
 					</tbody>
 				</table>		
@@ -383,24 +397,28 @@
 					</TR>
 <TR align="center">
 					<TD align="center" width="10%"> Virtual IP</TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck1text" disabled
-								type="text" size="12" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text"size="12" > </TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck" disabled
-								type="text" size="12" ></TD>								
+						<TD align="center" width="10%"><div id="rowhaEnabledCheck1"><label id="dbPrimaryHost"> DB2 Primary </label><input id="haEnabledCheck1text" name="haEnabledCheck1text" 
+								type="text" size="12" ><label id="dbSecondaryHost">DB2 Secondary </label><input id="haEnabledCheck1textS" name="haEnabledCheck1textS" 
+								type="text" size="12" ><label id="dbVirtualIPL"> Virtual IP </label><input id="dbVirutalIP" name="dbVirutalIP" 
+								type="text" size="12" ></div></TD>
+						<TD align="center" width="10%"><div id="rowhaEnabledCheck2"><label id="mqPrimaryHost"> QPID Primary </label><input id="haEnabledCheck2text" name="haEnabledCheck2text" 
+								type="text" size="12" ><label id="mqSecondaryHost">QPID Secondary </label><input id="haEnabledCheck2textS" name="haEnabledCheck2textS" 
+								type="text" size="12" ><label id="mqVirtualIPL"> Virtual IP </label><input id="mqVirutalIP" name="mqVirutalIP" 
+								type="text" size="12" ></div></TD>
+						<TD align="center" width="10%" ><div id="rowhaEnabledCheck3"><input name="haEnabledCheck3text" id="haEnabledCheck3text"
+								type="text" size="12" ></div></TD>
+														<TD  align="center" width="10%"><div id="rowhaEnabledCheck4"><input name="haEnabledCheck4text" id="haEnabledCheck4text"
+								type="text" size="12" ></div></TD>
+						<TD align="center" width="10%" ><div id="rowhaEnabledCheck5"><input name="haEnabledCheck5text" id="haEnabledCheck5text"
+								type="text" size="12" ></div></TD>
+														<TD align="center" width="10%"><div id="rowhaEnabledCheck6"><input name="haEnabledCheck6text" id="haEnabledCheck6text"
+								type="text" size="12" ></div></TD>
+						<TD align="center" width="10%" id><div id="rowhaEnabledCheck7"><input name="haEnabledCheck7text" id="haEnabledCheck7text"
+								type="text" size="12" ></div></TD>
+														<TD align="center" width="10%"><div id="rowhaEnabledCheck8"><input name="haEnabledCheck8text" id="haEnabledCheck8text"
+								type="text"size="12" > </div></TD>
+						<TD align="center" width="10%" id=><div id="rowhaEnabledCheck9"><input name="haEnabledCheck9text" id="haEnabledCheck9text"
+								type="text" size="12" ></div></TD>								
 					</TR>
 				</TABLE>
 				</div>
@@ -451,10 +469,59 @@
 									</tbody>
 									</table>
 									
+				<p></p>					
+			<div id="NodeMapping" class="NodeMapping">						
+				<table  border="1" width="100%">
+					<TH align="center">
+						<TD align="center" width="10%">Node / Role</TD>
+						<TD align="center" width="10%"> DB</TD> 
+						<TD align="center" width="10%">KeyStone</TD>
+						<TD align="center" width="10%"> Glance</TD> 
+						<TD align="center" width="10%">Nova Controller</TD>
+						<TD align="center" width="10%"> Cinder Controller</TD> 
+						<TD align="center" width="10%">Qunatum Server</TD>
+					</TH>
+					<TR align="center">
+					<TD align="center" width="10%"> Node 1</TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck1" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck2" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck3" value="New"
+								type="checkbox" ></TD>
+														<TD align="center" width="10%"><input name="haEnabledCheck4" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck5" value="New"
+								type="checkbox" ></TD>
+														<TD align="center" width="10%"><input name="haEnabledCheck6" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck7" value="New"
+								type="checkbox" ></TD>
+						
+					</TR>
+					<TR align="center">
+					<TD align="center" width="10%"> Node 2</TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck1" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck2" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck3" value="New"
+								type="checkbox" ></TD>
+														<TD align="center" width="10%"><input name="haEnabledCheck4" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck5" value="New"
+								type="checkbox" ></TD>
+														<TD align="center" width="10%"><input name="haEnabledCheck6" value="New"
+								type="checkbox" ></TD>
+						<TD align="center" width="10%"><input name="haEnabledCheck7" value="New"
+								type="checkbox" ></TD>
+						
+					</TR>					
+				</TABLE>
+				</div>									
 									
-									
-									
-									
+								
+								
 				<table  border="0" width="50%">
 					<tbody>
 
@@ -469,6 +536,18 @@
 						</tr>
 					</tbody>
 				</table>	
+				
+				<p></p>
+				
+				<h3>Please Note : (Not shown in this prototype)</h3>
+				
+				If HA is disabled, we need to show deployment selection (all-in-one, single-controller, multi-nodes), the corresponding roles are listed in page 11 in PPT
+				<p>If HA is enabled, we need to show the HA roles listed in page 11 in PPT
+				<p>Add validity checking:
+					<br>Do not show quantum roles if user selected nova-network in the basic configuration;
+					<br>Do not show nova-network role is user selected quantum in the basic configuration;
+					<br>Nova-compute and quantum-ovs-agent must be installed on the same node if quantum mode
+				
 									
 		</div>
 		<div aria-hidden="true" aria-expanded="false" style="display: none;"
