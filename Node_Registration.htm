@@ -10,6 +10,38 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/bootstrap-editable.css">
 
+
+<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+
+<script>
+
+ jQuery.support.cors = true;
+ 
+	$(document).ready(function() {
+	var ajaxUrl=" http://10.77.70.78:5984/devops/_design/node-query/_view/all";
+	$.ajax({
+                type: "GET",
+                async: "false",
+                url: ajaxUrl,		
+		
+                success: function(data, textStatus, jqXHR) {
+			
+					var json = JSON.parse(data).rows;
+					for(i=0;i<json.length;i++)
+					{
+						var jsonValue = json[i].value;
+						$("#baseTable > tbody").append("<tr><td>"+(json[i].key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td></tr>");
+					}
+			  
+					},             	
+                error: function(jqXHR, textStatus, errorThrown) {alert("No -> "+errorThrown);}                
+            });
+
+	
+	});
+
+    </script> 
+
 </head>
 
 
@@ -27,71 +59,13 @@
 			<p></p>
 			<form name="form2" id="form2">
 				<table id="baseTable" summary="Speadsheet" border="1" width="70%">
-					<tbody>
 						<tr id="baseTableHeader">
 							<th scope="col" width="20%">Node Name</th>
 							<th scope="col" width="10%">Install NIC</th>
 							<th scope="col" width="25%">Install IP</th>
 							<th scope="col" width="25%">Install Gateway</th>
 							<th scope="col" width="25%">Net Mask</th>
-						</tr>
-						<tr align="center">
-							<td>devr1n31</td>
-							<td>eth0</td>
-							<td>172.16.1.31</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>devr1n33</td>
-							<td>eth0</td>
-							<td>172.16.1.33</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>glance-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.153</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>keystone-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.151</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>mysql-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.150</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>novacontroller-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.155</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>
-						<tr align="center">
-							<td>qpid-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.152</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>	
-						<tr align="center">
-							<td>quantum-tt</td>
-							<td>eth0</td>
-							<td>172.16.1.154</td>
-							<td>172.16.0.1</td>
-							<td>255.255.255.0</td>
-						</tr>						
-					</tbody>
+						</tr>					
 				</table>
 			</form>
 
