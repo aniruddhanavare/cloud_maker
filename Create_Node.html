@@ -32,18 +32,18 @@ $(document).ready(function() {
 			{
 				jsonPayload[rows[i].name]=rows[i].value;
 			}
-					$.couch.db("devops").saveDoc(jsonPayload, {
-						success: function(data) {
-							if(data.ok)
-							{
-								alert("Node Saved");
-								$('#create_node').submit();
-							}
-						},
-						error: function(status) {
-							alert(status);
-						}
-					});
+			$.couch.db("devops").saveDoc(jsonPayload, {
+				success: function(data) {
+					if(data.ok)
+					{
+						alert("Node Saved");
+						$('#create_node').submit();
+					}
+				},
+				error: function(status) {
+					alert(status);
+				}
+			});
 		});		
 	});
 
