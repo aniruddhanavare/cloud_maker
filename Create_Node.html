@@ -10,6 +10,28 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/bootstrap-editable.css">
 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="/_utils/script/json2.js"></script>
+    <script src="/_utils/script/sha1.js"></script>
+    <script src="/_utils/script/jquery.js?1.4.2"></script>
+    <script src="/_utils/script/jquery.couch.js?0.11.0"></script>
+    <script src="/_utils/script/jquery.dialog.js?0.11.0"></script>	
+<script>
+
+$.couch.urlPrefix = "http://10.77.70.78:5984";
+
+$.couch.db("devops").view("node-query/all", {
+    success: function(data) {
+        alert(data);
+    },
+    error: function(status) {
+        alert(status);
+    },
+    reduce: false
+});
+
+
+</script>
 </head>
 
 <body>
@@ -23,7 +45,7 @@
 			
 			<h2>Create New Node</h2>
 			<p></p>
-			<form name="form2" id="form2" action="Node_Registration.htm">
+			<form name="form2" id="form2" action="Node_Registration.html">
 				<table id="baseTable" summary="Speadsheet" border="0" width="40%">
 				<tbody>
 						<tr>
