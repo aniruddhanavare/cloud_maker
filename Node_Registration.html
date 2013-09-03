@@ -17,9 +17,34 @@
     <script src="/_utils/script/jquery.couch.js?0.11.0"></script>
     <script src="/_utils/script/jquery.dialog.js?0.11.0"></script>	
 
+
+
+
 <script>
 
-$.couch.urlPrefix = "http://10.77.70.78:5984";
+
+function deleteNode(id,revID) {
+ 
+var jsonPayload = {};
+jsonPayload['_id']=id;
+jsonPayload['_rev']=revID;
+ 
+$.couch.db("devops").removeDoc(jsonPayload, {
+     success: function(data) {
+         if(data.ok)
+		{
+			alert("Node Deleted");
+			location.reload(true);
+		}
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
+
+    }
+
+$.couch.urlPrefix = "http://localhost:5984";
 jQuery.support.cors = true;
  
 $.couch.db("devops").view("node-query/all", {
@@ -30,7 +55,9 @@ $.couch.db("devops").view("node-query/all", {
 		{
 			var jsonObject = nodes[i];
 			var jsonValue = jsonObject.value;
-			$("#baseTable > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td></tr>");
+			
+			//alert(jsonValue._id);
+			$("#baseTable > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 		}
 	   
     },
@@ -68,9 +95,10 @@ $.couch.db("devops").view("node-query/all", {
 						<tr id="baseTableHeader">
 							<th scope="col" width="20%">Node Name</th>
 							<th scope="col" width="10%">Install NIC</th>
-							<th scope="col" width="25%">Install IP</th>
-							<th scope="col" width="25%">Install Gateway</th>
-							<th scope="col" width="25%">Net Mask</th>
+							<th scope="col" width="20%">Install IP</th>
+							<th scope="col" width="20%">Install Gateway</th>
+							<th scope="col" width="20%">Net Mask</th>
+							<th scope="col" width="5%">Delete</th>
 						</tr>					
 				</table>
 			</form>
