@@ -30,16 +30,18 @@
    <script>
   
   
+  
   $(document).ready(function() {
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
-		$.couch.urlPrefix = "http://10.77.70.78:5984";
+		$.couch.urlPrefix = "http://localhost:5984";
 		jQuery.support.cors = true;
  
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
 			var nodes = data.rows;
+
 			for(i=0;i<nodes.length;i++)
 			{
 				var jsonObject = nodes[i];
@@ -54,10 +56,11 @@
 	});
 	});
 });
+
   
 	$('#tabs').tabs({ active: 0 });
 	
-	$('.newNode').hide();
+	$('.newCluster').hide();
 	$('.existingNode').hide();
 	$('.loadBalancer').hide();
 	
@@ -92,14 +95,14 @@
 			if(selectedVal=="New")
 			{
 				$("#selectOptionLabel").text("Create New Node");
-				$('.newNode').show();
+				$('.newCluster').show();
 				$('.existingNode').hide();
 				
 			}
 			else
 			{
 				$("#selectOptionLabel").text("Please Choose Node");
-				$('.newNode').hide();
+				$('.newCluster').hide();
 				$('.existingNode').show();
 			}	
 		
@@ -108,7 +111,7 @@
 	 $('#networkType').change(function () {
 
 			var options = $(this).val();
-			if(options=="0")
+			if(options=="quantum")
 			{
 				$('.Quantum').show();				
 			}
@@ -131,8 +134,48 @@
 			$('.loadBalancer').hide();
 		}
 	 });
+	 
+	 
+	 $("#startDeployment").click(function(e){
+					
+			// Save Info Tab
+			var jsonPayload = {};
+			jsonPayload['type']='cluster';
+			
+			jsonPayload['ssh_key']='/root/.ssh/id_rsa';
+			jsonPayload['user_name']='root';
+			jsonPayload['chef_path']='/root/openstackchef/openstack-installation';
+			jsonPayload['chef_env_name']='grizzly';
+			jsonPayload['chef_server_ip']='172.16.0.8';
+			
+			var rows = $('#newCluster input:text');
+			for(i=0;i<rows .length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}
+			
+
+			$.couch.db("devops").saveDoc(jsonPayload, {
+				success: function(data) {
+					if(data.ok)
+					{
+						alert("Cluster Info Saved");
+					}
+				},
+				error: function(status) {
+					alert(status);
+				}
+			});
+			
+			
+			
+			
+	 });
+
+	 
   });	
 
+  
   </script>
 
 </head>
@@ -189,16 +232,16 @@
 						<tr>
 							<td width="20%"><label id="selectOptionLabel"></label></td>
 							<td>
-								<div id="newNode" class="newNode">
+								<div id="newCluster" class="newCluster">
 									<table id="baseTable" summary="Speadsheet" border="0" width="100%">
 									<tbody>
 										<tr>
 											<td width="30%"><label> Cluster Name</label></td>
-											<td><input name="nodeName" type="text"></td>
+											<td><input name="name" type="text"></td>
 										</tr>
 										<tr>
 											<td id="subCategory"><label> Cluster Description: </label></td>
-											<td><input name="installNIC"  type="text">
+											<td><input name="description"  type="text">
 											</td>
 										</tr>	
 
@@ -225,7 +268,7 @@
 						</tr>
 						
 						<tr>
-							<td><input class="saveButton" value="NEXT" type="button">
+							<td><input id="infoNext" class="saveButton" value="NEXT" type="button">
 							</td>
 							<td align="left">&nbsp;
 							</td>							
@@ -252,22 +295,22 @@
 							<td>
 								
 								<select name="databaseType" >
-													<option>MySQL</option>
-													<option>DB2</option></select>
+													<option value="mysql">MySQL</option>
+													<option value="db2">DB2</option></select>
 								</td>
 						</tr>
 						<tr>
 							<td id="subCategory"><label> AMQP Type: </label></td>
 							<td>								<select name="amqpType">
-													<option>QPID</option>
-													<option>RabbitMQ</option></select>
+													<option value="qpid">QPID</option>
+													<option value="rabbitmq">RabbitMQ</option></select>
 							</td>
 						</tr>
 						<tr>
 							<td id="groupMin"><label> Network Type: </label></td>
 							<td><select name="networkType" id="networkType" id="networkType">
-													<option value="0">Quantum</option>
-													<option value="1">Nova-Network</option></select></td>
+													<option value="quantum">Quantum</option>
+													<option value="nova-network">Nova-Network</option></select></td>
 						</tr>
 
 					</tbody>
@@ -581,7 +624,7 @@
 				<table border="0" width="60%">
 				<tbody>
 					<tr>
-						<th scope="col" width="50%"><input class="photoButton" value="Start Deployment"
+						<th scope="col" width="50%"><input id="startDeployment" value="Start Deployment"
 								type="button"></th>
 						<th scope="col" width="50%"><input class="photoButton" value="Reset Cluster"
 								type="button"></th>
