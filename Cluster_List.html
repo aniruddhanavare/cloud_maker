@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>SCI DevOps Portal - Cluster List</title>
+
+<link rel="stylesheet" href="css/jquery-ui.css">
+<link rel="stylesheet" href="css/tab_style.css">
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap-editable.css">
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="/_utils/script/json2.js"></script>
+    <script src="/_utils/script/sha1.js"></script>
+    <script src="/_utils/script/jquery.js?1.4.2"></script>
+    <script src="/_utils/script/jquery.couch.js?0.11.0"></script>
+    <script src="/_utils/script/jquery.dialog.js?0.11.0"></script>	
+
+
+
+
+<script>
+
+
+function deleteNode(id,revID) {
+ 
+var jsonPayload = {};
+jsonPayload['_id']=id;
+jsonPayload['_rev']=revID;
+ 
+$.couch.db("devops").removeDoc(jsonPayload, {
+     success: function(data) {
+         if(data.ok)
+		{
+			alert("Cluster Deleted");
+			location.reload(true);
+		}
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
+
+    }
+
+$.couch.urlPrefix = "http://localhost:5984";
+jQuery.support.cors = true;
+ 
+$.couch.db("devops").view("cluster-query/all", {
+    success: function(data) {
+	
+		var nodes = data.rows;
+		for(i=0;i<nodes.length;i++)
+		{
+			var jsonObject = nodes[i];
+			var jsonValue = jsonObject.value;
+			
+			//alert(jsonValue._id);
+			$("#baseTable > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.ssh_key)+"</td><td>"+(jsonValue.chef_env_name)+"</td><td>"+(jsonValue.chef_path)+"</td><td>"+(jsonValue.chef_server_ip)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+		}	  
+    },
+    error: function(status) {
+        alert(status);
+    },
+    reduce: false
+});
+
+
+    </script> 
+
+</head>
+
+
+<body>
+	<div
+		class="ui-tabs ui-widget ui-widget-content">
+		<div 
+		
+			class="ui-tabs-panel ui-widget-content ui-corner-bottom "
+			 align="center">
+			
+			<h2>Available Clusters</h2>
+				<table border="0" width="70%">
+						<tr id="baseTableHeader">
+							<th scope="col" width="50%"><a href="sci_portal.html">Home</a></th>
+						</tr>					
+				</table>
+			<p></p>
+			<form name="form2" id="form2">
+				<table id="baseTable" border="1" width="100%">
+						<tr id="baseTableHeader">
+							<th scope="col" width="13%">Cluster Name</th>
+							<th scope="col" width="13%">Description</th>
+							<th scope="col" width="13%">SSH Key</th>
+							<th scope="col" width="13%">Chef Env Name</th>
+							<th scope="col" width="13%">Chef Path</th>
+							<th scope="col" width="13%">Chef Server IP</th>
+							<th scope="col" width="13%">Username</th>
+							<th scope="col" width="5%">Delete</th>
+						</tr>					
+				</table>
+			</form>
+
+		</div>
+		</div>
+</body>
+</html>
