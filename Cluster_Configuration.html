@@ -29,14 +29,18 @@
   
    <script>
   
-  
+
   
   $(document).ready(function() {
+  
+  
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
 		$.couch.urlPrefix = "http://localhost:5984";
 		jQuery.support.cors = true;
+ 
+		//saveBasicConfiguration("075a7a7d4c865e9ff475f109ef0003b0");
  
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
@@ -108,7 +112,7 @@
 		
 	 });
 	 
-	 $('#networkType').change(function () {
+	 $('#networktype').change(function () {
 
 			var options = $(this).val();
 			if(options=="quantum")
@@ -160,7 +164,10 @@
 					if(data.ok)
 					{
 						alert("Cluster Info Saved");
-						location.reload(true);
+						//location.reload(true);
+						
+						var docID = data.id;
+						saveBasicConfiguration(docID);
 					}
 				},
 				error: function(status) {
@@ -175,6 +182,100 @@
 
 	 
   });	
+  
+    function saveBasicConfiguration(id) {
+ 
+		//alert(id);
+	
+		var jsonPayload = {};
+		jsonPayload['type']='cluster-basic-setting';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();
+
+
+		var rows = $('#basicConfiguration select');
+		for(i=0;i<rows .length;i++)
+		{
+			jsonPayload[rows[i].name]=rows[i].value;
+		}
+				
+		
+		if($("#networktype").val() == 'quantum')
+		{
+		
+			var quantumPayload = {};			
+			var rows = $('#Quantum input:text');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+	
+			var rows = $('#Quantum input:radio');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+			
+			jsonPayload['quantum']=quantumPayload;
+		}
+
+		
+		var networksPayload = {};
+		
+		var rows = $('#OSOPS input:text');
+
+		for(i=0;i<rows .length;i++)
+		{
+			networksPayload[rows[i].name]=rows[i].value;
+		}
+		
+		networksPayload['dns1']="172.16.0.1";
+		networksPayload['bridge']="br-vmnet";
+		networksPayload['bridgedev']="eth1";
+		networksPayload['vmnet']="192.168.1.0/24";
+		networksPayload['vmnetnum']="1";
+		networksPayload['vmnetsize']="256";
+		networksPayload['firewall_driver']="nova.virt.firewall.NoopFirewallDriver";
+		networksPayload['network_manager']="nova.network.manager.FlatDHCPManager";
+		
+		var vlanPayload = {};
+		vlanPayload['vlan_start']="520";
+		vlanPayload['vlan_end']="550";
+		vlanPayload['vlan_interface']="vlan1";
+		networksPayload['vlan']=vlanPayload;
+		
+		jsonPayload['networks']=networksPayload;
+		
+				
+		var glancePayload = {};
+		var image_upload = $('input:radio[name=image_upload]:checked').val();
+		glancePayload['image_upload']=image_upload;		
+		jsonPayload['glance']=glancePayload;
+
+		var gpfsPayload = {};
+		gpfsPayload['gpfs_cluster_name']="gpfs_01";
+		jsonPayload['gpfs']=gpfsPayload;
+		
+		jsonPayload['enable_iptables']='true';
+		jsonPayload['packageserver']="172.16.0.8";
+		jsonPayload['imageserver']="172.16.0.8";
+
+		
+			$.couch.db("devops").saveDoc(jsonPayload, {
+			success: function(data) {
+				if(data.ok)
+				{
+					alert("Cluster Basic Configuration Saved");
+				}
+			},
+			error: function(status) {
+				alert(status);
+			}
+		});
+		
+    }
 
   
   </script>
@@ -238,7 +339,7 @@
 									<tbody>
 										<tr>
 											<td width="30%"><label> Cluster Name</label></td>
-											<td><input name="name" type="text"></td>
+											<td><input name="name" id="name" type="text"></td>
 										</tr>
 										<tr>
 											<td id="subCategory"><label> Cluster Description: </label></td>
@@ -295,21 +396,21 @@
 							<td id="featureCodeCategory"><label> Database Type: </label></td>
 							<td>
 								
-								<select name="databaseType" >
+								<select name="dbtype" >
 													<option value="mysql">MySQL</option>
 													<option value="db2">DB2</option></select>
 								</td>
 						</tr>
 						<tr>
-							<td id="subCategory"><label> AMQP Type: </label></td>
-							<td>								<select name="amqpType">
+							<td id="mqtype"><label> AMQP Type: </label></td>
+							<td>								<select name="mqtype">
 													<option value="qpid">QPID</option>
 													<option value="rabbitmq">RabbitMQ</option></select>
 							</td>
 						</tr>
 						<tr>
 							<td id="groupMin"><label> Network Type: </label></td>
-							<td><select name="networkType" id="networkType" id="networkType">
+							<td><select name="networktype" id="networktype" >
 													<option value="quantum">Quantum</option>
 													<option value="nova-network">Nova-Network</option></select></td>
 						</tr>
@@ -320,28 +421,29 @@
 				
 				
 				<p></p>
+				<div id="OSOPS">
 				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
 					<TR>
 						<TD width="15%" ROWSPAN=3 >OSOPS</TD>
-						<TD width="25%">Public Network</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD width="25%">Public Network</TD> <TD><input name="pubnet" type="text"></TD>
 					</TR>
 					<TR>
-						<TD>Nova Network</TD> <TD><input name="nodeName" type="text"></TD> 
+						<TD>Nova Network</TD> <TD><input name="novanet" type="text"></TD> 
 					</TR>
 					<TR>
-						<TD>Management Network</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD>Management Network</TD> <TD><input name="mgmtnet" type="text"></TD>
 					</TR>
 
 				</TABLE>
-
+				</div>
 
 				<p></p>
 				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
 					<TR>
 						<TD width="15%" >Glance</TD>
 						<TD  width="25%">Image Upload</TD> <TD>
-						<input id="imageUpload" name="imageUpload" value="ImageYes"
-								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageUpload"  value="ImageNo"
+						<input id="image_upload" name="image_upload" value="true"
+								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="image_upload"  value="false"
 								type="radio">&nbsp;No</TD>
 					</TR>
 
@@ -353,24 +455,24 @@
 				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
 					<TR>
 						<TD width="15%" ROWSPAN=6 >Quantum</TD>
-						<TD width="25%">Tenant Network Type</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD width="25%">Tenant Network Type</TD> <TD><input name="tenant_network_type" type="text"></TD>
 					</TR>
 					<TR>
-						<TD>Network VLAN Rang</TD> <TD><input name="nodeName" type="text"></TD> 
+						<TD>Network VLAN Rang</TD> <TD><input name="network_vlan_range" type="text"></TD> 
 					</TR>
 					<TR>
-						<TD>Tunnel ID Range</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD>Tunnel ID Range</TD> <TD><input name="tunnel_id_range" type="text"></TD>
 					</TR>
 					<TR>
-						<TD>Enable Tunneling</TD> <TD><input id="enableTuneling" name="enableTuneling" value="tunelYes"
-								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="enableTuneling"  value="tunelNo"
+						<TD>Enable Tunneling</TD> <TD><input id="enableTuneling" name="enable_tunneling" value="true"
+								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="enable_tunneling"  value="false"
 								type="radio">&nbsp;No</TD> 
 					</TR>
 					<TR>
-						<TD>Bridge Mapping NIC</TD> <TD><input name="nodeName" type="text"></TD>
+						<TD>Bridge Mapping NIC</TD> <TD><input name="bridge_mapping_nic" type="text"></TD>
 					</TR>
 					<TR>
-						<TD>Floating IP NIC</TD> <TD><input name="nodeName" type="text"></TD> 
+						<TD>Floating IP NIC</TD> <TD><input name="floating_if" type="text"></TD> 
 					</TR>
 				</TABLE>
 				</div>
