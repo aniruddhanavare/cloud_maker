@@ -40,7 +40,7 @@
 		$.couch.urlPrefix = "http://localhost:5984";
 		jQuery.support.cors = true;
  
-		//saveBasicConfiguration("075a7a7d4c865e9ff475f109ef0003b0");
+		//saveHAConfiguration("a5fa30a02bca0c9cc0a1b9084e0005b9");
  
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
@@ -85,6 +85,7 @@
 		if(this.checked)
 		{
 			$('#row'+this.name).show();
+			$('#'+this.name+"text").focus();
 		}
 		else
 		{
@@ -149,7 +150,7 @@
 			jsonPayload['ssh_key']='/root/.ssh/id_rsa';
 			jsonPayload['user_name']='root';
 			jsonPayload['chef_path']='/root/openstackchef/openstack-installation';
-			jsonPayload['chef_env_name']='grizzly';
+			jsonPayload['chef_env_name']=$("#name").val();
 			jsonPayload['chef_server_ip']='172.16.0.8';
 			
 			var rows = $('#newCluster input:text');
@@ -268,6 +269,7 @@
 				if(data.ok)
 				{
 					alert("Cluster Basic Configuration Saved");
+					saveHAConfiguration(id);
 				}
 			},
 			error: function(status) {
@@ -277,6 +279,87 @@
 		
     }
 
+	
+	  function saveHAConfiguration(id) {
+ 
+		//alert(id);
+	
+		var jsonPayload = {};
+		jsonPayload['type']='cluster-ha-setting';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();
+
+		
+		var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+		
+		if(haEnabledCheck)
+		{
+			//alert(haEnabledCheck);
+			
+			var rows = $('#loadBalancer select');
+			for(i=0;i<rows .length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}		
+
+			var rows = $('#HAConfigurataion input:checkbox');
+			//alert(rows.length);
+			
+			var haPayload = {};
+			var vipsPayload = {};
+			
+			for(i=0;i<rows .length;i++)
+			{
+				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
+				if(isEnabledCheck)
+				{
+					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
+					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"text").val();
+					
+					if(rows[i].name=='db')
+					{
+						var dbPayload = {};
+						dbPayload['db2_primary_host']=$("#dbtext1").val();
+						dbPayload['db2_standby_host']=$("#dbtext2").val();
+						
+						jsonPayload['db']=dbPayload;
+					}
+					
+					if(rows[i].name=='mq')
+					{
+						var mqPayload = {};
+						mqPayload['qpid_nodes']=$("#mqtext1").val()+","+$("#mqtext2").val();
+						
+						jsonPayload['mq']=mqPayload;
+					}					
+				}
+				else
+				{
+					haPayload[rows[i].name+"_ha"]='false';
+					vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
+				}
+			}				
+						
+			jsonPayload['ha']=haPayload;
+			jsonPayload['vips']=vipsPayload;
+			
+			$.couch.db("devops").saveDoc(jsonPayload, {
+				success: function(data) {
+					if(data.ok)
+					{
+						alert("Cluster HA Configuration Saved");
+					}
+				},
+				error: function(status) {
+					alert(status);
+				}
+			});
+		}
+		
+		
+
+		
+    }
   
   </script>
 
@@ -290,11 +373,13 @@
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<li aria-selected="true" aria-labelledby="ui-id-1"
 				aria-controls="tabs-1" tabindex="0" role="tab"
-				class="ui-state-default ui-tabs-active ui-state-active ui-corner-left"><a 			id="ui-id-1" tabindex="-1" role="presentation"
+				class="ui-state-default ui-tabs-active ui-state-active ui-corner-left"><a
+				id="ui-id-1" tabindex="-1" role="presentation"
 				class="ui-tabs-anchor" href="#tabs-1">Info</a></li>
 			<li aria-selected="false" aria-labelledby="ui-id-2"
 				aria-controls="tabs-2" tabindex="-1" role="tab"
-				class="ui-state-default ui-corner-left"><a id="ui-id-2" tabindex="-1" role="presentation" class="ui-tabs-anchor"
+				class="ui-state-default ui-corner-left"><a id="ui-id-2"
+				tabindex="-1" role="presentation" class="ui-tabs-anchor"
 				href="#tabs-2">Basic Configuration</a></li>
 			<li aria-selected="false" aria-labelledby="ui-id-3"
 				aria-controls="tabs-3" tabindex="-1" role="tab"
@@ -311,7 +396,7 @@
 				class="ui-state-default ui-corner-left"><a id="ui-id-5"
 				tabindex="-1" role="presentation" class="ui-tabs-anchor"
 				href="#tabs-5">Deployment</a></li>
-	
+
 		</ul>
 		<div aria-hidden="false" aria-expanded="true" role="tabpanel"
 			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
@@ -319,61 +404,64 @@
 			<h2>Info</h2>
 			<form name="form1" id="form1">
 				<table id="baseTable" summary="Speadsheet" border="0" width="50%">
-				<tbody>
+					<tbody>
 						<tr>
 							<td width="20%"><label> Select Option: </label></td>
 							<td><input id="selectOption" name="selectOption" value="New"
-								type="radio">&nbsp;Create New Cluster&nbsp;&nbsp;&nbsp;&nbsp;<input name="selectOption"  value="Exiting"
-								type="radio">&nbsp;Select Existing Cluster</td>
-						</tr>		
-						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>	
-											
-						<tr>
-							<td width="20%"><label id="selectOptionLabel"></label></td>
-							<td>
-								<div id="newCluster" class="newCluster">
-									<table id="baseTable" summary="Speadsheet" border="0" width="100%">
-									<tbody>
-										<tr>
-											<td width="30%"><label> Cluster Name</label></td>
-											<td><input name="name" id="name" type="text"></td>
-										</tr>
-										<tr>
-											<td id="subCategory"><label> Cluster Description: </label></td>
-											<td><input name="description"  type="text">
-											</td>
-										</tr>	
-
-									</tbody>
-									</table>
-								</div>	
-								<div id="existingNode" class="existingNode">
-									<table id="baseTable" summary="Speadsheet" border="0" width="100%">
-									<tbody>
-										<tr>
-											<td>
-												<select name="existingNodeSelect" id="existingNodeSelect">
-												</select></td>
-										</tr>
-									</tbody>
-									</table>
-								</div>									
-							   
-							</td>
-						</tr>						
+								type="radio">&nbsp;Create New
+								Cluster&nbsp;&nbsp;&nbsp;&nbsp;<input name="selectOption"
+								value="Exiting" type="radio">&nbsp;Select Existing
+								Cluster</td>
+						</tr>
 						<tr>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 						</tr>
-						
+
 						<tr>
-							<td><input id="infoNext" class="saveButton" value="NEXT" type="button">
+							<td width="20%"><label id="selectOptionLabel"></label></td>
+							<td>
+								<div id="newCluster" class="newCluster">
+									<table id="baseTable" summary="Speadsheet" border="0"
+										width="100%">
+										<tbody>
+											<tr>
+												<td width="30%"><label> Cluster Name</label></td>
+												<td><input name="name" id="name" type="text"></td>
+											</tr>
+											<tr>
+												<td id="subCategory"><label> Cluster
+														Description: </label></td>
+												<td><input name="description" type="text"></td>
+											</tr>
+
+										</tbody>
+									</table>
+								</div>
+								<div id="existingNode" class="existingNode">
+									<table id="baseTable" summary="Speadsheet" border="0"
+										width="100%">
+										<tbody>
+											<tr>
+												<td><select name="existingNodeSelect"
+													id="existingNodeSelect">
+												</select></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
 							</td>
-							<td align="left">&nbsp;
-							</td>							
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+
+						<tr>
+							<td><input id="infoNext" class="saveButton" value="NEXT"
+								type="button"></td>
+							<td align="left">&nbsp;</td>
 						</tr>
 					</tbody>
 				</table>
@@ -385,99 +473,108 @@
 			role="tabpanel"
 			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
 			aria-labelledby="ui-id-2" id="tabs-2">
-			<h2>Basic Configuration </h2>
+			<h2>Basic Configuration</h2>
 			<form name="form2" id="form2">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
-				
-				<div id="basicConfiguration">
-				<table>
-					<tbody>
-						<tr>
-							<td id="featureCodeCategory"><label> Database Type: </label></td>
-							<td>
-								
-								<select name="dbtype" >
-													<option value="mysql">MySQL</option>
-													<option value="db2">DB2</option></select>
-								</td>
-						</tr>
-						<tr>
-							<td id="mqtype"><label> AMQP Type: </label></td>
-							<td>								<select name="mqtype">
-													<option value="qpid">QPID</option>
-													<option value="rabbitmq">RabbitMQ</option></select>
-							</td>
-						</tr>
-						<tr>
-							<td id="groupMin"><label> Network Type: </label></td>
-							<td><select name="networktype" id="networktype" >
-													<option value="quantum">Quantum</option>
-													<option value="nova-network">Nova-Network</option></select></td>
-						</tr>
 
-					</tbody>
-				</table>
+				<div id="basicConfiguration">
+					<table>
+						<tbody>
+							<tr>
+								<td id="featureCodeCategory"><label> Database Type:
+								</label></td>
+								<td><select name="dbtype">
+										<option value="mysql">MySQL</option>
+										<option value="db2">DB2</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td id="mqtype"><label> AMQP Type: </label></td>
+								<td><select name="mqtype">
+										<option value="qpid">QPID</option>
+										<option value="rabbitmq">RabbitMQ</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td id="groupMin"><label> Network Type: </label></td>
+								<td><select name="networktype" id="networktype">
+										<option value="quantum">Quantum</option>
+										<option value="nova-network">Nova-Network</option>
+								</select></td>
+							</tr>
+
+						</tbody>
+					</table>
 				</div>
-				
-				
+
+
 				<p></p>
 				<div id="OSOPS">
-				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
-					<TR>
-						<TD width="15%" ROWSPAN=3 >OSOPS</TD>
-						<TD width="25%">Public Network</TD> <TD><input name="pubnet" type="text"></TD>
-					</TR>
-					<TR>
-						<TD>Nova Network</TD> <TD><input name="novanet" type="text"></TD> 
-					</TR>
-					<TR>
-						<TD>Management Network</TD> <TD><input name="mgmtnet" type="text"></TD>
-					</TR>
+					<table id="baseTable" summary="Speadsheet" border="1" width="50%">
+						<TR>
+							<TD width="15%" ROWSPAN=3>OSOPS</TD>
+							<TD width="25%">Public Network</TD>
+							<TD><input name="pubnet" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Nova Network</TD>
+							<TD><input name="novanet" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Management Network</TD>
+							<TD><input name="mgmtnet" type="text"></TD>
+						</TR>
 
-				</TABLE>
+					</TABLE>
 				</div>
 
 				<p></p>
 				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
 					<TR>
-						<TD width="15%" >Glance</TD>
-						<TD  width="25%">Image Upload</TD> <TD>
-						<input id="image_upload" name="image_upload" value="true"
-								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="image_upload"  value="false"
-								type="radio">&nbsp;No</TD>
+						<TD width="15%">Glance</TD>
+						<TD width="25%">Image Upload</TD>
+						<TD><input id="image_upload" name="image_upload" value="true"
+							type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
+							name="image_upload" value="false" type="radio">&nbsp;No</TD>
 					</TR>
 
 
 				</TABLE>
 
 				<div id="Quantum" class="Quantum">
-				<p></p>
-				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
-					<TR>
-						<TD width="15%" ROWSPAN=6 >Quantum</TD>
-						<TD width="25%">Tenant Network Type</TD> <TD><input name="tenant_network_type" type="text"></TD>
-					</TR>
-					<TR>
-						<TD>Network VLAN Rang</TD> <TD><input name="network_vlan_range" type="text"></TD> 
-					</TR>
-					<TR>
-						<TD>Tunnel ID Range</TD> <TD><input name="tunnel_id_range" type="text"></TD>
-					</TR>
-					<TR>
-						<TD>Enable Tunneling</TD> <TD><input id="enableTuneling" name="enable_tunneling" value="true"
-								type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input name="enable_tunneling"  value="false"
-								type="radio">&nbsp;No</TD> 
-					</TR>
-					<TR>
-						<TD>Bridge Mapping NIC</TD> <TD><input name="bridge_mapping_nic" type="text"></TD>
-					</TR>
-					<TR>
-						<TD>Floating IP NIC</TD> <TD><input name="floating_if" type="text"></TD> 
-					</TR>
-				</TABLE>
+					<p></p>
+					<table id="baseTable" summary="Speadsheet" border="1" width="50%">
+						<TR>
+							<TD width="15%" ROWSPAN=6>Quantum</TD>
+							<TD width="25%">Tenant Network Type</TD>
+							<TD><input name="tenant_network_type" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Network VLAN Rang</TD>
+							<TD><input name="network_vlan_range" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Tunnel ID Range</TD>
+							<TD><input name="tunnel_id_range" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Enable Tunneling</TD>
+							<TD><input id="enableTuneling" name="enable_tunneling"
+								value="true" type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
+								name="enable_tunneling" value="false" type="radio">&nbsp;No</TD>
+						</TR>
+						<TR>
+							<TD>Bridge Mapping NIC</TD>
+							<TD><input name="bridge_mapping_nic" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Floating IP NIC</TD>
+							<TD><input name="floating_if" type="text"></TD>
+						</TR>
+					</TABLE>
 				</div>
-				
-				<table  border="0" width="50%">
+
+				<table border="0" width="50%">
 					<tbody>
 
 						<tr>
@@ -485,136 +582,169 @@
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
-							<td><input class="saveButton" value="BACK" type="button"></td><td  align="right"><input
-								class="refreshButton" id="1" value="NEXT" type="button">
-							</td>
+							<td><input class="saveButton" value="BACK" type="button"></td>
+							<td align="right"><input class="refreshButton" id="1"
+								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
 				</table>
 		</div>
-		<div aria-hidden="true" aria-expanded="false" style="display: none;"
-			role="tabpanel"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
-			aria-labelledby="ui-id-3" id="tabs-3">
+		<div style="display: none;"
+			class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabs-3">
 			<h2>HA Configuration</h2>
 			<form name="form3" id="form3">
 
-			<div id="haEnabled" class="haEnabled">
-			<table id="baseTable" summary="Speadsheet" border="0" width="50%">
-				<tbody>
-						<tr>
-							<td width="28%"><label> HA Enabled: </label></td>
-							<td><input id="haEnabledCheck" name="haEnabledCheck" value="New"
-								type="checkbox" ></td>
-						</tr>		
-					</tbody>
-				</table>		
+				<div id="haEnabled" class="haEnabled">
+					<table id="baseTable" summary="Speadsheet" border="0" width="50%">
+						<tbody>
+							<tr>
+								<td width="28%"><label> HA Enabled: </label></td>
+								<td><input id="haEnabledCheck" name="haEnabledCheck"
+									value="Yes" type="checkbox"></td>
+							</tr>
+						</tbody>
+					</table>
 
-				<p></p>		
-				
-				<div id="loadBalancer" class="loadBalancer">
-									<table id="baseTable" summary="Speadsheet" border="0" width="70%">
-									<tbody>
-										<tr><td width="20%"><label> Load Balancer: </label></td>
-											<td>
-												<select name="existingNodeSelect">
-													<option>Stringray</option>
-													<option>HAProxy</option>
-												</select></td>
-										</tr>
-									</tbody>
-									</table>
-									
-									
-									
-										<p></p>
-				<div id="HAConfigurataion" class="HAConfigurataion">						
-				<table  border="1" width="100%">
-					<TH align="center">
-						<TD align="center" width="10%">DB</TD>
-						<TD align="center" width="10%"> MQ</TD> 
-						<TD align="center" width="10%">KeyStone</TD>
-						<TD align="center" width="10%"> Glance API</TD> 
-						<TD align="center" width="10%">Glance Registry</TD>
-						<TD align="center" width="10%"> Cinder API</TD> 
-						<TD align="center" width="10%">NOVA API</TD>
-						<TD align="center" width="10%"> EC2-API</TD> 
-						<TD align="center" width="10%">Qunatum Server</TD>
-					</TH>
-					<TR align="center">
-					<TD align="center" width="10%"> HA Component</TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck1" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck2" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck3" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck4" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck5" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck6" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck7" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck8" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck9" value="New"
-								type="checkbox" ></TD>								
-					</TR>
-<TR align="center">
-					<TD align="center" width="10%"> Virtual IP</TD>
-						<TD align="center" width="10%"><div id="rowhaEnabledCheck1"><label id="dbPrimaryHost"> DB2 Primary </label><input id="haEnabledCheck1text" name="haEnabledCheck1text" 
-								type="text" size="12" ><label id="dbSecondaryHost">DB2 Secondary </label><input id="haEnabledCheck1textS" name="haEnabledCheck1textS" 
-								type="text" size="12" ><label id="dbVirtualIPL"> Virtual IP </label><input id="dbVirutalIP" name="dbVirutalIP" 
-								type="text" size="12" ></div></TD>
-						<TD align="center" width="10%"><div id="rowhaEnabledCheck2"><label id="mqPrimaryHost"> QPID Primary </label><input id="haEnabledCheck2text" name="haEnabledCheck2text" 
-								type="text" size="12" ><label id="mqSecondaryHost">QPID Secondary </label><input id="haEnabledCheck2textS" name="haEnabledCheck2textS" 
-								type="text" size="12" ><label id="mqVirtualIPL"> Virtual IP </label><input id="mqVirutalIP" name="mqVirutalIP" 
-								type="text" size="12" ></div></TD>
-						<TD align="center" width="10%" ><div id="rowhaEnabledCheck3"><input name="haEnabledCheck3text" id="haEnabledCheck3text"
-								type="text" size="12" ></div></TD>
-														<TD  align="center" width="10%"><div id="rowhaEnabledCheck4"><input name="haEnabledCheck4text" id="haEnabledCheck4text"
-								type="text" size="12" ></div></TD>
-						<TD align="center" width="10%" ><div id="rowhaEnabledCheck5"><input name="haEnabledCheck5text" id="haEnabledCheck5text"
-								type="text" size="12" ></div></TD>
-														<TD align="center" width="10%"><div id="rowhaEnabledCheck6"><input name="haEnabledCheck6text" id="haEnabledCheck6text"
-								type="text" size="12" ></div></TD>
-						<TD align="center" width="10%" id><div id="rowhaEnabledCheck7"><input name="haEnabledCheck7text" id="haEnabledCheck7text"
-								type="text" size="12" ></div></TD>
-														<TD align="center" width="10%"><div id="rowhaEnabledCheck8"><input name="haEnabledCheck8text" id="haEnabledCheck8text"
-								type="text"size="12" > </div></TD>
-						<TD align="center" width="10%" id=><div id="rowhaEnabledCheck9"><input name="haEnabledCheck9text" id="haEnabledCheck9text"
-								type="text" size="12" ></div></TD>								
-					</TR>
-				</TABLE>
+					<p></p>
+
+					<div id="loadBalancer" class="loadBalancer">
+						<table id="baseTable" summary="Speadsheet" border="0" width="70%">
+							<tbody>
+								<tr>
+									<td width="20%"><label> Load Balancer: </label></td>
+									<td><select name="hatype" id="hatype">
+											<option value="stingray">Stringray</option>
+											<option value="haproxy">HAProxy</option>
+									</select></td>
+								</tr>
+							</tbody>
+						</table>
+
+
+
+						<p></p>
+						<div id="HAConfigurataion" class="HAConfigurataion">
+							<table border="1" width="100%">
+								<TH align="center">
+								<TD align="center" width="10%">DB</TD>
+								<TD align="center" width="10%">MQ</TD>
+								<TD align="center" width="10%">KeyStone</TD>
+								<TD align="center" width="10%">Glance API</TD>
+								<TD align="center" width="10%">Glance Registry</TD>
+								<TD align="center" width="10%">Cinder API</TD>
+								<TD align="center" width="10%">NOVA API</TD>
+								<TD align="center" width="10%">EC2-API</TD>
+								<TD align="center" width="10%">Qunatum Server</TD>
+								</TH>
+								<TR align="center">
+									<TD align="center" width="10%">HA Component</TD>
+									<TD align="center" width="10%"><input
+										name="db" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="mq" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="keystone" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="glance_api" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="glance_registry" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="cinder_api" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="nova_api" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="ec2_api" value="true" type="checkbox"></TD>
+									<TD align="center" width="10%"><input
+										name="quantum_server" value="true" type="checkbox"></TD>
+								</TR>
+								<TR align="center">
+									<TD align="center" width="10%">Virtual IP</TD>
+									<TD align="center" width="10%">
+										<div id="rowdb">
+											<label id="dbPrimaryHost"> DB2 Primary </label> <input
+												id="dbtext1" name="dbtext1"
+												type="text" size="12"> <label id="dbSecondaryHost">DB2
+												Secondary </label><input id="dbtext2"
+												name="dbtext2" type="text" size="12">
+											<label id="dbVirtualIPL"> Virtual IP </label><input
+												id="dbtext" name="dbtext" type="text" size="12">
+										</div>
+									</TD>
+									<TD align="center" width="10%">
+										<div id="rowmq">
+											<label id="mqPrimaryHost"> QPID Primary </label><input
+												id="mqtext1" name="mqtext1"
+												type="text" size="12"><label id="mqSecondaryHost">QPID
+												Secondary </label><input id="mqtext2"
+												name="mqtext2" type="text" size="12"><label
+												id="mqVirtualIPL"> Virtual IP </label><input
+												id="mqtext" name="mqtext" type="text" size="12">
+										</div>
+									</TD>
+									<TD align="center" width="10%"><div
+											id="rowkeystone">
+											<input name="keystonetext" id="keystonetext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%"><div
+											id="rowglance_api">
+											<input name="glance_apitext" id="glance_apitext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%"><div
+											id="rowglance_registry">
+											<input name="glance_registrytext" id="glance_registrytext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%"><div
+											id="rowcinder_api">
+											<input name="cinder_apitext" id="cinder_apitext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%" id><div
+											id="rownova_api">
+											<input name="nova_apitext" id="nova_apitext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%"><div
+											id="rowec2_api">
+											<input name="ec2_apitext" id="ec2_apitext"
+												type="text" size="12">
+										</div></TD>
+									<TD align="center" width="10%" id=><div
+											id="rowquantum_server">
+											<input name="quantum_servertext" id="quantum_servertext"
+												type="text" size="12">
+										</div></TD>
+								</TR>
+							</TABLE>
+						</div>
+
+
+
+
+					</div>
+
+					<table border="0" width="50%">
+						<tbody>
+
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td><input class="saveButton" value="BACK" type="button"></td>
+								<td align="right"><input class="refreshButton" id="1"
+									value="NEXT" type="button"></td>
+							</tr>
+						</tbody>
+					</table>
+
+
+
 				</div>
-				
-			
-									
-									
-				</div>					
-				
-				<table  border="0" width="50%">
-					<tbody>
-
-						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td><input class="saveButton" value="BACK" type="button"></td><td  align="right"><input
-								class="refreshButton" id="1" value="NEXT" type="button">
-							</td>
-						</tr>
-					</tbody>
-				</table>				
-				
-				
-				
-			</div>
 			</form>
-	
+
 		</div>
 		<div aria-hidden="true" aria-expanded="false" style="display: none;"
 			role="tabpanel"
@@ -623,73 +753,73 @@
 			<h2>Node Role Mapping</h2>
 			<form name="form4" id="form4">
 
-							<table id="baseTable" summary="Speadsheet" border="0" width="70%">
-									<tbody>
-										<tr><td width="20%"><label> Deployment Selection: </label></td>
-											<td>
-												<select name="existingNodeSelect">
-													<option>All In One</option>
-													<option>Singole-Controller</option>
-													<option>Multi-Nodes</option>
-												</select></td>
-										</tr>
-									</tbody>
-									</table>
-									
-				<p></p>					
-			<div id="NodeMapping" class="NodeMapping">						
-				<table  border="1" width="100%">
-					<TH align="center">
+				<table id="baseTable" summary="Speadsheet" border="0" width="70%">
+					<tbody>
+						<tr>
+							<td width="20%"><label> Deployment Selection: </label></td>
+							<td><select name="existingNodeSelect">
+									<option>All In One</option>
+									<option>Singole-Controller</option>
+									<option>Multi-Nodes</option>
+							</select></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p></p>
+				<div id="NodeMapping" class="NodeMapping">
+					<table border="1" width="100%">
+						<TH align="center">
 						<TD align="center" width="10%">Node / Role</TD>
-						<TD align="center" width="10%"> DB</TD> 
+						<TD align="center" width="10%">DB</TD>
 						<TD align="center" width="10%">KeyStone</TD>
-						<TD align="center" width="10%"> Glance</TD> 
+						<TD align="center" width="10%">Glance</TD>
 						<TD align="center" width="10%">Nova Controller</TD>
-						<TD align="center" width="10%"> Cinder Controller</TD> 
+						<TD align="center" width="10%">Cinder Controller</TD>
 						<TD align="center" width="10%">Qunatum Server</TD>
-					</TH>
-					<TR align="center">
-					<TD align="center" width="10%"> Node 1</TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck1" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck2" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck3" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck4" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck5" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck6" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck7" value="New"
-								type="checkbox" ></TD>
-						
-					</TR>
-					<TR align="center">
-					<TD align="center" width="10%"> Node 2</TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck1" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck2" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck3" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck4" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck5" value="New"
-								type="checkbox" ></TD>
-														<TD align="center" width="10%"><input name="haEnabledCheck6" value="New"
-								type="checkbox" ></TD>
-						<TD align="center" width="10%"><input name="haEnabledCheck7" value="New"
-								type="checkbox" ></TD>
-						
-					</TR>					
-				</TABLE>
-				</div>									
-									
-								
-								
-				<table  border="0" width="50%">
+						</TH>
+						<TR align="center">
+							<TD align="center" width="10%">Node 1</TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck1"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck2"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck3"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck4"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck5"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck6"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck7"
+								value="New" type="checkbox"></TD>
+
+						</TR>
+						<TR align="center">
+							<TD align="center" width="10%">Node 2</TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck1"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck2"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck3"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck4"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck5"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck6"
+								value="New" type="checkbox"></TD>
+							<TD align="center" width="10%"><input name="haEnabledCheck7"
+								value="New" type="checkbox"></TD>
+
+						</TR>
+					</TABLE>
+				</div>
+
+
+
+				<table border="0" width="50%">
 					<tbody>
 
 						<tr>
@@ -697,25 +827,28 @@
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
-							<td><input class="saveButton" value="BACK" type="button"></td><td  align="right"><input
-								class="refreshButton" id="1" value="NEXT" type="button">
-							</td>
+							<td><input class="saveButton" value="BACK" type="button"></td>
+							<td align="right"><input class="refreshButton" id="1"
+								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
-				</table>	
-				
+				</table>
+
 				<p></p>
-				
+
 				<h3>Please Note : (Not shown in this prototype)</h3>
-				
-				If HA is disabled, we need to show deployment selection (all-in-one, single-controller, multi-nodes), the corresponding roles are listed in page 11 in PPT
-				<p>If HA is enabled, we need to show the HA roles listed in page 11 in PPT
-				<p>Add validity checking:
-					<br>Do not show quantum roles if user selected nova-network in the basic configuration;
-					<br>Do not show nova-network role is user selected quantum in the basic configuration;
-					<br>Nova-compute and quantum-ovs-agent must be installed on the same node if quantum mode
-				
-									
+
+				If HA is disabled, we need to show deployment selection (all-in-one,
+				single-controller, multi-nodes), the corresponding roles are listed
+				in page 11 in PPT
+				<p>If HA is enabled, we need to show the HA roles listed in page
+					11 in PPT
+				<p>
+					Add validity checking: <br>Do not show quantum roles if user
+					selected nova-network in the basic configuration; <br>Do not
+					show nova-network role is user selected quantum in the basic
+					configuration; <br>Nova-compute and quantum-ovs-agent must be
+					installed on the same node if quantum mode
 		</div>
 		<div aria-hidden="true" aria-expanded="false" style="display: none;"
 			role="tabpanel"
@@ -725,25 +858,26 @@
 			<form name="form5" id="form5">
 				<p></p>
 				<table border="0" width="60%">
-				<tbody>
-					<tr>
-						<th scope="col" width="50%"><input id="startDeployment" value="Start Deployment"
-								type="button"></th>
-						<th scope="col" width="50%"><input class="photoButton" value="Reset Cluster"
-								type="button"></th>
-					</tr>
-					<tr align="center">	
-						<td colspan="2"><textarea rows="21" cols="50"></textarea></td>
-					</tr>
-				</tbody>
-			</table>
+					<tbody>
+						<tr>
+							<th scope="col" width="50%"><input id="startDeployment"
+								value="Start Deployment" type="button"></th>
+							<th scope="col" width="50%"><input class="photoButton"
+								value="Reset Cluster" type="button"></th>
+						</tr>
+						<tr align="center">
+							<td colspan="2"><textarea rows="21" cols="50"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
 				<p></p>
 				<p></p>
-	
 		</div>
-	
+
 	</div>
 
 
 </body>
+
+
 </html>
