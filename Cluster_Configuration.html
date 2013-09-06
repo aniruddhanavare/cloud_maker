@@ -62,11 +62,12 @@
 });
 
   
-	$('#tabs').tabs({ active: 0 });
+	$('#tabs').tabs({ active: 3 });
 	
 	$('.newCluster').hide();
 	$('.existingNode').hide();
-	$('.loadBalancer').hide();
+	$('#loadBalancer').hide();
+	$('#deploymentSelection').show();
 	
 	var rows = $('#HAConfigurataion div');
 	//alert(rows[0].type);
@@ -126,6 +127,86 @@
 			}
 	  });
 
+	 $('#deploymentSelectionSelect').change(function () {
+
+			var options = $(this).val();
+			showNodeMappingTable("NONHA",options);
+
+	  });
+	  
+	  function showNodeMappingTable(hanonha,options) {
+	  
+			
+			$.couch.db("devops").view("chef-roles-query/all", {
+			success: function(data) {
+
+				var nodes = data.rows;
+				var jsonObject = nodes[0];
+				var jsonValue = jsonObject.value;
+				var hanonhaObject = jsonValue[hanonha];
+				var nonhaObject = hanonhaObject[options];	
+				var all_keys = Object.keys(nonhaObject);
+				
+				var tableStr="";
+				tableStr = tableStr.concat("<TH align=\"center\">");
+				for (var j in all_keys) {
+					var value = nonhaObject[all_keys[j]];
+					tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
+					tableStr = tableStr.concat(value);
+					tableStr = tableStr.concat("</TD>");
+				}
+				tableStr = tableStr.concat("</TH>");
+					
+				//alert(tableStr);
+				$("#NodeMappingTable").empty();
+				$("#NodeMappingTable").append(tableStr);
+				var tableStr="";
+				
+				// fetch nodes
+				$.couch.db("devops").view("node-query/all", {
+					success: function(data) {
+					
+						var nodes = data.rows;
+
+						for(i=0;i<nodes.length;i++)
+						{
+							var jsonObject = nodes[i];						
+							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key)+"\" align=\"center\">");
+							tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
+							tableStr = tableStr.concat(jsonObject.key);
+							tableStr = tableStr.concat("</TD>");	
+
+							for (var j in all_keys) {
+								var value = nonhaObject[all_keys[j]];
+								tableStr = tableStr.concat("<TD align=\"center\" width=\"20%\">");
+								tableStr = tableStr.concat("<input name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
+								tableStr = tableStr.concat("</TD>");
+							}
+							tableStr = tableStr.concat("</TR>");			
+						}	
+						
+						$("#NodeMappingTable").append(tableStr);						
+					},
+					error: function(status) {
+						alert(status);
+					},
+					reduce: false
+				});				
+				
+				//alert(tableStr);	
+								
+				
+			},
+			error: function(status) {
+				alert(status);
+			},
+			reduce: false
+		});
+								  
+	  
+	  }
+	 
+	 
 	 
 	 $("#haEnabledCheck").click(function(e){
 		var isChecked = $('#haEnabledCheck:checked').val()?true:false;
@@ -133,14 +214,26 @@
 		if(isChecked)
 		{
 			$('.loadBalancer').show();	
+			$('#deploymentSelection').hide();	
+			showNodeMappingTable("HA","all");			
 		}
 		else
 		{
 			$('.loadBalancer').hide();
+			$('#deploymentSelection').show();	
+			$("#NodeMappingTable").empty();
+			
+			var options = $('#deploymentSelectionSelect').val();
+			//alert(options);
+			showNodeMappingTable("NONHA",options);
+			
 		}
 	 });
 	 
-	 
+	 $("#startDeployment1").click(function(e){
+		saveNodeRoleMapping("a5fa30a02bca0c9cc0a1b9084e00e688");
+	  });
+	  
 	 $("#startDeployment").click(function(e){
 					
 			// Save Info Tab
@@ -348,6 +441,7 @@
 					if(data.ok)
 					{
 						alert("Cluster HA Configuration Saved");
+						saveNodeRoleMapping(id);
 					}
 				},
 				error: function(status) {
@@ -355,11 +449,55 @@
 				}
 			});
 		}
-		
-		
-
-		
     }
+  
+  function saveNodeRoleMapping(id) {
+ 
+		//alert(id);
+
+		var rows = $('#NodeMappingTable tr');
+
+		//alert(rows.length);
+		
+		rows.each(function() {
+
+		var nodeName = this.id;
+		var rows1 = $("#"+(this.id)+" input:checkbox");
+			//alert(rows1.length);
+			
+		var jsonPayload = {};
+		jsonPayload['type']='node-role-mapping';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();			
+		jsonPayload['hostname']=nodeName;
+		
+		var rolePayload = new Array();
+		
+		for(i=0;i<rows1.length;i++)
+		{
+			var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
+			if(isEnabledCheck)
+			{
+				rolePayload.push(rows1[i].value);
+			}				
+		}			
+		//alert(rolePayload);
+		jsonPayload['role']=rolePayload;	
+			
+		$.couch.db("devops").saveDoc(jsonPayload, {
+			success: function(data) {
+				if(data.ok)
+				{
+					alert("Node-Role Mapping is saved for : "+ nodeName);
+				}
+			},
+			error: function(status) {
+				alert(status);
+			}
+		});		
+		
+		});
+  }
   
   </script>
 
@@ -752,68 +890,24 @@
 			aria-labelledby="ui-id-4" id="tabs-4">
 			<h2>Node Role Mapping</h2>
 			<form name="form4" id="form4">
-
+	
+			<div id="deploymentSelection" class="deploymentSelection">
 				<table id="baseTable" summary="Speadsheet" border="0" width="70%">
 					<tbody>
 						<tr>
 							<td width="20%"><label> Deployment Selection: </label></td>
-							<td><select name="existingNodeSelect">
-									<option>All In One</option>
-									<option>Singole-Controller</option>
-									<option>Multi-Nodes</option>
+							<td><select name="deploymentSelectionSelect" id="deploymentSelectionSelect">
+									<option value="all">All In One</option>
+									<option value="single">Singole-Controller</option>
+									<option value="multi">Multi-Nodes</option>
 							</select></td>
 						</tr>
 					</tbody>
 				</table>
-
+			</div>
 				<p></p>
 				<div id="NodeMapping" class="NodeMapping">
-					<table border="1" width="100%">
-						<TH align="center">
-						<TD align="center" width="10%">Node / Role</TD>
-						<TD align="center" width="10%">DB</TD>
-						<TD align="center" width="10%">KeyStone</TD>
-						<TD align="center" width="10%">Glance</TD>
-						<TD align="center" width="10%">Nova Controller</TD>
-						<TD align="center" width="10%">Cinder Controller</TD>
-						<TD align="center" width="10%">Qunatum Server</TD>
-						</TH>
-						<TR align="center">
-							<TD align="center" width="10%">Node 1</TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck1"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck2"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck3"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck4"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck5"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck6"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck7"
-								value="New" type="checkbox"></TD>
-
-						</TR>
-						<TR align="center">
-							<TD align="center" width="10%">Node 2</TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck1"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck2"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck3"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck4"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck5"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck6"
-								value="New" type="checkbox"></TD>
-							<TD align="center" width="10%"><input name="haEnabledCheck7"
-								value="New" type="checkbox"></TD>
-
-						</TR>
+					<table border="1"  id="NodeMappingTable" class="NodeMappingTable">
 					</TABLE>
 				</div>
 
