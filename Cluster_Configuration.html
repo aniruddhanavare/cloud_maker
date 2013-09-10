@@ -15,7 +15,7 @@
 <script src="/_utils/script/json2.js"></script>
 <script src="/_utils/script/sha1.js"></script>
 <script src="/_utils/script/jquery.dialog.js?0.11.0"></script>	
-	
+<script src="js/common.js"></script>	
      
   <script>
   $(function() {
@@ -25,20 +25,17 @@
   </script>
   
 
+  
+  
+  <script>
+  
 
-  
-   <script>
-  
-
-  
   $(document).ready(function() {
   
   
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
-		$.couch.urlPrefix = "http://localhost:5984";
-		jQuery.support.cors = true;
  
 		//saveHAConfiguration("a5fa30a02bca0c9cc0a1b9084e0005b9");
  
@@ -62,7 +59,7 @@
 });
 
   
-	$('#tabs').tabs({ active: 3 });
+	$('#tabs').tabs({ active: 0 });
 	
 	$('.newCluster').hide();
 	$('.existingNode').hide();
@@ -206,7 +203,13 @@
 	  
 	  }
 	 
+	 $(".nextButton").click(function(e){
+		
+		var selected = $("#tabs").tabs("option", "active");
+		alert(selected);
+		$("#tabs").tabs("option", "active", selected + 1);
 	 
+	 });
 	 
 	 $("#haEnabledCheck").click(function(e){
 		var isChecked = $('#haEnabledCheck:checked').val()?true:false;
@@ -449,6 +452,10 @@
 				}
 			});
 		}
+		else
+		{
+			saveNodeRoleMapping(id);
+		}
     }
   
   function saveNodeRoleMapping(id) {
@@ -597,7 +604,7 @@
 						</tr>
 
 						<tr>
-							<td><input id="infoNext" class="saveButton" value="NEXT"
+							<td><input id="3" class="nextButton" value="NEXT"
 								type="button"></td>
 							<td align="left">&nbsp;</td>
 						</tr>
@@ -720,8 +727,8 @@
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
-							<td><input class="saveButton" value="BACK" type="button"></td>
-							<td align="right"><input class="refreshButton" id="1"
+							<td><input class="backButton" value="BACK" type="button"></td>
+							<td align="right"><input class="nextButton" id="1"
 								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
@@ -871,8 +878,8 @@
 								<td>&nbsp;</td>
 							</tr>
 							<tr>
-								<td><input class="saveButton" value="BACK" type="button"></td>
-								<td align="right"><input class="refreshButton" id="1"
+								<td><input class="backButton" value="BACK" type="button"></td>
+								<td align="right"><input class="nextButton" id="1"
 									value="NEXT" type="button"></td>
 							</tr>
 						</tbody>
@@ -921,8 +928,8 @@
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
-							<td><input class="saveButton" value="BACK" type="button"></td>
-							<td align="right"><input class="refreshButton" id="1"
+							<td><input class="backButton" value="BACK" type="button"></td>
+							<td align="right"><input class="nextButton" id="1"
 								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
@@ -931,12 +938,6 @@
 				<p></p>
 
 				<h3>Please Note : (Not shown in this prototype)</h3>
-
-				If HA is disabled, we need to show deployment selection (all-in-one,
-				single-controller, multi-nodes), the corresponding roles are listed
-				in page 11 in PPT
-				<p>If HA is enabled, we need to show the HA roles listed in page
-					11 in PPT
 				<p>
 					Add validity checking: <br>Do not show quantum roles if user
 					selected nova-network in the basic configuration; <br>Do not
