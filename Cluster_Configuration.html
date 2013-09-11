@@ -127,7 +127,19 @@
 	 $('#deploymentSelectionSelect').change(function () {
 
 			var options = $(this).val();
-			showNodeMappingTable("NONHA",options);
+
+			var quantum_nova = $('#networktype').val();
+			
+			if(options!="all")
+			{
+			   // alert(options+"-"+quantum_nova);
+				showNodeMappingTable("NONHA",options+"-"+quantum_nova);
+			}
+			else
+			{
+				//alert(options);
+				showNodeMappingTable("NONHA",options);
+			}
 
 	  });
 	  
@@ -218,7 +230,12 @@
 		{
 			$('.loadBalancer').show();	
 			$('#deploymentSelection').hide();	
-			showNodeMappingTable("HA","all");			
+			//showNodeMappingTable("HA","all");		
+
+			var quantum_nova = $('#networktype').val();
+
+			showNodeMappingTable("HA","all-"+quantum_nova);
+			
 		}
 		else
 		{
@@ -228,7 +245,22 @@
 			
 			var options = $('#deploymentSelectionSelect').val();
 			//alert(options);
-			showNodeMappingTable("NONHA",options);
+			//showNodeMappingTable("NONHA",options);
+			
+			var quantum_nova = $('#networktype').val();
+			
+			if(options!="all")
+			{
+			   // alert(options+"-"+quantum_nova);
+				showNodeMappingTable("NONHA",options+"-"+quantum_nova);
+			}
+			else
+			{
+				//alert(options);
+				showNodeMappingTable("NONHA",options);
+			}
+			
+			
 			
 		}
 	 });
@@ -939,10 +971,7 @@
 
 				<h3>Please Note : (Not shown in this prototype)</h3>
 				<p>
-					Add validity checking: <br>Do not show quantum roles if user
-					selected nova-network in the basic configuration; <br>Do not
-					show nova-network role is user selected quantum in the basic
-					configuration; <br>Nova-compute and quantum-ovs-agent must be
+					Add validity checking: <br>Nova-compute and quantum-ovs-agent must be
 					installed on the same node if quantum mode
 		</div>
 		<div aria-hidden="true" aria-expanded="false" style="display: none;"
