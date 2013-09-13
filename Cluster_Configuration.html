@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<title>SCI DevOps Portal - Cluster Configuration & Deployment</title>
+<title>OpenStack Cloud Maker - Cluster Configuration & Deployment</title>
 <link rel="stylesheet" href="css/jquery-ui.css">
 <link rel="stylesheet" href="css/tab_style.css">
 <link rel="stylesheet" href="css/bootstrap.css">
@@ -265,11 +265,39 @@
 		}
 	 });
 	 
-	 $("#startDeployment1").click(function(e){
-		saveNodeRoleMapping("a5fa30a02bca0c9cc0a1b9084e00e688");
+	 $("#startDeployment").click(function(e){
+		//saveNodeRoleMapping("a5fa30a02bca0c9cc0a1b9084e00e688");
+		
+		$(".include-file").load("file:///C:/test.log");
+		
+$.get('file:///C:/test.log', function(data) {    
+    
+    var lines = data.split("\n");
+
+    $.each(lines, function(n, elem) {
+       //$('#myContainer').append('<div>' + elem + '</div>');
+	   alert(elem);
+    });
+});
+
+		
+		setInterval(function() {
+			//alert("here");
+                $('#result').append("\n"+"Aniruddha");
+				tailScroll();
+			
+		}, 1000 );
+		
 	  });
 	  
-	 $("#startDeployment").click(function(e){
+	  	function tailScroll() {
+			var height = $("#result").get(0).scrollHeight;
+			$("#result").animate({
+				scrollTop: height
+			}, 500);
+		}
+		
+	 $("#startDeployment1").click(function(e){
 					
 			// Save Info Tab
 			var jsonPayload = {};
@@ -990,7 +1018,8 @@
 								value="Reset Cluster" type="button"></th>
 						</tr>
 						<tr align="center">
-							<td colspan="2"><textarea rows="21" cols="50"></textarea></td>
+							<td colspan="2"><textarea id="result" rows="21" cols="90"></textarea></td>
+							<div class="include-file">this is test</div>
 						</tr>
 					</tbody>
 				</table>
