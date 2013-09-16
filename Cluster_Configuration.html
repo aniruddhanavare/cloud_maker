@@ -107,9 +107,17 @@
 				$("#selectOptionLabel").text("Please Choose Node");
 				$('.newCluster').hide();
 				$('.existingNode').show();
+				loadClusterConfiguration();
 			}	
 		
 	 });
+	 
+	 
+	 
+	 $('#existingNodeSelect').change(function () {
+			loadClusterConfiguration();
+	 });
+	 
 	 
 	 $('#networktype').change(function () {
 
@@ -265,7 +273,7 @@
 		}
 	 });
 	 
-	 $("#startDeployment").click(function(e){
+	 $("#startDeployment1").click(function(e){
 		//saveNodeRoleMapping("a5fa30a02bca0c9cc0a1b9084e00e688");
 		
 		$(".include-file").load("file:///C:/test.log");
@@ -297,7 +305,7 @@ $.get('file:///C:/test.log', function(data) {
 			}, 500);
 		}
 		
-	 $("#startDeployment1").click(function(e){
+	 $("#startDeployment").click(function(e){
 					
 			// Save Info Tab
 			var jsonPayload = {};
@@ -339,7 +347,88 @@ $.get('file:///C:/test.log', function(data) {
 
 	 
   });	
-  
+	
+	function loadClusterConfiguration()
+	{
+		//alert("Load Values");
+		
+		var currentCluster = $("#existingNodeSelect").val();
+		
+			
+		$.couch.db("devops").view("data/by_clusterid", { key: "6ef1f8120d5846a66ffe94f8ea002360", success: function(data) {
+
+					var nodes = data.rows;
+	
+					//alert(nodes.length);
+					for(i=0;i<nodes.length;i++)
+					{
+						var jsonObject = nodes[i];
+						var jsonValue = jsonObject.value;
+
+						if(jsonValue.type == "cluster-basic-setting")
+						{
+							var rows = $('#basicConfiguration select');
+							for(i=0;i<rows.length;i++)
+							{
+								$('#'+(rows[i].name)).val(jsonValue[rows[i].name]);
+								
+								if(jsonValue[rows[i].name] =="quantum")
+								{
+									$('.Quantum').show();		
+									var quantumObj = jsonValue['quantum'];
+									
+									var input_rows = $('#Quantum input:text');
+									for(j=0;j<input_rows.length;j++)
+									{
+										$('#'+(input_rows[j].name)).val(quantumObj[input_rows[j].name]);
+									}
+									
+									//alert(quantumObj['enable_tunneling']);
+									if(quantumObj['enable_tunneling'] == 'true')
+									{
+										$('input:radio[name=enable_tunneling]:nth(0)').attr('checked',true);
+									}
+									else
+									{
+										$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
+									}
+									
+								}
+								else
+								{
+									$('.Quantum').hide();	
+								}															
+							}
+						
+							var networksObj = jsonValue['networks'];
+							
+							var rows = $('#OSOPS input:text');
+
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(networksObj[rows[k].name]);
+							}								
+							
+							var glanceOjb = jsonValue['glance'];
+							
+							if(glanceOjb['image_upload'] == 'true')
+							{
+								$('input:radio[name=image_upload]:nth(0)').attr('checked',true);
+							}
+							else
+							{
+								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
+							}							
+							
+						}
+					}
+
+		
+					} } )
+
+	}
+		
+	
     function saveBasicConfiguration(id) {
  
 		//alert(id);
@@ -688,20 +777,20 @@ $.get('file:///C:/test.log', function(data) {
 							<tr>
 								<td id="featureCodeCategory"><label> Database Type:
 								</label></td>
-								<td><select name="dbtype">
+								<td><select name="dbtype" id="dbtype">
 										<option value="mysql">MySQL</option>
 										<option value="db2">DB2</option>
 								</select></td>
 							</tr>
 							<tr>
-								<td id="mqtype"><label> AMQP Type: </label></td>
-								<td><select name="mqtype">
+								<td><label> AMQP Type: </label></td>
+								<td><select name="mqtype" id="mqtype">
 										<option value="qpid">QPID</option>
 										<option value="rabbitmq">RabbitMQ</option>
 								</select></td>
 							</tr>
 							<tr>
-								<td id="groupMin"><label> Network Type: </label></td>
+								<td><label> Network Type: </label></td>
 								<td><select name="networktype" id="networktype">
 										<option value="quantum">Quantum</option>
 										<option value="nova-network">Nova-Network</option>
@@ -719,15 +808,15 @@ $.get('file:///C:/test.log', function(data) {
 						<TR>
 							<TD width="15%" ROWSPAN=3>OSOPS</TD>
 							<TD width="25%">Public Network</TD>
-							<TD><input name="pubnet" type="text"></TD>
+							<TD><input name="pubnet" id="pubnet" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Nova Network</TD>
-							<TD><input name="novanet" type="text"></TD>
+							<TD><input name="novanet" id="novanet" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Management Network</TD>
-							<TD><input name="mgmtnet" type="text"></TD>
+							<TD><input name="mgmtnet" id="mgmtnet" type="text"></TD>
 						</TR>
 
 					</TABLE>
@@ -752,15 +841,15 @@ $.get('file:///C:/test.log', function(data) {
 						<TR>
 							<TD width="15%" ROWSPAN=6>Quantum</TD>
 							<TD width="25%">Tenant Network Type</TD>
-							<TD><input name="tenant_network_type" type="text"></TD>
+							<TD><input name="tenant_network_type" id="tenant_network_type" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Network VLAN Rang</TD>
-							<TD><input name="network_vlan_range" type="text"></TD>
+							<TD><input name="network_vlan_range" id="network_vlan_range" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Tunnel ID Range</TD>
-							<TD><input name="tunnel_id_range" type="text"></TD>
+							<TD><input name="tunnel_id_range" id="tunnel_id_range" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Enable Tunneling</TD>
@@ -770,11 +859,11 @@ $.get('file:///C:/test.log', function(data) {
 						</TR>
 						<TR>
 							<TD>Bridge Mapping NIC</TD>
-							<TD><input name="bridge_mapping_nic" type="text"></TD>
+							<TD><input name="bridge_mapping_nic" id="bridge_mapping_nic" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Floating IP NIC</TD>
-							<TD><input name="floating_if" type="text"></TD>
+							<TD><input name="floating_if" id="floating_if" type="text"></TD>
 						</TR>
 					</TABLE>
 				</div>
