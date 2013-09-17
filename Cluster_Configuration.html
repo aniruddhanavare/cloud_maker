@@ -47,7 +47,7 @@
 			{
 				var jsonObject = nodes[i];
 				var jsonValue = jsonObject.value;			
-				$('#existingNodeSelect').append('<option>'+jsonValue.name+'</option>');
+				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
 			}
 		},
 		error: function(status) {
@@ -93,8 +93,7 @@
 	});
 	 $('#tabs-1 input:radio').change(function () {
 			var selectedVal = $("#tabs-1 input:radio:checked").val();
-			
-			//alert(selectedVal);
+
 			if(selectedVal=="New")
 			{
 				$("#selectOptionLabel").text("Create New Node");
@@ -130,6 +129,18 @@
 			{
 				$('.Quantum').hide();	
 			}
+			
+			var deploymentSelection = $('#deploymentSelectionSelect').val();
+			
+			if(deploymentSelection!="all")
+			{
+				showNodeMappingTable("NONHA",deploymentSelection+"-"+options);
+			}
+			else
+			{
+				showNodeMappingTable("NONHA",deploymentSelection);
+			}			
+			
 	  });
 
 	 $('#deploymentSelectionSelect').change(function () {
@@ -140,16 +151,18 @@
 			
 			if(options!="all")
 			{
-			   // alert(options+"-"+quantum_nova);
 				showNodeMappingTable("NONHA",options+"-"+quantum_nova);
 			}
 			else
 			{
-				//alert(options);
 				showNodeMappingTable("NONHA",options);
 			}
 
 	  });
+	  
+	  
+	  
+	  
 	  
 	  function showNodeMappingTable(hanonha,options) {
 	  
@@ -354,17 +367,19 @@ $.get('file:///C:/test.log', function(data) {
 		
 		var currentCluster = $("#existingNodeSelect").val();
 		
-			
-		$.couch.db("devops").view("data/by_clusterid", { key: "6ef1f8120d5846a66ffe94f8ea002360", success: function(data) {
+		//alert(currentCluster);	
+		$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
 
 					var nodes = data.rows;
 	
 					//alert(nodes.length);
-					for(i=0;i<nodes.length;i++)
+					for(nodeI=0;nodeI<nodes.length;nodeI++)
 					{
-						var jsonObject = nodes[i];
+						var jsonObject = nodes[nodeI];
+						//alert(jsonObject);
 						var jsonValue = jsonObject.value;
-
+						
+						//alert(jsonValue.type);
 						if(jsonValue.type == "cluster-basic-setting")
 						{
 							var rows = $('#basicConfiguration select');
@@ -419,6 +434,24 @@ $.get('file:///C:/test.log', function(data) {
 							{
 								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
 							}							
+							
+						}
+						else if(jsonValue.type == "cluster-ha-setting")
+						{
+							//alert("ha");
+							$('input:checkbox[name=haEnabledCheck]:checked').attr('checked',true);
+							$('.loadBalancer').show();	
+							
+							var all_keys = Object.keys(jsonValue);
+							
+							for (var j in all_keys) {
+								
+								if(all_keys[j]!="_id" && all_keys[j]!="_rev" && all_keys[j]!="type" && all_keys[j]!="clusterid" && all_keys[j]!="cluster_name" )
+								{
+									alert(all_keys[j]);
+									var value = jsonValue[all_keys[j]];
+								}
+							}
 							
 						}
 					}
