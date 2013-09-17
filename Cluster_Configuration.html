@@ -301,7 +301,7 @@ $.get('file:///C:/test.log', function(data) {
 			jsonPayload['chef_server_ip']='172.16.0.8';
 			
 			var rows = $('#newCluster input:text');
-			for(i=0;i<rows .length;i++)
+			for(i=0;i<rows.length;i++)
 			{
 				jsonPayload[rows[i].name]=rows[i].value;
 			}
@@ -409,20 +409,58 @@ $.get('file:///C:/test.log', function(data) {
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
 							//alert("ha");
-							$('input:checkbox[name=haEnabledCheck]:checked').attr('checked',true);
+							$('#haEnabledCheck').prop('checked', true);
 							$('.loadBalancer').show();	
 							
-							var all_keys = Object.keys(jsonValue);
+							//alert(jsonValue['hatype']);
 							
+							$('#hatype').val(jsonValue['hatype']);
+							
+							var haObj = jsonValue['ha'];
+							var vipsObj = jsonValue['vips'];
+
+							var all_keys = Object.keys(haObj);
+													
 							for (var j in all_keys) {
+								var value = haObj[all_keys[j]];
+								//alert(value);
 								
-								if(all_keys[j]!="_id" && all_keys[j]!="_rev" && all_keys[j]!="type" && all_keys[j]!="clusterid" && all_keys[j]!="cluster_name" )
-								{
-									alert(all_keys[j]);
-									var value = jsonValue[all_keys[j]];
+								if(value == 'true')
+								{									
+									//alert(all_keys[j].indexOf("_ha"));
+									
+									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_ha"));
+									//alert(objName);									
+									$('#'+objName+'').prop('checked', true);
+									$('#row'+objName).show();
+
+									$('#'+(objName)+'text').val(vipsObj[objName+"_vip"]);
+									
+									if(objName=="db")
+									{
+										var dbObj = jsonValue['db'];
+										
+										$('#dbtext1').val(dbObj['db2_primary_host']);			
+										$('#dbtext2').val(dbObj['db2_standby_host']);			
+																				
+									}
+									else if(objName=="mq")
+									{
+									
+										var mqObj = jsonValue['mq'];
+										var qpid_nodes = mqObj['qpid_nodes'];
+										//alert(qpid_nodes);
+										
+										//alert(qpid_nodes.indexOf(","));
+										
+										$('#mqtext1').val(qpid_nodes.substr(0,qpid_nodes.indexOf(",")));			
+										$('#mqtext2').val(qpid_nodes.substr(qpid_nodes.indexOf(",")+1));										
+									
+									}
 								}
+								
 							}
-							
+						
 						}
 					}
 
@@ -556,7 +594,7 @@ $.get('file:///C:/test.log', function(data) {
 			var haPayload = {};
 			var vipsPayload = {};
 			
-			for(i=0;i<rows .length;i++)
+			for(i=0;i<rows.length;i++)
 			{
 				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
 				if(isEnabledCheck)
@@ -936,23 +974,23 @@ $.get('file:///C:/test.log', function(data) {
 								<TR align="center">
 									<TD align="center" width="10%">HA Component</TD>
 									<TD align="center" width="10%"><input
-										name="db" value="true" type="checkbox"></TD>
+										name="db" id="db" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="mq" value="true" type="checkbox"></TD>
+										name="mq" id="mq" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="keystone" value="true" type="checkbox"></TD>
+										name="keystone" id="keystone" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="glance_api" value="true" type="checkbox"></TD>
+										name="glance_api" id="glance_api"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="glance_registry" value="true" type="checkbox"></TD>
+										name="glance_registry" id="glance_registry"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="cinder_api" value="true" type="checkbox"></TD>
+										name="cinder_api" id="cinder_api" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="nova_api" value="true" type="checkbox"></TD>
+										name="nova_api" id="nova_api"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="ec2_api" value="true" type="checkbox"></TD>
+										name="ec2_api" id="ec2_api"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="quantum_server" value="true" type="checkbox"></TD>
+										name="quantum_server" id="quantum_server"  value="true" type="checkbox"></TD>
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%">Virtual IP</TD>
