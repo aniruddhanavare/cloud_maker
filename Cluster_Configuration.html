@@ -37,7 +37,7 @@
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
  
-		//saveHAConfiguration("a5fa30a02bca0c9cc0a1b9084e0005b9");
+		chooseNodeMappingOptions();		
  
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
@@ -111,56 +111,64 @@
 		
 	 });
 	 
-	 
-	 
 	 $('#existingNodeSelect').change(function () {
 			loadClusterConfiguration();
 	 });
 	 
 	 
 	 $('#networktype').change(function () {
+		chooseNodeMappingOptions();
+	  });
 
-			var options = $(this).val();
-			if(options=="quantum")
+	 $('#deploymentSelectionSelect').change(function () {		
+			chooseNodeMappingOptions();
+	  });
+	  
+	  
+	  function chooseNodeMappingOptions(){
+	  
+		// Check Network Type
+		
+		var network_type = $('#networktype').val();
+		
+		if(network_type=="quantum")
+		{
+			$('.Quantum').show();				
+		}
+		else
+		{
+			$('.Quantum').hide();	
+		}		
+		
+		// Check Whether HA enabled or not
+		
+		var isHAEnabled = $('#haEnabledCheck:checked').val()?true:false;
+		
+		if(isHAEnabled)
+		{
+			$('.loadBalancer').show();	
+			$('#deploymentSelection').hide();	
+			showNodeMappingTable("HA","all-"+network_type);			
+		}
+		else
+		{
+			$('.loadBalancer').hide();
+			$('#deploymentSelection').show();	
+			$("#NodeMappingTable").empty();
+			
+			var deploymentOption = $('#deploymentSelectionSelect').val();
+			
+			if(deploymentOption!="all")
 			{
-				$('.Quantum').show();				
+				showNodeMappingTable("NONHA",deploymentOption+"-"+network_type);
 			}
 			else
 			{
-				$('.Quantum').hide();	
-			}
-			
-			var deploymentSelection = $('#deploymentSelectionSelect').val();
-			
-			if(deploymentSelection!="all")
-			{
-				showNodeMappingTable("NONHA",deploymentSelection+"-"+options);
-			}
-			else
-			{
-				showNodeMappingTable("NONHA",deploymentSelection);
+				showNodeMappingTable("NONHA",deploymentOption);
 			}			
-			
-	  });
-
-	 $('#deploymentSelectionSelect').change(function () {
-
-			var options = $(this).val();
-
-			var quantum_nova = $('#networktype').val();
-			
-			if(options!="all")
-			{
-				showNodeMappingTable("NONHA",options+"-"+quantum_nova);
-			}
-			else
-			{
-				showNodeMappingTable("NONHA",options);
-			}
-
-	  });
-	  
-	  
+		}		
+		
+	  }
 	  
 	  
 	  
@@ -245,45 +253,7 @@
 	 });
 	 
 	 $("#haEnabledCheck").click(function(e){
-		var isChecked = $('#haEnabledCheck:checked').val()?true:false;
-		
-		if(isChecked)
-		{
-			$('.loadBalancer').show();	
-			$('#deploymentSelection').hide();	
-			//showNodeMappingTable("HA","all");		
-
-			var quantum_nova = $('#networktype').val();
-
-			showNodeMappingTable("HA","all-"+quantum_nova);
-			
-		}
-		else
-		{
-			$('.loadBalancer').hide();
-			$('#deploymentSelection').show();	
-			$("#NodeMappingTable").empty();
-			
-			var options = $('#deploymentSelectionSelect').val();
-			//alert(options);
-			//showNodeMappingTable("NONHA",options);
-			
-			var quantum_nova = $('#networktype').val();
-			
-			if(options!="all")
-			{
-			   // alert(options+"-"+quantum_nova);
-				showNodeMappingTable("NONHA",options+"-"+quantum_nova);
-			}
-			else
-			{
-				//alert(options);
-				showNodeMappingTable("NONHA",options);
-			}
-			
-			
-			
-		}
+			chooseNodeMappingOptions();
 	 });
 	 
 	 $("#startDeployment1").click(function(e){
