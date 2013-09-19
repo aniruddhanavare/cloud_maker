@@ -32,6 +32,11 @@
 
   $(document).ready(function() {
   
+  $(".nexttab").click(function() {
+    var selected = $("#tabs").tabs("option", "selected");
+    $("#tabs").tabs("option", "selected", selected + 1);
+
+});
   
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
@@ -55,6 +60,52 @@
 		},
 		reduce: false
 	});
+	
+	
+ 
+$.couch.db("devops").view("node-query/all", {
+
+    success: function(data) {
+	
+		var nodes = data.rows;
+		for(i=0;i<nodes.length;i++)
+		{
+			var jsonObject = nodes[i];
+			var jsonValue = jsonObject.value;
+			
+			//alert(jsonValue._id);
+			$("#baseTable > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+		}
+	   
+    },
+    error: function(status) {
+        alert(status);
+    },
+    reduce: false
+});
+
+
+$.couch.db("devops").view("cluster-query/all", {
+    success: function(data) {
+	
+		var nodes = data.rows;
+		for(i=0;i<nodes.length;i++)
+		{
+			var jsonObject = nodes[i];
+			var jsonValue = jsonObject.value;
+			
+			//alert(jsonValue._id);
+			//$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.ssh_key)+"</td><td>"+(jsonValue.chef_env_name)+"</td><td>"+(jsonValue.chef_path)+"</td><td>"+(jsonValue.chef_server_ip)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+			
+			$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+		}	  
+    },
+    error: function(status) {
+        alert(status);
+    },
+    reduce: false
+});
+	
 	});
 });
 
@@ -91,8 +142,8 @@
 		}
 		
 	});
-	 $('#tabs-1 input:radio').change(function () {
-			var selectedVal = $("#tabs-1 input:radio:checked").val();
+	 $('#tabs-3 input:radio').change(function () {
+			var selectedVal = $("#tabs-3 input:radio:checked").val();
 
 			if(selectedVal=="New")
 			{
@@ -246,9 +297,8 @@
 	 
 	 $(".nextButton").click(function(e){
 		
-		var selected = $("#tabs").tabs("option", "active");
-		alert(selected);
-		$("#tabs").tabs("option", "active", selected + 1);
+		var selected = $("#tabs").tabs("option", "selected");
+		$("#tabs").tabs("option", "selected", selected + 1);
 	 
 	 });
 	 
@@ -409,7 +459,7 @@ $.get('file:///C:/test.log', function(data) {
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
 							//alert("ha");
-							$('#haEnabledCheck').prop('checked', true);
+							$('#haEnabledCheck').attr('checked', 'checked');
 							$('.loadBalancer').show();	
 							
 							//alert(jsonValue['hatype']);
@@ -431,7 +481,7 @@ $.get('file:///C:/test.log', function(data) {
 									
 									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_ha"));
 									//alert(objName);									
-									$('#'+objName+'').prop('checked', true);
+									$('#'+objName+'').attr('checked', 'checked');
 									$('#row'+objName).show();
 
 									$('#'+(objName)+'text').val(vipsObj[objName+"_vip"]);
@@ -698,47 +748,121 @@ $.get('file:///C:/test.log', function(data) {
   
   </script>
 
+  <script>
+
+
+function deleteNode(id,revID) {
+ 
+var jsonPayload = {};
+jsonPayload['_id']=id;
+jsonPayload['_rev']=revID;
+ 
+$.couch.db("devops").removeDoc(jsonPayload, {
+     success: function(data) {
+         if(data.ok)
+		{
+			alert("Node Deleted");
+			location.reload(true);
+		}
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
+
+    }
+
+function deleteCluster(id,revID) {
+ 
+var jsonPayload = {};
+jsonPayload['_id']=id;
+jsonPayload['_rev']=revID;
+ 
+$.couch.db("devops").removeDoc(jsonPayload, {
+     success: function(data) {
+         if(data.ok)
+		{
+			alert("Cluster Deleted");
+			location.reload(true);
+		}
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
+
+    }
+
+
+    </script> 
+  
+  
 </head>
 
 <body>
 	<div
 		class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-vertical ui-helper-clearfix"
 		id="tabs">
-		<ul role="tablist"
+		<ul 
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-			<li aria-selected="true" aria-labelledby="ui-id-1"
-				aria-controls="tabs-1" tabindex="0" role="tab"
-				class="ui-state-default ui-tabs-active ui-state-active ui-corner-left"><a
-				id="ui-id-1" tabindex="-1" role="presentation"
-				class="ui-tabs-anchor" href="#tabs-1">Info</a></li>
-			<li aria-selected="false" aria-labelledby="ui-id-2"
-				aria-controls="tabs-2" tabindex="-1" role="tab"
-				class="ui-state-default ui-corner-left"><a id="ui-id-2"
-				tabindex="-1" role="presentation" class="ui-tabs-anchor"
-				href="#tabs-2">Basic Configuration</a></li>
-			<li aria-selected="false" aria-labelledby="ui-id-3"
-				aria-controls="tabs-3" tabindex="-1" role="tab"
-				class="ui-state-default ui-corner-left"><a id="ui-id-3"
-				tabindex="-1" role="presentation" class="ui-tabs-anchor"
-				href="#tabs-3">HA Configuration</a></li>
-			<li aria-selected="false" aria-labelledby="ui-id-4"
-				aria-controls="tabs-4" tabindex="-1" role="tab"
-				class="ui-state-default ui-corner-left"><a id="ui-id-4"
-				tabindex="-1" role="presentation" class="ui-tabs-anchor"
-				href="#tabs-4">Node-Role Mapping</a></li>
-			<li aria-selected="false" aria-labelledby="ui-id-5"
-				aria-controls="tabs-5" tabindex="-1" role="tab"
-				class="ui-state-default ui-corner-left"><a id="ui-id-5"
-				tabindex="-1" role="presentation" class="ui-tabs-anchor"
-				href="#tabs-5">Deployment</a></li>
-
+			<li><a class="ui-tabs-anchor" href="#tabs-1">Node Registration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-3">Info</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
 		</ul>
-		<div aria-hidden="false" aria-expanded="true" role="tabpanel"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
-			aria-labelledby="ui-id-1" id="tabs-1">
+
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1">
+			
+			<h2>Node Registration</h2>
+				<table border="0" width="70%">
+						<tr id="baseTableHeader">
+							<th scope="col" width="50%"><a href="Create_Node.html">Create New Node</a></th>
+						</tr>					
+				</table>			
+			
+			<p></p>
+			<form name="form2" id="form2">
+				<table id="baseTable" border="1" width="70%">
+						<tr id="baseTableHeader">
+							<th scope="col" width="20%">Node Name</th>
+							<th scope="col" width="10%">Install NIC</th>
+							<th scope="col" width="20%">Install IP</th>
+							<th scope="col" width="20%">Install Gateway</th>
+							<th scope="col" width="20%">Net Mask</th>
+							<th scope="col" width="5%">Delete</th>
+						</tr>					
+				</table>
+			</form>
+
+		</div>
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
+			
+			<h2>Available Cluster List</h2>
+
+			<p></p>
+			<form name="form2" id="form2">
+				<table id="baseTableCluster" border="1" width="70%">
+						<tr id="baseTableHeaderCluster">
+							<th scope="col" width="20%">Cluster Name</th>
+							<th scope="col" width="40%">Description</th>
+						<!--	<th scope="col" width="13%">SSH Key</th>
+							<th scope="col" width="13%">Chef Env Name</th>
+							<th scope="col" width="13%">Chef Path</th>
+							<th scope="col" width="13%">Chef Server IP</th>-->
+							<th scope="col" width="20%">Username</th>
+							<th scope="col" width="5%">Delete</th>
+						</tr>					
+				</table>
+			</form>			
+			
+		</div>	
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-3">
 			<h2>Info</h2>
 			<form name="form1" id="form1">
-				<table id="baseTable" summary="Speadsheet" border="0" width="50%">
+				<table  border="0" width="50%">
 					<tbody>
 						<tr>
 							<td width="20%"><label> Select Option: </label></td>
@@ -757,7 +881,7 @@ $.get('file:///C:/test.log', function(data) {
 							<td width="20%"><label id="selectOptionLabel"></label></td>
 							<td>
 								<div id="newCluster" class="newCluster">
-									<table id="baseTable" summary="Speadsheet" border="0"
+									<table  summary="Speadsheet" border="0"
 										width="100%">
 										<tbody>
 											<tr>
@@ -774,7 +898,7 @@ $.get('file:///C:/test.log', function(data) {
 									</table>
 								</div>
 								<div id="existingNode" class="existingNode">
-									<table id="baseTable" summary="Speadsheet" border="0"
+									<table  summary="Speadsheet" border="0"
 										width="100%">
 										<tbody>
 											<tr>
@@ -794,20 +918,16 @@ $.get('file:///C:/test.log', function(data) {
 						</tr>
 
 						<tr>
-							<td><input id="3" class="nextButton" value="NEXT"
+							<td><input id="1" class="nextButton" value="NEXT"
 								type="button"></td>
-							<td align="left">&nbsp;</td>
+							<td align="left">&nbsp; </td>
 						</tr>
 					</tbody>
 				</table>
 			</form>
-			<p></p>
-
+			<p></p>		
 		</div>
-		<div aria-hidden="true" aria-expanded="false" style="display: none;"
-			role="tabpanel"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
-			aria-labelledby="ui-id-2" id="tabs-2">
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-4">
 			<h2>Basic Configuration</h2>
 			<form name="form2" id="form2">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
@@ -845,7 +965,7 @@ $.get('file:///C:/test.log', function(data) {
 
 				<p></p>
 				<div id="OSOPS">
-					<table id="baseTable" summary="Speadsheet" border="1" width="50%">
+					<table summary="Speadsheet" border="1" width="50%">
 						<TR>
 							<TD width="15%" ROWSPAN=3>OSOPS</TD>
 							<TD width="25%">Public Network</TD>
@@ -864,7 +984,7 @@ $.get('file:///C:/test.log', function(data) {
 				</div>
 
 				<p></p>
-				<table id="baseTable" summary="Speadsheet" border="1" width="50%">
+				<table  summary="Speadsheet" border="1" width="50%">
 					<TR>
 						<TD width="15%">Glance</TD>
 						<TD width="25%">Image Upload</TD>
@@ -878,7 +998,7 @@ $.get('file:///C:/test.log', function(data) {
 
 				<div id="Quantum" class="Quantum">
 					<p></p>
-					<table id="baseTable" summary="Speadsheet" border="1" width="50%">
+					<table summary="Speadsheet" border="1" width="50%">
 						<TR>
 							<TD width="15%" ROWSPAN=6>Quantum</TD>
 							<TD width="25%">Tenant Network Type</TD>
@@ -918,19 +1038,21 @@ $.get('file:///C:/test.log', function(data) {
 						</tr>
 						<tr>
 							<td><input class="backButton" value="BACK" type="button"></td>
-							<td align="right"><input class="nextButton" id="1"
+							<td align="right"><input class="nextButton" id="2"
 								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
-				</table>
+				</table>	
+			</form>	
 		</div>
-		<div style="display: none;"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabs-3">
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-5">
+
+			
 			<h2>HA Configuration</h2>
 			<form name="form3" id="form3">
 
 				<div id="haEnabled" class="haEnabled">
-					<table id="baseTable" summary="Speadsheet" border="0" width="50%">
+					<table border="0" width="50%">
 						<tbody>
 							<tr>
 								<td width="28%"><label> HA Enabled: </label></td>
@@ -943,19 +1065,6 @@ $.get('file:///C:/test.log', function(data) {
 					<p></p>
 
 					<div id="loadBalancer" class="loadBalancer">
-						<table id="baseTable" summary="Speadsheet" border="0" width="70%">
-							<tbody>
-								<tr>
-									<td width="20%"><label> Load Balancer: </label></td>
-									<td><select name="hatype" id="hatype">
-											<option value="stingray">Stringray</option>
-											<option value="haproxy">HAProxy</option>
-									</select></td>
-								</tr>
-							</tbody>
-						</table>
-
-
 
 						<p></p>
 						<div id="HAConfigurataion" class="HAConfigurataion">
@@ -1069,7 +1178,7 @@ $.get('file:///C:/test.log', function(data) {
 							</tr>
 							<tr>
 								<td><input class="backButton" value="BACK" type="button"></td>
-								<td align="right"><input class="nextButton" id="1"
+								<td align="right"><input class="nextButton" id="3"
 									value="NEXT" type="button"></td>
 							</tr>
 						</tbody>
@@ -1080,16 +1189,14 @@ $.get('file:///C:/test.log', function(data) {
 				</div>
 			</form>
 
-		</div>
-		<div aria-hidden="true" aria-expanded="false" style="display: none;"
-			role="tabpanel"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
-			aria-labelledby="ui-id-4" id="tabs-4">
+
+		</div>	
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-6">
 			<h2>Node Role Mapping</h2>
 			<form name="form4" id="form4">
 	
 			<div id="deploymentSelection" class="deploymentSelection">
-				<table id="baseTable" summary="Speadsheet" border="0" width="70%">
+				<table border="0" width="70%">
 					<tbody>
 						<tr>
 							<td width="20%"><label> Deployment Selection: </label></td>
@@ -1119,7 +1226,7 @@ $.get('file:///C:/test.log', function(data) {
 						</tr>
 						<tr>
 							<td><input class="backButton" value="BACK" type="button"></td>
-							<td align="right"><input class="nextButton" id="1"
+							<td align="right"><input class="nextButton" id="4"
 								value="NEXT" type="button"></td>
 						</tr>
 					</tbody>
@@ -1127,15 +1234,10 @@ $.get('file:///C:/test.log', function(data) {
 
 				<p></p>
 
-				<h3>Please Note : (Not shown in this prototype)</h3>
-				<p>
-					Add validity checking: <br>Nova-compute and quantum-ovs-agent must be
-					installed on the same node if quantum mode
+			</form>		
 		</div>
-		<div aria-hidden="true" aria-expanded="false" style="display: none;"
-			role="tabpanel"
-			class="ui-tabs-panel ui-widget-content ui-corner-bottom"
-			aria-labelledby="ui-id-5" id="tabs-5" align="center">
+		
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-7">
 			<h2>Deployment</h2>
 			<form name="form5" id="form5">
 				<p></p>
@@ -1154,12 +1256,11 @@ $.get('file:///C:/test.log', function(data) {
 					</tbody>
 				</table>
 				<p></p>
-				<p></p>
+				<p></p>		
+			</form>			
 		</div>
-
-	</div>
-
-
+		</div>
+		
 </body>
 
 
