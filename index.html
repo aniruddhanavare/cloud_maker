@@ -291,21 +291,12 @@ $.couch.db("devops").view("cluster-query/all", {
 	 });
 	 
 	 $("#startDeployment1").click(function(e){
-		//saveNodeRoleMapping("a5fa30a02bca0c9cc0a1b9084e00e688");
+		startDeployment();
+	 });
+	 
+	 $("#startDeployment2").click(function(e){
 		
-		$(".include-file").load("file:///C:/test.log");
-		
-$.get('file:///C:/test.log', function(data) {    
-    
-    var lines = data.split("\n");
-
-    $.each(lines, function(n, elem) {
-       //$('#myContainer').append('<div>' + elem + '</div>');
-	   alert(elem);
-    });
-});
-
-		
+	
 		setInterval(function() {
 			//alert("here");
                 $('#result').append("\n"+"Aniruddha");
@@ -314,6 +305,8 @@ $.get('file:///C:/test.log', function(data) {
 		}, 1000 );
 		
 	  });
+	  
+	  
 	  
 	  	function tailScroll() {
 			var height = $("#result").get(0).scrollHeight;
@@ -364,6 +357,27 @@ $.get('file:///C:/test.log', function(data) {
 
 	 
   });	
+	
+	function startDeployment()
+	  {
+		alert("Starting Deployment - Calling Python Script");
+		  $.ajax({type:'GET', 
+				  url: 'http://172.16.0.8:5984/devops/_test',     
+				  data: "somedata",				
+				  success: function(response) { 
+					alert("Response : " + response); 
+			 },
+			 error: function(jqXHR, textStatus, errorThrown) {
+			 
+			 alert("Some Error has occurred");
+			 //var all_keys = Object.keys(jqXHR);
+			 //alert(all_keys);
+			  //alert(jqXHR);
+			 }   
+			 
+			 }); 
+	  }
+	  
 	
 	function loadClusterConfiguration()
 	{
@@ -684,8 +698,6 @@ $.get('file:///C:/test.log', function(data) {
   
   function saveNodeRoleMapping(id) {
  
-		//alert(id);
-
 		var rows = $('#NodeMappingTable tr');
 
 		//alert(rows.length);
@@ -719,7 +731,7 @@ $.get('file:///C:/test.log', function(data) {
 			success: function(data) {
 				if(data.ok)
 				{
-					alert("Node-Role Mapping is saved for : "+ nodeName);
+					alert("Node-Role Mapping is saved for : "+ nodeName);					
 				}
 			},
 			error: function(status) {
@@ -728,6 +740,8 @@ $.get('file:///C:/test.log', function(data) {
 		});		
 		
 		});
+		
+		startDeployment();
   }
   
   </script>
