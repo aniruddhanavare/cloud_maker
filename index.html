@@ -290,30 +290,18 @@ $.couch.db("devops").view("cluster-query/all", {
 			chooseNodeMappingOptions();
 	 });
 	 
-	 $("#startDeployment1").click(function(e){
+	 $("#startDeployment2").click(function(e){
 		startDeployment();
+		//showDeploymentLogs();
 	 });
 	 
-	 $("#startDeployment2").click(function(e){
+	 $("#startDeployment1").click(function(e){
 		
-	
-		setInterval(function() {
-			//alert("here");
-                $('#result').append("\n"+"Aniruddha");
-				tailScroll();
-			
-		}, 1000 );
+
 		
 	  });
 	  
 	  
-	  
-	  	function tailScroll() {
-			var height = $("#result").get(0).scrollHeight;
-			$("#result").animate({
-				scrollTop: height
-			}, 500);
-		}
 		
 	 $("#startDeployment").click(function(e){
 					
@@ -362,20 +350,57 @@ $.couch.db("devops").view("cluster-query/all", {
 	  {
 		alert("Starting Deployment - Calling Python Script");
 		  $.ajax({type:'GET', 
-				  url: 'http://172.16.0.8:5984/devops/_test',     
-				  data: "somedata",				
+				  url: 'http://10.44.66.126:5984/devops/_generate_nodelist',     		
 				  success: function(response) { 
-					alert("Response : " + response); 
+				  //alert(response);
+				  if(response.invocation =="success")
+				  {
+					alert("Generate NodeList Script successfully invoked. Displaying Logs..."); 
+					showDeploymentLogs();
+				  }
+				  else
+				  {
+					alert("Generate Nodelist invocation failed");
+				  }
 			 },
 			 error: function(jqXHR, textStatus, errorThrown) {
-			 
-			 alert("Some Error has occurred");
-			 //var all_keys = Object.keys(jqXHR);
-			 //alert(all_keys);
-			  //alert(jqXHR);
-			 }   
-			 
+		  		 alert("Some Error has occurred. Trying Again...");
+				startDeployment();
+			 }   			 
 			 }); 
+	  }
+
+	function showDeploymentLogs()
+	  {
+
+	
+		setInterval(function() {
+		  
+		  $.ajax({type:'GET', 
+				  url: 'http://10.44.66.126:5984/devops/_show_logs',     		
+				  success: function(response) { 
+				  //alert(response);
+				  if(response.result)
+				  {	
+					$('#result').append("\n"+response.result);
+					tailScroll();
+				  }
+			 },
+			 error: function(jqXHR, textStatus, errorThrown) {
+		  		// alert("Some Error has occurred.");
+			 }   			 
+			 }); 
+
+			
+		}, 1000 );
+	  }
+	  
+    
+	  function tailScroll() {
+		  var height = $("#result").get(0).scrollHeight;
+		  $("#result").animate({
+			  scrollTop: height
+		  }, 500);
 	  }
 	  
 	
@@ -1313,7 +1338,7 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 						</tr>
 						<tr align="center">
 							<td colspan="2"><textarea id="result" rows="21" cols="90"></textarea></td>
-							<div class="include-file">this is test</div>
+							<!--<div class="include-file">this is test</div>-->
 						</tr>
 					</tbody>
 				</table>
