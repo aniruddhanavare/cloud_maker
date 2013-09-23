@@ -326,7 +326,7 @@ $.couch.db("devops").view("cluster-query/all", {
 				success: function(data) {
 					if(data.ok)
 					{
-						alert("Cluster Info Saved");
+						//alert("Cluster Info Saved");
 						//location.reload(true);
 						
 						var docID = data.id;
@@ -340,7 +340,6 @@ $.couch.db("devops").view("cluster-query/all", {
 			
 			
 			
-			
 	 });
 
 	 
@@ -348,26 +347,34 @@ $.couch.db("devops").view("cluster-query/all", {
 	
 	function startDeployment()
 	  {
-		alert("Starting Deployment - Calling Python Script");
-		  $.ajax({type:'GET', 
-				  url: 'http://10.44.66.126:5984/devops/_generate_nodelist',     		
-				  success: function(response) { 
-				  //alert(response);
-				  if(response.invocation =="success")
-				  {
-					alert("Generate NodeList Script successfully invoked. Displaying Logs..."); 
+		// Save Info Tab
+		var jsonPayload = {};
+		jsonPayload['type']='action';
+		
+		jsonPayload['status']='start'; //Four status: start, running, end, failed
+		jsonPayload['cluster_name']=$("#name").val();
+		jsonPayload['user_name']='root';
+		
+		var rows = $('#newCluster input:text');
+		for(i=0;i<rows.length;i++)
+		{
+			jsonPayload[rows[i].name]=rows[i].value;
+		}
+		
+
+		$.couch.db("devops").saveDoc(jsonPayload, {
+			success: function(data) {
+				if(data.ok)
+				{
+					alert("Deployment request sent!");
 					showDeploymentLogs();
-				  }
-				  else
-				  {
-					alert("Generate Nodelist invocation failed");
-				  }
-			 },
-			 error: function(jqXHR, textStatus, errorThrown) {
-		  		 alert("Some Error has occurred. Trying Again...");
-				startDeployment();
-			 }   			 
-			 }); 
+				}
+			},
+			error: function(status) {
+				alert(status);
+			}
+		});
+			
 	  }
 
 	function showDeploymentLogs()
@@ -377,7 +384,7 @@ $.couch.db("devops").view("cluster-query/all", {
 		setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
-				  url: 'http://10.44.66.126:5984/devops/_show_logs',     		
+				  url: 'http://172.16.0.8:5984/devops/_show_logs',     		
 				  success: function(response) { 
 				  //alert(response);
 				  if(response.result)
@@ -627,7 +634,7 @@ $.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
 				if(data.ok)
 				{
-					alert("Cluster Basic Configuration Saved");
+					//alert("Cluster Basic Configuration Saved");
 					saveHAConfiguration(id);
 				}
 			},
@@ -706,7 +713,7 @@ $.couch.db("devops").view("cluster-query/all", {
 				success: function(data) {
 					if(data.ok)
 					{
-						alert("Cluster HA Configuration Saved");
+						//alert("Cluster HA Configuration Saved");
 						saveNodeRoleMapping(id);
 					}
 				},
@@ -756,7 +763,7 @@ $.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
 				if(data.ok)
 				{
-					alert("Node-Role Mapping is saved for : "+ nodeName);					
+					//alert("Node-Role Mapping is saved for : "+ nodeName);					
 				}
 			},
 			error: function(status) {
