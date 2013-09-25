@@ -252,12 +252,13 @@ $.couch.db("devops").view("cluster-query/all", {
 							for (var j in all_keys) {
 								var value = nonhaObject[all_keys[j]];
 								tableStr = tableStr.concat("<TD align=\"center\" width=\"20%\">");
-								tableStr = tableStr.concat("<input name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
+								tableStr = tableStr.concat("<input id=\""+(jsonObject.key)+(value)+"\" name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
 								tableStr = tableStr.concat("</TD>");
 							}
 							tableStr = tableStr.concat("</TR>");			
 						}	
 						
+						//alert(tableStr);
 						$("#NodeMappingTable").append(tableStr);						
 					},
 					error: function(status) {
@@ -541,6 +542,22 @@ $.couch.db("devops").view("cluster-query/all", {
 								
 							}
 						
+						}
+						else if(jsonValue.type == "node-role-mapping")
+						{
+													
+							var rows = $('#'+jsonValue['hostname']);
+							
+							if(rows.length !=0)
+							{
+									var roleObj = jsonValue['role'];
+								
+									var roles=String(roleObj).split(",");
+									
+									for (var j in roles) {
+										$('#'+jsonValue['hostname']+roles[j]+'').attr('checked', 'checked');										
+									}										
+							}							
 						}
 					}
 
