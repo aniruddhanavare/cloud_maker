@@ -296,15 +296,252 @@ $.couch.db("devops").view("cluster-query/all", {
 		//showDeploymentLogs();
 	 });
 	 
-	 $("#startDeployment1").click(function(e){
+	 $("#startDeployment").click(function(e){
 		
-
+			// Save Info Tab
+			var jsonPayload = {};
+			jsonPayload['type']='cluster';
+			
+			jsonPayload['ssh_key']='/root/.ssh/id_rsa';
+			jsonPayload['user_name']='root';
+			jsonPayload['chef_path']='/root/openstackchef/openstack-installation';
+			jsonPayload['chef_env_name']=$("#name").val();
+			jsonPayload['chef_server_ip']='172.16.0.8';
+			
+			var rows = $('#newCluster input:text');
+			for(i=0;i<rows.length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}
+			
+			var docID;
+			$.couch.db("devops").saveDoc(jsonPayload, {
+				success: function(data) {
+					if(data.ok)
+					{
+						docID = data.id;
+						startTabSave(docID);
+					}
+				},
+				error: function(status) {
+					alert(status);
+				}
+			});
+			
+			
+			
+			
+			
 		
 	  });
 	  
+	  function startTabSave(docID)
+	  {
+
+			if(docID !=null)
+			{
+				var cloudObj = [];
+
+				var basicObject = saveBasicConfigurationNew(docID);		
+				cloudObj.push(basicObject);
+				
+				var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+				if(haEnabledCheck)
+				{
+					var haObject = saveHAConfigurationNew(docID);	
+					cloudObj.push(haObject);					
+				}	
+				
+				var rows = $('#NodeMappingTable tr');
+				rows.each(function() {
+					var nodeRoleObject = saveNodeRoleMappingNew(docID,this.id);
+					cloudObj.push(nodeRoleObject);	
+				});
+						
+				$.couch.db("devops").bulkSave({"docs": cloudObj}, {
+					success: function(data) {
+						startDeployment();
+					},
+					error: function(status) {
+						console.log(status);
+					}
+				});
+
+			}
+	  }
+	  
+	   function saveNodeRoleMappingNew(id,rowid) {
+ 
+		var nodeName = rowid;
+		var rows1 = $("#"+(rowid)+" input:checkbox");
+			//alert(rows1.length);
+			
+		var jsonPayload = {};
+		jsonPayload['type']='node-role-mapping';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();			
+		jsonPayload['hostname']=nodeName;
+		
+		var rolePayload = new Array();
+		
+		for(i=0;i<rows1.length;i++)
+		{
+			var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
+			if(isEnabledCheck)
+			{
+				rolePayload.push(rows1[i].value);
+			}				
+		}			
+		//alert(rolePayload);
+		jsonPayload['role']=rolePayload;	
+			
+		return jsonPayload;
+  }
+	  
+	   function saveHAConfigurationNew(id) {
+ 
+		//alert(id);
+	
+		var jsonPayload = {};
+		jsonPayload['type']='cluster-ha-setting';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();
+
+			var rows = $('#loadBalancer select');
+			for(i=0;i<rows .length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}		
+
+			var rows = $('#HAConfigurataion input:checkbox');
+			//alert(rows.length);
+			
+			var haPayload = {};
+			var vipsPayload = {};
+			
+			for(i=0;i<rows.length;i++)
+			{
+				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
+				if(isEnabledCheck)
+				{
+					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
+					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"text").val();
+					
+					if(rows[i].name=='db')
+					{
+						var dbPayload = {};
+						dbPayload['db2_primary_host']=$("#dbtext1").val();
+						dbPayload['db2_standby_host']=$("#dbtext2").val();
+						
+						jsonPayload['db']=dbPayload;
+					}
+					
+					if(rows[i].name=='mq')
+					{
+						var mqPayload = {};
+						mqPayload['qpid_nodes']=$("#mqtext1").val()+","+$("#mqtext2").val();
+						
+						jsonPayload['mq']=mqPayload;
+					}					
+				}
+				else
+				{
+					haPayload[rows[i].name+"_ha"]='false';
+					vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
+				}
+			}				
+						
+			jsonPayload['ha']=haPayload;
+			jsonPayload['vips']=vipsPayload;
+			
+			return jsonPayload;
+
+    }
+	  
+	  function saveBasicConfigurationNew(id) {
+ 
+
+		var jsonPayload = {};
+		jsonPayload['type']='cluster-basic-setting';
+		jsonPayload['clusterid']=id;
+		jsonPayload['cluster_name']=$("#name").val();
+
+
+		var rows = $('#basicConfiguration select');
+		for(i=0;i<rows .length;i++)
+		{
+			jsonPayload[rows[i].name]=rows[i].value;
+		}
+
+		if($("#networktype").val() == 'quantum')
+		{
+		
+			var quantumPayload = {};			
+			var rows = $('#Quantum input:text');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+	
+			var rows = $('#Quantum input:radio');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+			
+			jsonPayload['quantum']=quantumPayload;
+		}
+
+		
+		var networksPayload = {};
+		
+		var rows = $('#OSOPS input:text');
+
+		for(i=0;i<rows .length;i++)
+		{
+			networksPayload[rows[i].name]=rows[i].value;
+		}
+		
+		networksPayload['dns1']="172.16.0.1";
+		networksPayload['bridge']="br-vmnet";
+		networksPayload['bridgedev']="eth1";
+		networksPayload['vmnet']="192.168.1.0/24";
+		networksPayload['vmnetnum']="1";
+		networksPayload['vmnetsize']="256";
+		networksPayload['firewall_driver']="nova.virt.firewall.NoopFirewallDriver";
+		networksPayload['network_manager']="nova.network.manager.FlatDHCPManager";
+		
+		var vlanPayload = {};
+		vlanPayload['vlan_start']="520";
+		vlanPayload['vlan_end']="550";
+		vlanPayload['vlan_interface']="vlan1";
+		networksPayload['vlan']=vlanPayload;
+		
+		jsonPayload['networks']=networksPayload;
+		
+				
+		var glancePayload = {};
+		var image_upload = $('input:radio[name=image_upload]:checked').val();
+		glancePayload['image_upload']=image_upload;		
+		jsonPayload['glance']=glancePayload;
+
+		var gpfsPayload = {};
+		gpfsPayload['gpfs_cluster_name']="gpfs_01";
+		jsonPayload['gpfs']=gpfsPayload;
+		
+		jsonPayload['enable_iptables']='true';
+		jsonPayload['packageserver']="172.16.0.8";
+		jsonPayload['imageserver']="172.16.0.8";
+	
+		return jsonPayload;
+		
+    }
+	  
 	  
 		
-	 $("#startDeployment").click(function(e){
+	 $("#startDeployment1").click(function(e){
 					
 			// Save Info Tab
 			var jsonPayload = {};
