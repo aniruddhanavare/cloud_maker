@@ -36,6 +36,7 @@
   var currentID;
   
   var loadedBaseObject;
+  var loadedHAObject;
 	
   $(document).ready(function() {
   
@@ -92,7 +93,7 @@
 					success: function(data) {
 					
 						cloud_nodes = data;		
-						console.log("cloud_nodes : " + cloud_nodes);		
+						//console.log("cloud_nodes : " + cloud_nodes);		
 						
 					},
 					error: function(status) {
@@ -106,7 +107,7 @@
 					success: function(data) {
 					
 						chef_roles = data;		
-						console.log("chef_roles : " + chef_roles);		
+						//console.log("chef_roles : " + chef_roles);		
 						
 					},
 					error: function(status) {
@@ -248,7 +249,7 @@
 			if(currentID !=null)
 			{	
 				
-				// save Basic Object
+				// Update Basic Object
 				var basicObject1 = saveBasicConfigurationNew(currentID);	
 			
 				basicObject1['_id'] = loadedBaseObject['_id'];
@@ -265,63 +266,63 @@
 					}
 				});
 				
+				// Update HA Object
 				
+				
+				var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+				var haObject1 = saveHAConfigurationNew(currentID);	
+				
+				if(loadedHAObject)
+				{
+					console.log("loadedHAObject['_id'] " + loadedHAObject['_id']);
+					haObject1['_id'] = loadedHAObject['_id'];
+					haObject1['_rev'] = loadedHAObject['_rev'];
+				}
+				else
+				{		
+					console.log("no present....New entry");
+					
+				}
+				
+				haObject1['cluster_name'] = loadedBaseObject['cluster_name'];
+										
+				if(haEnabledCheck)
+				{						
+					$.couch.db("devops").saveDoc(haObject1, {
+						success: function(data) {
+							console.log(data.rev);
+							if(!loadedHAObject)
+							{
+								loadedHAObject=haObject1;
+							}
+							loadedHAObject['_rev'] = data.rev;
+						},
+						error: function(status) {
+							console.log(status);
+						}
+					});				
+				
+				}
+				else
+				{
+					$.couch.db("devops").removeDoc(haObject1, {
+						success: function(data) {
+							console.log(data.rev);
+							loadedHAObject="";
+						},
+						error: function(status) {
+							console.log(status);
+						}
+					});										
+				}
 				
 			}
 		}
 			
 	  });
 	  
-	  
-	   
-	   function saveBasicConfigurationUpdate(jsonPayload) {
-	
-		var rows = $('#basicConfiguration select');
-		for(i=0;i<rows .length;i++)
-		{
-			jsonPayload[rows[i].name]=rows[i].value;
-		}
-		if($("#networktype").val() == 'quantum')
-		{
-		
-			var quantumPayload = {};			
-			var rows = $('#Quantum input:text');
-
-			for(i=0;i<rows .length;i++)
-			{
-				quantumPayload[rows[i].name]=rows[i].value;
-			}
-	
-			var rows = $('#Quantum input:radio');
-
-			for(i=0;i<rows .length;i++)
-			{
-				quantumPayload[rows[i].name]=rows[i].value;
-			}
-			
-			jsonPayload['quantum']=quantumPayload;
-		}
-
-		
-		var networksPayload = {};
-		
-		var rows = $('#OSOPS input:text');
-
-		for(i=0;i<rows .length;i++)
-		{
-			networksPayload[rows[i].name]=rows[i].value;
-		}
-	
-		var glancePayload = {};
-		var image_upload = $('input:radio[name=image_upload]:checked').val();
-		glancePayload['image_upload']=image_upload;		
-		jsonPayload['glance']=glancePayload;
-		
-		console.log("exiting");
-		return jsonPayload;
-		
-    }
-	  
+	  	  
 	  
 	  function startTabSave(docID)
 	  {
@@ -452,7 +453,7 @@
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
 		jsonPayload['clusterid']=id;
-		console.log("name : " + $("#name").val());
+		//console.log("name : " + $("#name").val());
 		jsonPayload['cluster_name']=$("#name").val();
 
 
@@ -673,11 +674,13 @@
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
+							loadedHAObject=jsonValue;
+							
 							$('#haEnabledCheck').attr('checked', 'checked');							
 							$('.loadBalancer').show();	
 
 							chooseNodeMappingOptions();
-							console.log("Proceeding");
+							//console.log("Proceeding");
 
 							$('#hatype').val(jsonValue['hatype']);
 							
@@ -727,7 +730,7 @@
 						else if(jsonValue.type == "node-role-mapping")
 						{
 						
-							console.log("node");
+							//console.log("node");
 							var rows = $('#'+jsonValue['hostname']);						
 							
 							if(rows.length !=0)
@@ -738,7 +741,7 @@
 									//alert(roles);
 									
 									for (var j in roles) {
-										console.log('#'+jsonValue['hostname']+roles[j]+'');
+										//console.log('#'+jsonValue['hostname']+roles[j]+'');
 										$('#'+jsonValue['hostname']+roles[j]+'').attr('checked', 'checked');										
 									}										
 							}	
@@ -800,7 +803,7 @@
 	  
 	  function showNodeMappingTable(hanonha,options) {
 	  
-			console.info("showNodeMappingTable called");
+			//console.info("showNodeMappingTable called");
 			/*$.couch.db("devops").view("chef-roles-query/all", {
 			success: function(data) {*/
 				
@@ -831,7 +834,7 @@
 				/*$.couch.db("devops").view("node-query/all", {
 					success: function(data) {*/
 						
-						console.log("cloud_nodes - in all " + cloud_nodes);
+						//console.log("cloud_nodes - in all " + cloud_nodes);
 						var nodes = cloud_nodes.rows;
 
 						for(i=0;i<nodes.length;i++)
@@ -852,7 +855,7 @@
 						}	
 						
 						$("#NodeMappingTable").append(tableStr);
-						console.log("added checkboxes new");						
+						//console.log("added checkboxes new");						
 						
 					/*},
 					error: function(status) {
@@ -870,7 +873,7 @@
 			},
 			reduce: false
 		});*/
-		console.log("Exiting showNodeMappingTable");						  
+		//console.log("Exiting showNodeMappingTable");						  
 	  
 	  }	  
 	
