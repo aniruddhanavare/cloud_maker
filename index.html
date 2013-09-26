@@ -607,12 +607,13 @@
 		setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
-				  url: 'http://172.16.0.8:5984/devops/_show_logs',     		
+				  url: 'http://172.16.0.8:5984/devops/logid12345/install.log',     		
 				  success: function(response) { 
-				  //alert(response);
-				  if(response.result)
+				  // alert(response);
+				  if(response)
 				  {	
-					$('#result').append("\n"+response.result);
+					//$('#result').append("\n"+response);
+					$('#result').val("\n"+response);
 					tailScroll();
 				  }
 			 },
@@ -622,7 +623,7 @@
 			 }); 
 
 			
-		}, 1000 );
+		}, 10000 );
 	  }
 	  
     
@@ -930,7 +931,8 @@ $.couch.db("devops").removeDoc(jsonPayload, {
          if(data.ok)
 		{
 			alert("Node Deleted");
-			location.reload(true);
+			//location.reload(true);
+			$('#' + id).remove();
 		}
     },
     error: function(status) {
@@ -987,6 +989,8 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 						alert("Node Saved");
 						location.reload(true);
 						// loadAllNodes();
+						
+						//$("#baseTable > tbody").append("<tr id='"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 					}
 				},
 				error: function(status) {
@@ -1013,7 +1017,7 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 					var jsonValue = jsonObject.value;
 					
 					//alert(jsonValue._id);
-					$("#baseTable > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+					$("#baseTable > tbody").append("<tr id='"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 				}
 			   
 			},
