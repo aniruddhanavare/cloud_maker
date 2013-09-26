@@ -205,10 +205,6 @@
 			chooseNodeMappingOptions();
 	 });
 	 
-	 $("#startDeployment2").click(function(e){
-		startDeployment();
-		//showDeploymentLogs();
-	 });
 	 
 	 $("#startDeployment").click(function(e){
 		
@@ -353,7 +349,7 @@
 				
 				// Start Deployment
 				
-				startDeployment();
+				startDeployment(loadedBaseObject['cluster_name']);
 				
 				
 			}
@@ -388,7 +384,7 @@
 						
 				$.couch.db("devops").bulkSave({"docs": cloudObj}, {
 					success: function(data) {
-						startDeployment();
+						startDeployment($("#name").val());
 					},
 					error: function(status) {
 						console.log(status);
@@ -571,14 +567,14 @@
  
   });	
 	
-	function startDeployment()
+	function startDeployment(cluster_name)
 	  {
 		// Save Info Tab
 		var jsonPayload = {};
 		jsonPayload['type']='action';
 		
 		jsonPayload['status']='start'; //Four status: start, running, end, failed
-		jsonPayload['cluster_name']=$("#name").val();
+		jsonPayload['cluster_name']=cluster_name;
 		jsonPayload['user_name']='root';
 		
 		var rows = $('#newCluster input:text');
@@ -592,6 +588,7 @@
 			success: function(data) {
 				if(data.ok)
 				{
+					console.log("action : " + data.rev);
 					alert("Deployment request sent!");
 					showDeploymentLogs();
 				}
@@ -954,7 +951,6 @@ $.couch.db("devops").removeDoc(jsonPayload, {
          if(data.ok)
 		{
 			alert("Cluster Deleted");
-			//location.reload(true);
 			$('#' + id).remove();
 		}
     },
