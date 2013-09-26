@@ -29,7 +29,14 @@
   
   <script>
   
-
+  var cloud_nodes;
+  var chef_roles;
+  
+  var isNew=true;
+  var currentID;
+  
+  var loadedBaseObject;
+	
   $(document).ready(function() {
   
   $(".nexttab").click(function() {
@@ -38,13 +45,10 @@
 
 });
 
-
-  
-  
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
  
-		chooseNodeMappingOptions();		
+		setTimeout(function() {chooseNodeMappingOptions(); }, 2000);		
  
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
@@ -62,33 +66,54 @@
 		},
 		reduce: false
 	});
-	
-	
- 
-	 loadAllNodes();
+
+				loadAllNodes();
 	 
+				$.couch.db("devops").view("cluster-query/all", {
+					success: function(data) {
+					
+						var nodes = data.rows;
+						for(i=0;i<nodes.length;i++)
+						{
+							var jsonObject = nodes[i];
+							var jsonValue = jsonObject.value;
+										
+							$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+						}	  
+					},
+					error: function(status) {
+						alert(status);
+					},
+					reduce: false
+				});
+				
+					// fetch nodes
+				$.couch.db("devops").view("node-query/all", {
+					success: function(data) {
+					
+						cloud_nodes = data;		
+						console.log("cloud_nodes : " + cloud_nodes);		
+						
+					},
+					error: function(status) {
+						alert(status);
+					},
+					reduce: false
+				});	
+				
 
-
-$.couch.db("devops").view("cluster-query/all", {
-    success: function(data) {
-	
-		var nodes = data.rows;
-		for(i=0;i<nodes.length;i++)
-		{
-			var jsonObject = nodes[i];
-			var jsonValue = jsonObject.value;
-			
-			//alert(jsonValue._id);
-			//$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.ssh_key)+"</td><td>"+(jsonValue.chef_env_name)+"</td><td>"+(jsonValue.chef_path)+"</td><td>"+(jsonValue.chef_server_ip)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
-			
-			$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
-		}	  
-    },
-    error: function(status) {
-        alert(status);
-    },
-    reduce: false
-});
+				$.couch.db("devops").view("chef-roles-query/all", {
+					success: function(data) {
+					
+						chef_roles = data;		
+						console.log("chef_roles : " + chef_roles);		
+						
+					},
+					error: function(status) {
+						alert(status);
+					},
+					reduce: false
+				});	
 	
 	});
 });
@@ -131,6 +156,7 @@ $.couch.db("devops").view("cluster-query/all", {
 
 			if(selectedVal=="New")
 			{
+				isNew=true;
 				$("#selectOptionLabel").text("Create New Node");
 				$('.newCluster').show();
 				$('.existingNode').hide();
@@ -138,6 +164,7 @@ $.couch.db("devops").view("cluster-query/all", {
 			}
 			else
 			{
+				isNew=false;
 				$("#selectOptionLabel").text("Please Choose Node");
 				$('.newCluster').hide();
 				$('.existingNode').show();
@@ -160,125 +187,10 @@ $.couch.db("devops").view("cluster-query/all", {
 	  });
 	  
 	  
-	  function chooseNodeMappingOptions(){
-	  
-		// Check Network Type
-		
-		var network_type = $('#networktype').val();
-		
-		if(network_type=="quantum")
-		{
-			$('.Quantum').show();				
-		}
-		else
-		{
-			$('.Quantum').hide();	
-		}		
-		
-		// Check Whether HA enabled or not
-		
-		var isHAEnabled = $('#haEnabledCheck:checked').val()?true:false;
-		
-		if(isHAEnabled)
-		{
-			$('.loadBalancer').show();	
-			$('#deploymentSelection').hide();	
-			showNodeMappingTable("HA","all-"+network_type);			
-		}
-		else
-		{
-			$('.loadBalancer').hide();
-			$('#deploymentSelection').show();	
-			$("#NodeMappingTable").empty();
-			
-			var deploymentOption = $('#deploymentSelectionSelect').val();
-			
-			if(deploymentOption!="all")
-			{
-				showNodeMappingTable("NONHA",deploymentOption+"-"+network_type);
-			}
-			else
-			{
-				showNodeMappingTable("NONHA",deploymentOption);
-			}			
-		}		
-		
-	  }
+	
 	  
 	  
-	  
-	  function showNodeMappingTable(hanonha,options) {
-	  
-			
-			$.couch.db("devops").view("chef-roles-query/all", {
-			success: function(data) {
 
-				var nodes = data.rows;
-				var jsonObject = nodes[0];
-				var jsonValue = jsonObject.value;
-				var hanonhaObject = jsonValue[hanonha];
-				var nonhaObject = hanonhaObject[options];	
-				var all_keys = Object.keys(nonhaObject);
-				
-				var tableStr="";
-				tableStr = tableStr.concat("<TH align=\"center\">");
-				for (var j in all_keys) {
-					var value = nonhaObject[all_keys[j]];
-					tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
-					tableStr = tableStr.concat(value);
-					tableStr = tableStr.concat("</TD>");
-				}
-				tableStr = tableStr.concat("</TH>");
-					
-				//alert(tableStr);
-				$("#NodeMappingTable").empty();
-				$("#NodeMappingTable").append(tableStr);
-				var tableStr="";
-				
-				// fetch nodes
-				$.couch.db("devops").view("node-query/all", {
-					success: function(data) {
-					
-						var nodes = data.rows;
-
-						for(i=0;i<nodes.length;i++)
-						{
-							var jsonObject = nodes[i];						
-							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key)+"\" align=\"center\">");
-							tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
-							tableStr = tableStr.concat(jsonObject.key);
-							tableStr = tableStr.concat("</TD>");	
-
-							for (var j in all_keys) {
-								var value = nonhaObject[all_keys[j]];
-								tableStr = tableStr.concat("<TD align=\"center\" width=\"20%\">");
-								tableStr = tableStr.concat("<input id=\""+(jsonObject.key)+(value)+"\" name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
-								tableStr = tableStr.concat("</TD>");
-							}
-							tableStr = tableStr.concat("</TR>");			
-						}	
-						
-						//alert(tableStr);
-						$("#NodeMappingTable").append(tableStr);						
-					},
-					error: function(status) {
-						alert(status);
-					},
-					reduce: false
-				});				
-				
-				//alert(tableStr);	
-								
-				
-			},
-			error: function(status) {
-				alert(status);
-			},
-			reduce: false
-		});
-								  
-	  
-	  }
 	 
 	 $(".nextButton").click(function(e){
 		
@@ -299,6 +211,8 @@ $.couch.db("devops").view("cluster-query/all", {
 	 $("#startDeployment").click(function(e){
 		
 			// Save Info Tab
+		if(isNew)
+		{
 			var jsonPayload = {};
 			jsonPayload['type']='cluster';
 			
@@ -327,13 +241,87 @@ $.couch.db("devops").view("cluster-query/all", {
 					alert(status);
 				}
 			});
+		}
+		else
+		{
+
+			if(currentID !=null)
+			{	
+				
+				// save Basic Object
+				var basicObject1 = saveBasicConfigurationNew(currentID);	
 			
+				basicObject1['_id'] = loadedBaseObject['_id'];
+				basicObject1['_rev'] = loadedBaseObject['_rev'];
+				basicObject1['cluster_name'] = loadedBaseObject['cluster_name'];
+				
+				$.couch.db("devops").saveDoc(basicObject1, {
+					success: function(data) {
+						console.log(data.rev);
+						loadedBaseObject['_rev'] = data.rev;
+					},
+					error: function(status) {
+						console.log(status);
+					}
+				});
+				
+				
+				
+			}
+		}
 			
-			
-			
-			
-		
 	  });
+	  
+	  
+	   
+	   function saveBasicConfigurationUpdate(jsonPayload) {
+	
+		var rows = $('#basicConfiguration select');
+		for(i=0;i<rows .length;i++)
+		{
+			jsonPayload[rows[i].name]=rows[i].value;
+		}
+		if($("#networktype").val() == 'quantum')
+		{
+		
+			var quantumPayload = {};			
+			var rows = $('#Quantum input:text');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+	
+			var rows = $('#Quantum input:radio');
+
+			for(i=0;i<rows .length;i++)
+			{
+				quantumPayload[rows[i].name]=rows[i].value;
+			}
+			
+			jsonPayload['quantum']=quantumPayload;
+		}
+
+		
+		var networksPayload = {};
+		
+		var rows = $('#OSOPS input:text');
+
+		for(i=0;i<rows .length;i++)
+		{
+			networksPayload[rows[i].name]=rows[i].value;
+		}
+	
+		var glancePayload = {};
+		var image_upload = $('input:radio[name=image_upload]:checked').val();
+		glancePayload['image_upload']=image_upload;		
+		jsonPayload['glance']=glancePayload;
+		
+		console.log("exiting");
+		return jsonPayload;
+		
+    }
+	  
 	  
 	  function startTabSave(docID)
 	  {
@@ -458,12 +446,13 @@ $.couch.db("devops").view("cluster-query/all", {
 
     }
 	  
-	  function saveBasicConfigurationNew(id) {
+	   function saveBasicConfigurationNew(id) {
  
 
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
 		jsonPayload['clusterid']=id;
+		console.log("name : " + $("#name").val());
 		jsonPayload['cluster_name']=$("#name").val();
 
 
@@ -539,48 +528,7 @@ $.couch.db("devops").view("cluster-query/all", {
 		
     }
 	  
-	  
-		
-	 $("#startDeployment1").click(function(e){
-					
-			// Save Info Tab
-			var jsonPayload = {};
-			jsonPayload['type']='cluster';
-			
-			jsonPayload['ssh_key']='/root/.ssh/id_rsa';
-			jsonPayload['user_name']='root';
-			jsonPayload['chef_path']='/root/openstackchef/openstack-installation';
-			jsonPayload['chef_env_name']=$("#name").val();
-			jsonPayload['chef_server_ip']='172.16.0.8';
-			
-			var rows = $('#newCluster input:text');
-			for(i=0;i<rows.length;i++)
-			{
-				jsonPayload[rows[i].name]=rows[i].value;
-			}
-			
-
-			$.couch.db("devops").saveDoc(jsonPayload, {
-				success: function(data) {
-					if(data.ok)
-					{
-						//alert("Cluster Info Saved");
-						//location.reload(true);
-						
-						var docID = data.id;
-						saveBasicConfiguration(docID);
-					}
-				},
-				error: function(status) {
-					alert(status);
-				}
-			});
-			
-			
-			
-	 });
-
-	 
+ 
   });	
 	
 	function startDeployment()
@@ -651,16 +599,14 @@ $.couch.db("devops").view("cluster-query/all", {
 	
 	function loadClusterConfiguration()
 	{
-		//alert("Load Values");
-		
+	
 		var currentCluster = $("#existingNodeSelect").val();
-		
+		currentID = currentCluster;
 		//alert(currentCluster);	
 		$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
 
 					var nodes = data.rows;
 	
-					//alert(nodes.length);
 					for(nodeI=0;nodeI<nodes.length;nodeI++)
 					{
 						var jsonObject = nodes[nodeI];
@@ -670,6 +616,7 @@ $.couch.db("devops").view("cluster-query/all", {
 						//alert(jsonValue.type);
 						if(jsonValue.type == "cluster-basic-setting")
 						{
+							loadedBaseObject = jsonValue;
 							var rows = $('#basicConfiguration select');
 							for(i=0;i<rows.length;i++)
 							{
@@ -726,12 +673,12 @@ $.couch.db("devops").view("cluster-query/all", {
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
-							//alert("ha");
-							$('#haEnabledCheck').attr('checked', 'checked');
+							$('#haEnabledCheck').attr('checked', 'checked');							
 							$('.loadBalancer').show();	
-							
-							//alert(jsonValue['hatype']);
-							
+
+							chooseNodeMappingOptions();
+							console.log("Proceeding");
+
 							$('#hatype').val(jsonValue['hatype']);
 							
 							var haObj = jsonValue['ha'];
@@ -767,9 +714,6 @@ $.couch.db("devops").view("cluster-query/all", {
 									
 										var mqObj = jsonValue['mq'];
 										var qpid_nodes = mqObj['qpid_nodes'];
-										//alert(qpid_nodes);
-										
-										//alert(qpid_nodes.indexOf(","));
 										
 										$('#mqtext1').val(qpid_nodes.substr(0,qpid_nodes.indexOf(",")));			
 										$('#mqtext2').val(qpid_nodes.substr(qpid_nodes.indexOf(",")+1));										
@@ -782,19 +726,23 @@ $.couch.db("devops").view("cluster-query/all", {
 						}
 						else if(jsonValue.type == "node-role-mapping")
 						{
-													
-							var rows = $('#'+jsonValue['hostname']);
+						
+							console.log("node");
+							var rows = $('#'+jsonValue['hostname']);						
 							
 							if(rows.length !=0)
 							{
 									var roleObj = jsonValue['role'];
 								
 									var roles=String(roleObj).split(",");
+									//alert(roles);
 									
 									for (var j in roles) {
+										console.log('#'+jsonValue['hostname']+roles[j]+'');
 										$('#'+jsonValue['hostname']+roles[j]+'').attr('checked', 'checked');										
 									}										
-							}							
+							}	
+							
 						}
 					}
 
@@ -803,233 +751,130 @@ $.couch.db("devops").view("cluster-query/all", {
 
 	}
 		
-	
-    function saveBasicConfiguration(id) {
- 
-		//alert(id);
-	
-		var jsonPayload = {};
-		jsonPayload['type']='cluster-basic-setting';
-		jsonPayload['clusterid']=id;
-		jsonPayload['cluster_name']=$("#name").val();
-
-
-		var rows = $('#basicConfiguration select');
-		for(i=0;i<rows .length;i++)
-		{
-			jsonPayload[rows[i].name]=rows[i].value;
-		}
-				
 		
-		if($("#networktype").val() == 'quantum')
-		{
+	  function chooseNodeMappingOptions(){
+	  
+		// Check Network Type
 		
-			var quantumPayload = {};			
-			var rows = $('#Quantum input:text');
-
-			for(i=0;i<rows .length;i++)
-			{
-				quantumPayload[rows[i].name]=rows[i].value;
-			}
-	
-			var rows = $('#Quantum input:radio');
-
-			for(i=0;i<rows .length;i++)
-			{
-				quantumPayload[rows[i].name]=rows[i].value;
-			}
-			
-			jsonPayload['quantum']=quantumPayload;
-		}
-
-		
-		var networksPayload = {};
-		
-		var rows = $('#OSOPS input:text');
-
-		for(i=0;i<rows .length;i++)
-		{
-			networksPayload[rows[i].name]=rows[i].value;
-		}
-		
-		networksPayload['dns1']="172.16.0.1";
-		networksPayload['bridge']="br-vmnet";
-		networksPayload['bridgedev']="eth1";
-		networksPayload['vmnet']="192.168.1.0/24";
-		networksPayload['vmnetnum']="1";
-		networksPayload['vmnetsize']="256";
-		networksPayload['firewall_driver']="nova.virt.firewall.NoopFirewallDriver";
-		networksPayload['network_manager']="nova.network.manager.FlatDHCPManager";
-		
-		var vlanPayload = {};
-		vlanPayload['vlan_start']="520";
-		vlanPayload['vlan_end']="550";
-		vlanPayload['vlan_interface']="vlan1";
-		networksPayload['vlan']=vlanPayload;
-		
-		jsonPayload['networks']=networksPayload;
-		
-				
-		var glancePayload = {};
-		var image_upload = $('input:radio[name=image_upload]:checked').val();
-		glancePayload['image_upload']=image_upload;		
-		jsonPayload['glance']=glancePayload;
-
-		var gpfsPayload = {};
-		gpfsPayload['gpfs_cluster_name']="gpfs_01";
-		jsonPayload['gpfs']=gpfsPayload;
-		
-		jsonPayload['enable_iptables']='true';
-		jsonPayload['packageserver']="172.16.0.8";
-		jsonPayload['imageserver']="172.16.0.8";
-
-		
-			$.couch.db("devops").saveDoc(jsonPayload, {
-			success: function(data) {
-				if(data.ok)
-				{
-					//alert("Cluster Basic Configuration Saved");
-					saveHAConfiguration(id);
-				}
-			},
-			error: function(status) {
-				alert(status);
-			}
-		});
-		
-    }
-
-	
-	  function saveHAConfiguration(id) {
- 
-		//alert(id);
-	
-		var jsonPayload = {};
-		jsonPayload['type']='cluster-ha-setting';
-		jsonPayload['clusterid']=id;
-		jsonPayload['cluster_name']=$("#name").val();
-
-		
-		var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
-		
-		if(haEnabledCheck)
-		{
-			//alert(haEnabledCheck);
-			
-			var rows = $('#loadBalancer select');
-			for(i=0;i<rows .length;i++)
-			{
-				jsonPayload[rows[i].name]=rows[i].value;
-			}		
-
-			var rows = $('#HAConfigurataion input:checkbox');
-			//alert(rows.length);
-			
-			var haPayload = {};
-			var vipsPayload = {};
-			
-			for(i=0;i<rows.length;i++)
-			{
-				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
-				if(isEnabledCheck)
-				{
-					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
-					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"text").val();
-					
-					if(rows[i].name=='db')
-					{
-						var dbPayload = {};
-						dbPayload['db2_primary_host']=$("#dbtext1").val();
-						dbPayload['db2_standby_host']=$("#dbtext2").val();
+		var network_type = $('#networktype').val();
 						
-						jsonPayload['db']=dbPayload;
-					}
-					
-					if(rows[i].name=='mq')
-					{
-						var mqPayload = {};
-						mqPayload['qpid_nodes']=$("#mqtext1").val()+","+$("#mqtext2").val();
-						
-						jsonPayload['mq']=mqPayload;
-					}					
-				}
-				else
-				{
-					haPayload[rows[i].name+"_ha"]='false';
-					vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
-				}
-			}				
-						
-			jsonPayload['ha']=haPayload;
-			jsonPayload['vips']=vipsPayload;
-			
-			$.couch.db("devops").saveDoc(jsonPayload, {
-				success: function(data) {
-					if(data.ok)
-					{
-						//alert("Cluster HA Configuration Saved");
-						saveNodeRoleMapping(id);
-					}
-				},
-				error: function(status) {
-					alert(status);
-				}
-			});
+		if(network_type=="quantum")
+		{
+			$('.Quantum').show();				
 		}
 		else
 		{
-			saveNodeRoleMapping(id);
-		}
-    }
-  
-  function saveNodeRoleMapping(id) {
- 
-		var rows = $('#NodeMappingTable tr');
-
-		//alert(rows.length);
+			$('.Quantum').hide();	
+		}		
 		
-		rows.each(function() {
-
-		var nodeName = this.id;
-		var rows1 = $("#"+(this.id)+" input:checkbox");
-			//alert(rows1.length);
-			
-		var jsonPayload = {};
-		jsonPayload['type']='node-role-mapping';
-		jsonPayload['clusterid']=id;
-		jsonPayload['cluster_name']=$("#name").val();			
-		jsonPayload['hostname']=nodeName;
+		// Check Whether HA enabled or not
 		
-		var rolePayload = new Array();
-		
-		for(i=0;i<rows1.length;i++)
+		var isHAEnabled = $('#haEnabledCheck:checked').val()?true:false;
+		if(isHAEnabled)
 		{
-			var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
-			if(isEnabledCheck)
-			{
-				rolePayload.push(rows1[i].value);
-			}				
-		}			
-		//alert(rolePayload);
-		jsonPayload['role']=rolePayload;	
+			$('.loadBalancer').show();	
+			$('#deploymentSelection').hide();	
+			showNodeMappingTable("HA","all-"+network_type);			
+		}
+		else
+		{
+			$('.loadBalancer').hide();
+			$('#deploymentSelection').show();	
+			$("#NodeMappingTable").empty();
 			
-		$.couch.db("devops").saveDoc(jsonPayload, {
-			success: function(data) {
-				if(data.ok)
-				{
-					//alert("Node-Role Mapping is saved for : "+ nodeName);					
+			var deploymentOption = $('#deploymentSelectionSelect').val();
+			if(deploymentOption!="all")
+			{
+				showNodeMappingTable("NONHA",deploymentOption+"-"+network_type);
+			}
+			else
+			{
+				showNodeMappingTable("NONHA",deploymentOption);
+			}			
+		}	
+
+		
+	  }
+
+
+	  
+	  function showNodeMappingTable(hanonha,options) {
+	  
+			console.info("showNodeMappingTable called");
+			/*$.couch.db("devops").view("chef-roles-query/all", {
+			success: function(data) {*/
+				
+				
+				var nodes = chef_roles.rows;
+				var jsonObject = nodes[0];
+				var jsonValue = jsonObject.value;
+				var hanonhaObject = jsonValue[hanonha];
+				var nonhaObject = hanonhaObject[options];	
+				var all_keys = Object.keys(nonhaObject);
+				
+				var tableStr="";
+				tableStr = tableStr.concat("<TH align=\"center\">");
+				for (var j in all_keys) {
+					var value = nonhaObject[all_keys[j]];
+					tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
+					tableStr = tableStr.concat(value);
+					tableStr = tableStr.concat("</TD>");
 				}
-			},
+				tableStr = tableStr.concat("</TH>");
+					
+				//alert(tableStr);
+				$("#NodeMappingTable").empty();
+				$("#NodeMappingTable").append(tableStr);
+				var tableStr="";
+				
+				// fetch nodes
+				/*$.couch.db("devops").view("node-query/all", {
+					success: function(data) {*/
+						
+						console.log("cloud_nodes - in all " + cloud_nodes);
+						var nodes = cloud_nodes.rows;
+
+						for(i=0;i<nodes.length;i++)
+						{
+							var jsonObject = nodes[i];						
+							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key)+"\" align=\"center\">");
+							tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
+							tableStr = tableStr.concat(jsonObject.key);
+							tableStr = tableStr.concat("</TD>");	
+
+							for (var j in all_keys) {
+								var value = nonhaObject[all_keys[j]];
+								tableStr = tableStr.concat("<TD align=\"center\" width=\"20%\">");
+								tableStr = tableStr.concat("<input id=\""+(jsonObject.key)+(value)+"\" name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
+								tableStr = tableStr.concat("</TD>");
+							}
+							tableStr = tableStr.concat("</TR>");			
+						}	
+						
+						$("#NodeMappingTable").append(tableStr);
+						console.log("added checkboxes new");						
+						
+					/*},
+					error: function(status) {
+						alert(status);
+					},
+					reduce: false
+				});		*/		
+				
+				//alert(tableStr);	
+								
+				
+			/*},
 			error: function(status) {
 				alert(status);
-			}
-		});		
-		
-		});
-		
-		startDeployment();
-  }
-  
+			},
+			reduce: false
+		});*/
+		console.log("Exiting showNodeMappingTable");						  
+	  
+	  }	  
+	
+   
   </script>
 
   <script>
@@ -1088,7 +933,6 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 		
 			$("#addNode").click(function(e){
 			
-			//alert("here");
 			var jsonPayload = {};
 			jsonPayload['type']='node';
 			
