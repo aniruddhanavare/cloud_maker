@@ -37,7 +37,8 @@
   
   var loadedBaseObject;
   var loadedHAObject;
-	
+  var loadedNodesObj ={};	
+  
   $(document).ready(function() {
   
   $(".nexttab").click(function() {
@@ -316,6 +317,42 @@
 						}
 					});										
 				}
+				
+				
+				// Save Node Role Mapping
+							
+				var rows = $('#NodeMappingTable tr');
+				rows.each(function() {
+					
+					var nodeID=this.id;
+					console.log(nodeID);
+					console.log(loadedNodesObj[nodeID]);
+					
+					var oldnodeRoleObject1=loadedNodesObj[nodeID];
+					var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
+					
+					//cloudObj.push(nodeRoleObject);	
+					
+					nodeRoleObject1['_id'] = oldnodeRoleObject1['_id'];
+					nodeRoleObject1['_rev'] = oldnodeRoleObject1['_rev'];
+					nodeRoleObject1['cluster_name'] = oldnodeRoleObject1['cluster_name'];
+					
+					$.couch.db("devops").saveDoc(nodeRoleObject1, {
+						success: function(data) {
+							console.log(data.rev);
+							oldnodeRoleObject1['_rev'] = data.rev;							
+							loadedNodesObj[nodeID]=oldnodeRoleObject1;
+						},
+						error: function(status) {
+							console.log(status);
+						}
+					});					
+							
+					
+				});
+				
+				
+				
 				
 			}
 		}
@@ -729,7 +766,7 @@
 						}
 						else if(jsonValue.type == "node-role-mapping")
 						{
-						
+							loadedNodesObj[jsonValue['hostname']] =jsonValue;
 							//console.log("node");
 							var rows = $('#'+jsonValue['hostname']);						
 							
