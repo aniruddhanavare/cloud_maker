@@ -80,7 +80,7 @@
 							var jsonObject = nodes[i];
 							var jsonValue = jsonObject.value;
 										
-							$("#baseTableCluster > tbody").append("<tr align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+							$("#baseTableCluster > tbody").append("<tr id='"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 						}	  
 					},
 					error: function(status) {
@@ -259,7 +259,7 @@
 				
 				$.couch.db("devops").saveDoc(basicObject1, {
 					success: function(data) {
-						console.log(data.rev);
+						//console.log(data.rev);
 						loadedBaseObject['_rev'] = data.rev;
 					},
 					error: function(status) {
@@ -276,13 +276,13 @@
 				
 				if(loadedHAObject)
 				{
-					console.log("loadedHAObject['_id'] " + loadedHAObject['_id']);
+					//console.log("loadedHAObject['_id'] " + loadedHAObject['_id']);
 					haObject1['_id'] = loadedHAObject['_id'];
 					haObject1['_rev'] = loadedHAObject['_rev'];
 				}
 				else
 				{		
-					console.log("no present....New entry");
+					//console.log("no present....New entry");
 					
 				}
 				
@@ -292,7 +292,7 @@
 				{						
 					$.couch.db("devops").saveDoc(haObject1, {
 						success: function(data) {
-							console.log(data.rev);
+							//console.log(data.rev);
 							if(!loadedHAObject)
 							{
 								loadedHAObject=haObject1;
@@ -309,7 +309,7 @@
 				{
 					$.couch.db("devops").removeDoc(haObject1, {
 						success: function(data) {
-							console.log(data.rev);
+							//console.log(data.rev);
 							loadedHAObject="";
 						},
 						error: function(status) {
@@ -325,8 +325,8 @@
 				rows.each(function() {
 					
 					var nodeID=this.id;
-					console.log(nodeID);
-					console.log(loadedNodesObj[nodeID]);
+					//console.log(nodeID);
+					//console.log(loadedNodesObj[nodeID]);
 					
 					var oldnodeRoleObject1=loadedNodesObj[nodeID];
 					var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
@@ -339,7 +339,7 @@
 					
 					$.couch.db("devops").saveDoc(nodeRoleObject1, {
 						success: function(data) {
-							console.log(data.rev);
+							//console.log(data.rev);
 							oldnodeRoleObject1['_rev'] = data.rev;							
 							loadedNodesObj[nodeID]=oldnodeRoleObject1;
 						},
@@ -351,7 +351,9 @@
 					
 				});
 				
+				// Start Deployment
 				
+				startDeployment();
 				
 				
 			}
@@ -952,7 +954,8 @@ $.couch.db("devops").removeDoc(jsonPayload, {
          if(data.ok)
 		{
 			alert("Cluster Deleted");
-			location.reload(true);
+			//location.reload(true);
+			$('#' + id).remove();
 		}
     },
     error: function(status) {
