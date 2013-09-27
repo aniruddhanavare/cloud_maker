@@ -52,22 +52,7 @@
  
 		setTimeout(function() {chooseNodeMappingOptions(); }, 2000);		
  
-		$.couch.db("devops").view("cluster-query/all", {
-			success: function(data) {
-			var nodes = data.rows;
-
-			for(i=0;i<nodes.length;i++)
-			{
-				var jsonObject = nodes[i];
-				var jsonValue = jsonObject.value;			
-				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
-			}
-		},
-		error: function(status) {
-			alert(status);
-		},
-		reduce: false
-	});
+				loadClusterList();
 
 				loadAllNodes();
 	 
@@ -80,7 +65,7 @@
 							var jsonObject = nodes[i];
 							var jsonValue = jsonObject.value;
 										
-							$("#baseTableCluster > tbody").append("<tr id='"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+							$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 						}	  
 					},
 					error: function(status) {
@@ -119,6 +104,8 @@
 	
 	});
 });
+
+	
 
   
 	$('#tabs').tabs({ active: 0 });
@@ -379,7 +366,13 @@
 				var rows = $('#NodeMappingTable tr');
 				rows.each(function() {
 					var nodeRoleObject = saveNodeRoleMappingNew(docID,this.id);
-					cloudObj.push(nodeRoleObject);	
+					
+					console.log("nodeRoleObject " + nodeRoleObject);
+					
+					if(nodeRoleObject!="")
+					{
+						cloudObj.push(nodeRoleObject);	
+					}
 				});
 						
 				$.couch.db("devops").bulkSave({"docs": cloudObj}, {
@@ -390,7 +383,7 @@
 						console.log(status);
 					}
 				});
-
+					loadClusterList();
 			}
 	  }
 	  
@@ -408,18 +401,29 @@
 		
 		var rolePayload = new Array();
 		
-		for(i=0;i<rows1.length;i++)
-		{
-			var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
-			if(isEnabledCheck)
+		console.log("rows1.length " + rows1.length);
+		
+
+			for(i=0;i<rows1.length;i++)
 			{
-				rolePayload.push(rows1[i].value);
-			}				
-		}			
-		//alert(rolePayload);
-		jsonPayload['role']=rolePayload;	
-			
-		return jsonPayload;
+				var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
+				if(isEnabledCheck)
+				{
+					rolePayload.push(rows1[i].value);
+				}				
+			}			
+			console.log("rolePayload : " + rolePayload);
+			console.log("rolePayload.size : " + rolePayload.size);
+			if(rolePayload!="")
+			{			
+				jsonPayload['role']=rolePayload;	
+					
+				return jsonPayload;
+			}
+			else
+			{
+				return "";
+			}
   }
 	  
 	   function saveHAConfigurationNew(id) {
@@ -932,7 +936,7 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 		{
 			alert("Node Deleted");
 			//location.reload(true);
-			$('#' + id).remove();
+			$('#node' + id).remove();
 		}
     },
     error: function(status) {
@@ -943,18 +947,59 @@ $.couch.db("devops").removeDoc(jsonPayload, {
     }
 
 function deleteCluster(id,revID) {
- 
+
+var delCloudObj = [];
 var jsonPayload = {};
+
+console.log("here");
+
 jsonPayload['_id']=id;
 jsonPayload['_rev']=revID;
  
-$.couch.db("devops").removeDoc(jsonPayload, {
+//delCloudObj.push(jsonPayload);
+
+ 
+delCloudObj.push(jsonPayload);
+ 
+ $.couch.db("devops").view("data/by_clusterid", { key: id, success: function(data) {
+
+	var nodes = data.rows;
+	
+	
+	for(nodeI=0;nodeI<nodes.length;nodeI++)
+	{
+		var jsonObject = nodes[nodeI];
+		//alert(jsonObject);
+		var jsonValue = jsonObject.value;
+		
+		jsonPayload['_id']=jsonValue['_id'];
+		jsonPayload['_rev']=jsonValue['_rev'];
+		
+		//delCloudObj.push(jsonPayload);
+		
+		console.log(jsonPayload['_id']);
+		console.log(jsonPayload['_rev']);
+		
+		//console.log(jsonPayload);
+		
+		delCloudObj.push({
+                text: jsonValue['_id'],
+                value: jsonValue['_rev']
+            });
+		
+	}
+
+ },
+    error: function(status) {
+        alert(status);
+    }
+});
+
+$.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
      success: function(data) {
-         if(data.ok)
-		{
-			alert("Cluster Deleted");
-			$('#' + id).remove();
-		}
+	alert("Cluster Deleted");
+	$('#cluster' + id).remove();
+	loadClusterList();
     },
     error: function(status) {
         alert(status);
@@ -1017,7 +1062,7 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 					var jsonValue = jsonObject.value;
 					
 					//alert(jsonValue._id);
-					$("#baseTable > tbody").append("<tr id='"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+					$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 				}
 			   
 			},
@@ -1028,7 +1073,28 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 		});	
 	}
 
-		
+	function loadClusterList()
+	{
+
+		$.couch.db("devops").view("cluster-query/all", {
+			success: function(data) {
+			var nodes = data.rows;
+			$('#existingNodeSelect').empty();
+			for(i=0;i<nodes.length;i++)
+			{
+				var jsonObject = nodes[i];
+				var jsonValue = jsonObject.value;			
+				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
+			}
+			},
+			error: function(status) {
+				alert(status);
+			},
+			reduce: false
+		});
+	}
+
+	
     </script> 
   
   
