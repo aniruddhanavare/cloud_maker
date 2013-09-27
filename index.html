@@ -941,9 +941,33 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 
     }
 
+	
+function deleteCluster1(id,revID) {
+
+var docs = [
+    {
+        _id: "8065ab7678ff8cea85461329ea08c960",
+        _rev: "1-e13b674afb51e1b55fd4757fb50cf5d1"
+    },
+    {
+        _id: "8065ab7678ff8cea85461329ea0a03c9",
+        _rev: "1-e13b674afb51e1b55fd4757fb50cf5d1"
+    }
+];
+$.couch.db("devops").bulkRemove({"docs": docs}, {
+    success: function(data) {
+        console.log(data);
+    },
+    error: function(status) {
+        console.log(status);
+    }
+});
+
+}	
+	
 function deleteCluster(id,revID) {
 
-var delCloudObj = [];
+//var delCloudObj = [];
 var jsonPayload = {};
 
 console.log("here");
@@ -951,10 +975,17 @@ console.log("here");
 jsonPayload['_id']=id;
 jsonPayload['_rev']=revID;
  
+		$.couch.db("devops").removeDoc(jsonPayload, {
+			success: function(data) {
+				console.log("data : "+ data);
+
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
 //delCloudObj.push(jsonPayload);
 
- 
-delCloudObj.push(jsonPayload);
  
  $.couch.db("devops").view("data/by_clusterid", { key: id, success: function(data) {
 
@@ -970,14 +1001,23 @@ delCloudObj.push(jsonPayload);
 		jsonPayload['_id']=jsonValue['_id'];
 		jsonPayload['_rev']=jsonValue['_rev'];
 		
-		//delCloudObj.push(jsonPayload);
+		//delCloudObj.push({_id: jsonValue['_id'], _rev: jsonValue['_rev']});
 		
-		console.log(jsonPayload['_id']);
-		console.log(jsonPayload['_rev']);
-		
-		//console.log(jsonPayload);
+		$.couch.db("devops").removeDoc(jsonPayload, {
+			success: function(data) {
+				console.log("data : "+ data);
+
+    },
+    error: function(status) {
+        alert(status);
+    }
+});
 		
 	}
+				alert("Cluster Deleted");
+				$('#cluster' + id).remove();
+				loadClusterList();
+	
 
  },
     error: function(status) {
@@ -985,8 +1025,9 @@ delCloudObj.push(jsonPayload);
     }
 });
 
-$.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
+/*$.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
      success: function(data) {
+	 console.log("data : "+ data);
 	alert("Cluster Deleted");
 	$('#cluster' + id).remove();
 	loadClusterList();
@@ -994,7 +1035,7 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
     error: function(status) {
         alert(status);
     }
-});
+});*/
 
     }
 
