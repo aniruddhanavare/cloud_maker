@@ -42,8 +42,10 @@
   $(document).ready(function() {
   
   $(".nexttab").click(function() {
-    var selected = $("#tabs").tabs("option", "selected");
-    $("#tabs").tabs("option", "selected", selected + 1);
+    //var selected = $("#tabs").tabs("option", "selected");
+    //$("#tabs").tabs("option", "selected", selected + 1);
+	alert("here");
+	clearAll();
 
 });
 
@@ -93,7 +95,7 @@
 					success: function(data) {
 					
 						chef_roles = data;		
-						//console.log("chef_roles : " + chef_roles);		
+						console.log("chef_roles : " + chef_roles);		
 						
 					},
 					error: function(status) {
@@ -108,7 +110,7 @@
 	
 
   
-	$('#tabs').tabs({ active: 0 });
+/*	$('#tabs').tabs({ active: 0 });
 	
 	$('.newCluster').hide();
 	$('.existingNode').hide();
@@ -116,8 +118,6 @@
 	$('#deploymentSelection').show();
 	
 	var rows = $('#HAConfigurataion div');
-	//alert(rows[0].type);
-
 	rows.each(function() {
 
 		if(this.id)
@@ -125,7 +125,12 @@
 			$('#'+(this.id)).hide();	
 		}
 	
-	});
+	}); */
+	
+				  
+	$('#tabs').tabs({ active: 0 });
+
+	setTimeout(function() {clearAll(); }, 2000);	
 	
 	$('#HAConfigurataion input:checkbox').change(function () {
 
@@ -186,6 +191,12 @@
 		var selected = $("#tabs").tabs("option", "selected");
 		$("#tabs").tabs("option", "selected", selected + 1);
 	 
+	 });
+	 
+	 
+	 
+	  $("#resetCluster").click(function(e){
+			clearAll();
 	 });
 	 
 	 $("#haEnabledCheck").click(function(e){
@@ -594,6 +605,7 @@
 				{
 					console.log("action : " + data.rev);
 					alert("Deployment request sent!");
+					clearAll();
 					showDeploymentLogs();
 				}
 			},
@@ -801,6 +813,7 @@
 		// Check Network Type
 		
 		var network_type = $('#networktype').val();
+		console.log("network_type : " + network_type);
 						
 		if(network_type=="quantum")
 		{
@@ -814,11 +827,13 @@
 		// Check Whether HA enabled or not
 		
 		var isHAEnabled = $('#haEnabledCheck:checked').val()?true:false;
+		console.log("isHAEnabled : " + isHAEnabled);
 		if(isHAEnabled)
 		{
 			$('.loadBalancer').show();	
 			$('#deploymentSelection').hide();	
 			showNodeMappingTable("HA","all-"+network_type);			
+			console.log("showNodeMappingTable with HA All : " );
 		}
 		else
 		{
@@ -835,6 +850,7 @@
 			{
 				showNodeMappingTable("NONHA",deploymentOption);
 			}			
+			console.log("showNodeMappingTable with NoHA " );
 		}	
 
 		
@@ -917,11 +933,6 @@
 		//console.log("Exiting showNodeMappingTable");						  
 	  
 	  }	  
-	
-   
-  </script>
-
-  <script>
 
 
 function deleteNode(id,revID) {
@@ -1093,7 +1104,44 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 			reduce: false
 		});
 	}
+	
+	function clearAll()
+	{
+		$("form").each(function() {
+				console.log(this.id);
+				if(this.id!="deployment")
+				{
+					$("#"+(this.id)+"").each(function() {
+						this.reset();
+					});			
+				}	
+		});
+		
+		// Clear Info Tab
+		$("#selectOptionLabel").text("");		
+		$('.newCluster').hide();
+		$('.existingNode').hide();
+		
+		// Clearn Basic Configuration
+		chooseNodeMappingOptions();
+		
+		// Clean HA Configuration
+		var rows = $('#HAConfigurataion div');
+		rows.each(function() {
 
+			if(this.id)
+			{
+				$('#'+(this.id)).hide();	
+			}
+		
+		});
+
+		$('#loadBalancer').hide();
+		$('#deploymentSelection').show();
+		
+
+		
+	}
 	
     </script> 
   
@@ -1144,7 +1192,7 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 			<h2>Available Cluster List</h2>
 
 			<p></p>
-			<form name="form2" id="form2">
+			<form name="cluster_list" id="cluster_list">
 				<table id="baseTableCluster" border="1" width="70%">
 						<tr id="baseTableHeaderCluster">
 							<th scope="col" width="20%">Cluster Name</th>
@@ -1162,8 +1210,8 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		</div>	
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-3">
 			<h2>Info</h2>
-			<form name="form1" id="form1">
-				<table  border="0" width="50%">
+			<form name="info_form" id="info_form">
+				<table border="0" width="50%">
 					<tbody>
 						<tr>
 							<td width="20%"><label> Select Option: </label></td>
@@ -1182,24 +1230,23 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 							<td width="20%"><label id="selectOptionLabel"></label></td>
 							<td>
 								<div id="newCluster" class="newCluster">
-									<table  summary="Speadsheet" border="0"
-										width="100%">
+									<table border="0" width="100%">
 										<tbody>
 											<tr>
 												<td width="30%"><label> Cluster Name</label></td>
-												<td><input name="name" id="name" type="text"></td>
+												<td><input name="name" id="name" type="text"/></td>
 											</tr>
 											<tr>
 												<td id="subCategory"><label> Cluster
 														Description: </label></td>
-												<td><input name="description" type="text"></td>
+												<td><input name="description" type="text"/></td>
 											</tr>
 
 										</tbody>
 									</table>
 								</div>
 								<div id="existingNode" class="existingNode">
-									<table  summary="Speadsheet" border="0"
+									<table  border="0"
 										width="100%">
 										<tbody>
 											<tr>
@@ -1230,7 +1277,7 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		</div>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-4">
 			<h2>Basic Configuration</h2>
-			<form name="form2" id="form2">
+			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
 				<div id="basicConfiguration">
@@ -1350,7 +1397,7 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 
 			
 			<h2>HA Configuration</h2>
-			<form name="form3" id="form3">
+			<form name="ha_configuration" id="ha_configuration">
 
 				<div id="haEnabled" class="haEnabled">
 					<table border="0" width="50%">
@@ -1494,7 +1541,7 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		</div>	
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-6">
 			<h2>Node Role Mapping</h2>
-			<form name="form4" id="form4">
+			<form name="node_role_mapping" id="node_role_mapping">
 	
 			<div id="deploymentSelection" class="deploymentSelection">
 				<table border="0" width="70%">
@@ -1540,14 +1587,14 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-7">
 			<h2>Deployment</h2>
-			<form name="form5" id="form5">
+			<form name="deployment" id="deployment">
 				<p></p>
 				<table border="0" width="60%">
 					<tbody>
 						<tr>
 							<th scope="col" width="50%"><input id="startDeployment"
 								value="Start Deployment" type="button"></th>
-							<th scope="col" width="50%"><input class="photoButton"
+							<th scope="col" width="50%"><input id="resetCluster"
 								value="Reset Cluster" type="button"></th>
 						</tr>
 						<tr align="center">
