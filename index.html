@@ -57,25 +57,7 @@
 				loadClusterList();
 
 				loadAllNodes();
-	 
-				$.couch.db("devops").view("cluster-query/all", {
-					success: function(data) {
-					
-						var nodes = data.rows;
-						for(i=0;i<nodes.length;i++)
-						{
-							var jsonObject = nodes[i];
-							var jsonValue = jsonObject.value;
-										
-							$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
-						}	  
-					},
-					error: function(status) {
-						alert(status);
-					},
-					reduce: false
-				});
-				
+			
 					// fetch nodes
 				$.couch.db("devops").view("node-query/all", {
 					success: function(data) {
@@ -394,7 +376,8 @@
 						console.log(status);
 					}
 				});
-					loadClusterList();
+					
+				
 			}
 	  }
 	  
@@ -607,6 +590,7 @@
 					alert("Deployment request sent!");
 					clearAll();
 					showDeploymentLogs();
+					loadClusterList();
 				}
 			},
 			error: function(status) {
@@ -993,11 +977,6 @@ delCloudObj.push(jsonPayload);
 		
 		//console.log(jsonPayload);
 		
-		delCloudObj.push({
-                text: jsonValue['_id'],
-                value: jsonValue['_rev']
-            });
-		
 	}
 
  },
@@ -1090,12 +1069,17 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		$.couch.db("devops").view("cluster-query/all", {
 			success: function(data) {
 			var nodes = data.rows;
+				
 			$('#existingNodeSelect').empty();
+			$("#baseTableCluster  > tbody").empty();
 			for(i=0;i<nodes.length;i++)
 			{
 				var jsonObject = nodes[i];
-				var jsonValue = jsonObject.value;			
+				var jsonValue = jsonObject.value;		
 				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
+				
+				$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+				
 			}
 			},
 			error: function(status) {
@@ -1192,7 +1176,6 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 			<h2>Available Cluster List</h2>
 
 			<p></p>
-			<form name="cluster_list" id="cluster_list">
 				<table id="baseTableCluster" border="1" width="70%">
 						<tr id="baseTableHeaderCluster">
 							<th scope="col" width="20%">Cluster Name</th>
@@ -1205,7 +1188,6 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 							<th scope="col" width="5%">Delete</th>
 						</tr>					
 				</table>
-			</form>			
 			
 		</div>	
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-3">
@@ -1610,6 +1592,4 @@ $.couch.db("devops").bulkRemove({"docs": delCloudObj}, {
 		</div>
 		
 </body>
-
-
 </html>
