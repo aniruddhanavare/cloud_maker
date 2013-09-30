@@ -873,14 +873,23 @@
 				var all_keys = Object.keys(nonhaObject);
 				
 				var tableStr="";
-				tableStr = tableStr.concat("<TH align=\"center\">");
+				tableStr = tableStr.concat("<TR align=\"center\">");
+				tableStr = tableStr.concat("<TH class=\"rounded-left\" align=\"center\" width=\"10%\">&nbsp;</TH>");
 				for (var j in all_keys) {
 					var value = nonhaObject[all_keys[j]];
-					tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
+					
+					if(j ==all_keys.length-1)
+					{
+						tableStr = tableStr.concat("<TH class=\"rounded-right\" align=\"center\" width=\"10%\">");
+					}
+					else
+					{
+						tableStr = tableStr.concat("<TH  align=\"center\" width=\"10%\">");
+					}
 					tableStr = tableStr.concat(value);
-					tableStr = tableStr.concat("</TD>");
+					tableStr = tableStr.concat("</TH>");
 				}
-				tableStr = tableStr.concat("</TH>");
+				tableStr = tableStr.concat("</TR>");
 					
 				//alert(tableStr);
 				$("#NodeMappingTable").empty();
@@ -893,13 +902,34 @@
 						{
 							var jsonObject = nodes[i];						
 							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key)+"\" align=\"center\">");
-							tableStr = tableStr.concat("<TD align=\"center\" width=\"10%\">");
-							tableStr = tableStr.concat(jsonObject.key);
-							tableStr = tableStr.concat("</TD>");	
-
+							
+							if(i ==nodes.length-1)
+							{
+								tableStr = tableStr.concat("<TD class=\"rounded-foot-left\" align=\"center\" >");
+							}
+							else
+							{							
+								tableStr = tableStr.concat("<TD align=\"center\" >");	
+							}
+								tableStr = tableStr.concat(jsonObject.key);
+								tableStr = tableStr.concat("</TD>");							
+							
+							
 							for (var j in all_keys) {
 								var value = nonhaObject[all_keys[j]];
-								tableStr = tableStr.concat("<TD align=\"center\" width=\"20%\">");
+							
+								console.log("j : " + j);
+								console.log("all_keys : " + all_keys.length);
+
+								if(i ==nodes.length-1 && j ==all_keys.length-1)
+								{
+									tableStr = tableStr.concat("<TD class=\"rounded-foot-right\" align=\"center\" >");	
+								}
+								else
+								{
+									tableStr = tableStr.concat("<TD  align=\"center\" >");	
+								}
+								
 								tableStr = tableStr.concat("<input id=\""+(jsonObject.key)+(value)+"\" name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
 								tableStr = tableStr.concat("</TD>");
 							}
@@ -1629,22 +1659,28 @@ console.log("Delete Cluster _rev : " + revID);
 			<form name="node_role_mapping" id="node_role_mapping">
 	
 			<div id="deploymentSelection" class="deploymentSelection">
-				<table border="0" width="70%">
-					<tbody>
-						<tr>
-							<td width="20%"><label> Deployment Selection: </label></td>
-							<td><select name="deploymentSelectionSelect" id="deploymentSelectionSelect">
+			
+					<table class="roundTable-left" >
+						<tbody>
+						<TR>
+							<TH class="rounded-left">Deployment Selection</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<tr>
+								<td class="rounded-foot-left" id="featureCodeCategory"><label> Deployment Selection:
+								</label></td>
+								<td class="rounded-foot-right"><select name="deploymentSelectionSelect" id="deploymentSelectionSelect">
 									<option value="all">All In One</option>
 									<option value="single">Singole-Controller</option>
 									<option value="multi">Multi-Nodes</option>
 							</select></td>
-						</tr>
-					</tbody>
-				</table>
+							</tr>
+						</tbody>
+					</table>				
 			</div>
 				<p></p>
 				<div id="NodeMapping" class="NodeMapping">
-					<table border="1"  id="NodeMappingTable" class="NodeMappingTable">
+					<table id="NodeMappingTable" class="roundTable">
 					</TABLE>
 				</div>
 
@@ -1652,7 +1688,6 @@ console.log("Delete Cluster _rev : " + revID);
 
 				<table border="0" width="50%">
 					<tbody>
-
 						<tr>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
