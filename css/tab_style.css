@@ -2,3 +2,54 @@ body {
 	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
 	font-size: 62.5%;
 }
+
+#baseTable {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	text-align: center;
+	border-collapse: collapse;
+	margin: 20px;
+}
+
+#baseTable  th.rounded-left {
+	background: #b9c9fe
+		url("http://localhost:5984/_utils/cloud_maker/img/left.png")
+		left -1px no-repeat;
+}
+
+#baseTable  th.rounded-right {
+	background: #b9c9fe
+		url("http://localhost:5984/_utils/cloud_maker/img/right.png")
+		right -1px no-repeat;
+}
+
+#baseTable th {
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+	background: #b9c9fe;
+	padding: 8px;
+}
+
+#baseTable td {
+	background: #e8edff;
+	border-top: 1px solid #fff;
+	color: #669;
+	padding: 8px;
+}
+
+#baseTable td.rounded-foot-left {
+	background: #e8edff
+		url("http://localhost:5984/_utils/cloud_maker/img/botleft.png")
+		left bottom no-repeat;
+}
+
+#baseTable td.rounded-foot-right {
+	background: #e8edff
+		url("http://localhost:5984/_utils/cloud_maker/img/botright.png")
+		right bottom no-repeat;
+}
+
+#baseTable tbody tr:hover td {
+	background: #d0dafd;
+}
+

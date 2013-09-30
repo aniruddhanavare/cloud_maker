@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="css/bootstrap-editable.css">
 
  <script src="http://localhost:5984/_utils/script/jquery.js?1.4.2"></script>	
- <script src="http://localhost:5984/_utils/sci_portal/js/jquery-ui.js"></script>	
+ <script src="http://localhost:5984/_utils/cloud_maker/js/jquery-ui.js"></script>	
  <script src="http://localhost:5984/_utils/script/jquery.couch.js?0.11.0"></script>	
 
   <script>
@@ -37,27 +37,20 @@
   
   $(document).ready(function() {
   
-  
 
- // $.getScript("/_utils/script/jquery.js?1.4.2", function(){
-//	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
- 
 		setTimeout(function() {chooseNodeMappingOptions(); }, 2000);		
  
 				loadClusterList();
-
 				loadAllNodes();
 			
 					// fetch nodes
 				$.couch.db("devops").view("node-query/all", {
-					success: function(data) {
-					
+					success: function(data) {					
 						cloud_nodes = data;		
-						//console.log("cloud_nodes : " + cloud_nodes);		
-						
+						console.log("cloud_nodes : " + cloud_nodes);								
 					},
 					error: function(status) {
-						alert(status);
+						console.log("Error in node-query/all : " + status);		
 					},
 					reduce: false
 				});	
@@ -71,38 +64,13 @@
 						
 					},
 					error: function(status) {
-						alert(status);
+						console.log("Error in chef-roles-query/all : " + status);		
 					},
 					reduce: false
 				});	
-	
-//	});
-//});
-
-	
-
-  
-/*	$('#tabs').tabs({ active: 0 });
-	
-	$('.newCluster').hide();
-	$('.existingNode').hide();
-	$('#loadBalancer').hide();
-	$('#deploymentSelection').show();
-	
-	var rows = $('#HAConfigurataion div');
-	rows.each(function() {
-
-		if(this.id)
-		{
-			$('#'+(this.id)).hide();	
-		}
-	
-	}); */
-	
-				  
+					  
+					  
 	$('#tabs').tabs({ active: 0 });
-    //$("#tabs").tabs();
-
 
 	setTimeout(function() {clearAll(); }, 2000);	
 	
@@ -154,12 +122,7 @@
 			chooseNodeMappingOptions();
 	  });
 	  
-	  
-	
-	  
-	  
 
-	 
 	 $(".nextButton").click(function(e){
 			
 		var currentTabIndex = $("#tabs").tabs("option", "active");
@@ -198,6 +161,7 @@
 	 $("#startDeployment").click(function(e){
 		
 			// Save Info Tab
+		console.log("isNew : "+ isNew);	
 		if(isNew)
 		{
 			var jsonPayload = {};
@@ -221,17 +185,18 @@
 					if(data.ok)
 					{
 						docID = data.id;
+						console.log("ID : " +docID);
 						startTabSave(docID);
 					}
 				},
 				error: function(status) {
-					alert(status);
+					console.log("Error in saving cluser " + status);
 				}
 			});
 		}
 		else
 		{
-
+			console.log("currentID : "+ currentID);	
 			if(currentID !=null)
 			{	
 				
@@ -248,16 +213,26 @@
 						loadedBaseObject['_rev'] = data.rev;
 					},
 					error: function(status) {
-						console.log(status);
+						console.log("Error in Basic Configuration Save : " +status);
 					}
 				});
 				
+				console.log("Basic Configuration Saved");
 				// Update HA Object
 				
 				
 				var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
 			
-				var haObject1 = saveHAConfigurationNew(currentID);	
+				var haObject1;
+				
+				if(haEnabledCheck)
+				{
+					haObject1 = saveHAConfigurationNew(currentID);	
+					haObject1['cluster_name'] = loadedBaseObject['cluster_name'];
+				}
+				
+				console.log("loadedHAObject : "+ loadedHAObject);
+				console.log("haObject1 : "+ haObject1);
 				
 				if(loadedHAObject)
 				{
@@ -270,11 +245,10 @@
 					//console.log("no present....New entry");
 					
 				}
-				
-				haObject1['cluster_name'] = loadedBaseObject['cluster_name'];
-										
+					
 				if(haEnabledCheck)
-				{						
+				{			
+					console.log("Saving HA Object");	
 					$.couch.db("devops").saveDoc(haObject1, {
 						success: function(data) {
 							//console.log(data.rev);
@@ -285,24 +259,28 @@
 							loadedHAObject['_rev'] = data.rev;
 						},
 						error: function(status) {
-							console.log(status);
+							console.log("Error in HA Save : " +status);
 						}
 					});				
 				
 				}
 				else
 				{
-					$.couch.db("devops").removeDoc(haObject1, {
-						success: function(data) {
-							//console.log(data.rev);
-							loadedHAObject="";
-						},
-						error: function(status) {
-							console.log(status);
-						}
-					});										
+					if(haObject1)
+					{
+						console.log("Removing HA Object");
+						$.couch.db("devops").removeDoc(haObject1, {
+							success: function(data) {
+								//console.log(data.rev);
+								loadedHAObject="";
+							},
+							error: function(status) {
+								console.log("Error in HA removal : " +status);
+							}
+						});										
+					}
 				}
-				
+				console.log("HA Configuration Saved");
 				
 				// Save Node Role Mapping
 							
@@ -310,31 +288,63 @@
 				rows.each(function() {
 					
 					var nodeID=this.id;
+					console.log("nodeID : " + nodeID);
 					//console.log(nodeID);
 					//console.log(loadedNodesObj[nodeID]);
 					
 					var oldnodeRoleObject1=loadedNodesObj[nodeID];
+					
+					console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
+					
 					var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
 					
 					//cloudObj.push(nodeRoleObject);	
 					
-					nodeRoleObject1['_id'] = oldnodeRoleObject1['_id'];
-					nodeRoleObject1['_rev'] = oldnodeRoleObject1['_rev'];
-					nodeRoleObject1['cluster_name'] = oldnodeRoleObject1['cluster_name'];
+					console.log("nodeRoleObject1 : " + nodeRoleObject1);
 					
-					$.couch.db("devops").saveDoc(nodeRoleObject1, {
-						success: function(data) {
-							//console.log(data.rev);
-							oldnodeRoleObject1['_rev'] = data.rev;							
-							loadedNodesObj[nodeID]=oldnodeRoleObject1;
-						},
-						error: function(status) {
-							console.log(status);
+					if(nodeRoleObject1)
+					{					
+						if(oldnodeRoleObject1)
+						{
+							nodeRoleObject1['_id'] = oldnodeRoleObject1['_id'];
+							nodeRoleObject1['_rev'] = oldnodeRoleObject1['_rev'];
 						}
-					});					
-							
+						
+						nodeRoleObject1['cluster_name'] = loadedBaseObject['cluster_name'];
+					
+						$.couch.db("devops").saveDoc(nodeRoleObject1, {
+							success: function(data) {
+								//console.log(data.rev);
+								oldnodeRoleObject1['_rev'] = data.rev;							
+								loadedNodesObj[nodeID]=oldnodeRoleObject1;
+							},
+							error: function(status) {
+								console.log("Error in Node Role Saving : " +status);
+							}
+						});					
+					}
+					else
+					{					
+						console.log("Removing Node Role Mapping : "+ nodeID);
+						
+						if(oldnodeRoleObject1)
+						{
+							$.couch.db("devops").removeDoc(oldnodeRoleObject1, {
+								success: function(data) {
+									//console.log(data.rev);
+									delete loadedNodesObj[nodeID];
+								},
+								error: function(status) {
+									console.log("Error in Node Role Mapping removal : " +status);
+								}
+							});						
+						}	
+						
+					}
 					
 				});
+				
+				console.log("Node Role Mapping Saved");
 				
 				// Start Deployment
 				
@@ -419,8 +429,7 @@
 			console.log("rolePayload.size : " + rolePayload.size);
 			if(rolePayload!="")
 			{			
-				jsonPayload['role']=rolePayload;	
-					
+				jsonPayload['role']=rolePayload;						
 				return jsonPayload;
 			}
 			else
@@ -603,7 +612,7 @@
 				}
 			},
 			error: function(status) {
-				alert(status);
+			console.log("Error in Deployment request " + status);
 			}
 		});
 			
@@ -852,11 +861,7 @@
 
 	  
 	  function showNodeMappingTable(hanonha,options) {
-	  
-			//console.info("showNodeMappingTable called");
-			/*$.couch.db("devops").view("chef-roles-query/all", {
-			success: function(data) {*/
-				
+	 			
 				
 				var nodes = chef_roles.rows;
 				var jsonObject = nodes[0];
@@ -880,11 +885,6 @@
 				$("#NodeMappingTable").append(tableStr);
 				var tableStr="";
 				
-				// fetch nodes
-				/*$.couch.db("devops").view("node-query/all", {
-					success: function(data) {*/
-						
-						//console.log("cloud_nodes - in all " + cloud_nodes);
 						var nodes = cloud_nodes.rows;
 
 						for(i=0;i<nodes.length;i++)
@@ -905,26 +905,7 @@
 						}	
 						
 						$("#NodeMappingTable").append(tableStr);
-						//console.log("added checkboxes new");						
-						
-					/*},
-					error: function(status) {
-						alert(status);
-					},
-					reduce: false
-				});		*/		
-				
-				//alert(tableStr);	
-								
-				
-			/*},
-			error: function(status) {
-				alert(status);
-			},
-			reduce: false
-		});*/
-		//console.log("Exiting showNodeMappingTable");						  
-	  
+					 	  
 	  }	  
 
 
@@ -944,7 +925,7 @@ $.couch.db("devops").removeDoc(jsonPayload, {
 		}
     },
     error: function(status) {
-        alert(status);
+        console.log("Error in Delete Node : " + status);
     }
 });
 
@@ -990,7 +971,7 @@ jsonPayload['_rev']=revID;
 
     },
     error: function(status) {
-        alert(status);
+        console.log("Error in Cluster Delete : " + status);
     }
 });
 //delCloudObj.push(jsonPayload);
@@ -1018,7 +999,7 @@ jsonPayload['_rev']=revID;
 
     },
     error: function(status) {
-        alert(status);
+        console.log("Error in removing cluster : " + status);
     }
 });
 		
@@ -1030,7 +1011,7 @@ jsonPayload['_rev']=revID;
 
  },
     error: function(status) {
-        alert(status);
+        console.log("Error in data/by_clusterid : " + status);
     }
 });
 
@@ -1079,7 +1060,7 @@ jsonPayload['_rev']=revID;
 					}
 				},
 				error: function(status) {
-					alert(status);
+					console.log("Error in Creating Node : " + status);
 				}
 			});
 		});			
@@ -1102,12 +1083,21 @@ jsonPayload['_rev']=revID;
 					var jsonValue = jsonObject.value;
 					
 					//alert(jsonValue._id);
-					$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
+					
+					if(i == nodes.length-1)
+					{
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");						
+					}
+					else
+					{
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");						
+					}
+
 				}
 			   
 			},
 			error: function(status) {
-				alert(status);
+				console.log("Error in node-query/all : " + status);
 			},
 			reduce: false
 		});	
@@ -1131,9 +1121,12 @@ jsonPayload['_rev']=revID;
 				$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");
 				
 			}
+			
+			console.log("Loaded Cluster List");
+			
 			},
 			error: function(status) {
-				alert(status);
+				console.log("Error in Loaded Cluster List : " + status);
 			},
 			reduce: false
 		});
@@ -1207,16 +1200,18 @@ jsonPayload['_rev']=revID;
 				</table>			
 			
 			<p></p>
+		
 			<form name="create_node" id="create_node" >
-				<table id="baseTable" name="baseTable" border="1" width="70%">
+				<table id="baseTable" name="baseTable"  width="70%">
+				
 						<tr id="baseTableHeader">
-							<th scope="col" width="20%">Node Name</th>
+							<th scope="col" class="rounded-left" width="20%">Node Name</th>
 							<th scope="col" width="10%">Install NIC</th>
 							<th scope="col" width="20%">Install IP</th>
 							<th scope="col" width="20%">Install Gateway</th>
 							<th scope="col" width="20%">Net Mask</th>
-							<th scope="col" width="5%">Delete</th>
-						</tr>					
+							<th scope="col" width="5%" class="rounded-right">Delete</th>
+						</tr>																						
 				</table>
 			</form>
 
