@@ -1032,9 +1032,7 @@ jsonPayload['_rev']=revID;
 	function createNode()
 	{
 		
-	
-	
-	$("#baseTable > tbody").append("<tr align='center'><td><input name=\"name\" id=\"name\" type=\"text\"></td><td><input name=\"install_nic\" id=\"install_nic\"  type=\"text\"></td><td><input name=\"install_ip\" id=\"install_ip\" type=\"text\"></td><td><input name=\"install_gw\" id=\"install_gw\" type=\"text\"></td><td><input name=\"install_nmask\" id=\"install_nmask\" type=\"text\"></td><td><input id=\"addNode\" value=\"Add\" type=\"button\"></td></tr>");
+	$("#baseTable > tbody").append("<tr align='center'><td><input name=\"name\" id=\"name\" type=\"text\"></td><td><input name=\"install_nic\" id=\"install_nic\"  type=\"text\"></td><td><input name=\"install_ip\" id=\"install_ip\" type=\"text\"></td><td><input name=\"install_gw\" id=\"install_gw\" type=\"text\"></td><td><input name=\"install_nmask\" id=\"install_nmask\" type=\"text\"></td><td><img id=\"addNode\" src=\"img/add.png\"/></a></td></tr>");
 	
 		$('#name').focus();
 		
@@ -1086,11 +1084,11 @@ jsonPayload['_rev']=revID;
 					
 					if(i == nodes.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\">Delete</a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 
 				}
