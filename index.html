@@ -1500,18 +1500,19 @@ console.log("Delete Cluster _rev : " + revID);
 
 						<p></p>
 						<div id="HAConfigurataion" class="HAConfigurataion">
-							<table border="1" width="100%">
-								<TH align="center">
-								<TD align="center" width="10%">DB</TD>
-								<TD align="center" width="10%">MQ</TD>
-								<TD align="center" width="10%">KeyStone</TD>
-								<TD align="center" width="10%">Glance API</TD>
-								<TD align="center" width="10%">Glance Registry</TD>
-								<TD align="center" width="10%">Cinder API</TD>
-								<TD align="center" width="10%">NOVA API</TD>
-								<TD align="center" width="10%">EC2-API</TD>
-								<TD align="center" width="10%">Qunatum Server</TD>
-								</TH>
+							<table class="roundTable">
+								<TR>
+									<TH align="center" width="10%" class="rounded-left">&nbsp;</TH>
+									<TH align="center" width="10%">DB</TH>
+									<TH align="center" width="10%">MQ</TH>
+									<TH align="center" width="10%">KeyStone</TH>
+									<TH align="center" width="10%">Glance API</TH>
+									<TH align="center" width="10%">Glance Registry</TH>
+									<TH align="center" width="10%">Cinder API</TH>
+									<TH align="center" width="10%">NOVA API</TH>
+									<TH align="center" width="10%">EC2-API</TH>
+									<TH align="center" width="10%" class="rounded-right">Qunatum Server</TH>
+								</TR>
 								<TR align="center">
 									<TD align="center" width="10%">HA Component</TD>
 									<TD align="center" width="10%"><input
@@ -1534,7 +1535,7 @@ console.log("Delete Cluster _rev : " + revID);
 										name="quantum_server" id="quantum_server"  value="true" type="checkbox"></TD>
 								</TR>
 								<TR align="center">
-									<TD align="center" width="10%">Virtual IP</TD>
+									<TD align="center" width="10%" class="rounded-foot-left">Virtual IP</TD>
 									<TD align="center" width="10%">
 										<div id="rowdb">
 											<label id="dbPrimaryHost"> DB2 Primary </label> <input
@@ -1546,7 +1547,7 @@ console.log("Delete Cluster _rev : " + revID);
 												id="dbtext" name="dbtext" type="text" size="12">
 										</div>
 									</TD>
-									<TD align="center" width="10%">
+									<TD align="center" width="10%" >
 										<div id="rowmq">
 											<label id="mqPrimaryHost"> QPID Primary </label><input
 												id="mqtext1" name="mqtext1"
@@ -1587,7 +1588,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<input name="ec2_apitext" id="ec2_apitext"
 												type="text" size="12">
 										</div></TD>
-									<TD align="center" width="10%" id=><div
+									<TD align="center" width="10%" class="rounded-foot-right" id=><div
 											id="rowquantum_server">
 											<input name="quantum_servertext" id="quantum_servertext"
 												type="text" size="12">
