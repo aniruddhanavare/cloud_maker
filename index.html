@@ -1246,8 +1246,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<p></p>
 		
 			<form name="create_node" id="create_node" >
-				<table id="baseTable" name="baseTable"  width="70%">
-				
+				<table id="baseTable" name="baseTable"  width="70%" class="roundTable">				
 						<tr id="baseTableHeader">
 							<th scope="col" class="rounded-left" width="20%">Node Name</th>
 							<th scope="col" width="10%">Install NIC</th>
@@ -1265,7 +1264,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<h2>Available Cluster List</h2>
 
 			<p></p>
-				<table id="baseTableCluster"  width="70%">
+				<table id="baseTableCluster"  width="70%" class="roundTable">
 				<thead>
 						<tr id="baseTableHeaderCluster">
 							<th scope="col" width="20%" class="rounded-left">Cluster Name</th>
@@ -1352,8 +1351,12 @@ console.log("Delete Cluster _rev : " + revID);
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
 				<div id="basicConfiguration">
-					<table>
+					<table class="roundTable-left" >
 						<tbody>
+						<TR>
+							<TH class="rounded-left">Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
 							<tr>
 								<td id="featureCodeCategory"><label> Database Type:
 								</label></td>
@@ -1370,8 +1373,8 @@ console.log("Delete Cluster _rev : " + revID);
 								</select></td>
 							</tr>
 							<tr>
-								<td><label> Network Type: </label></td>
-								<td><select name="networktype" id="networktype">
+								<td class="rounded-foot-left" ><label> Network Type: </label></td>
+								<td class="rounded-foot-right" ><select name="networktype" id="networktype">
 										<option value="quantum">Quantum</option>
 										<option value="nova-network">Nova-Network</option>
 								</select></td>
@@ -1384,30 +1387,37 @@ console.log("Delete Cluster _rev : " + revID);
 
 				<p></p>
 				<div id="OSOPS">
-					<table summary="Speadsheet" border="1" width="50%">
+					<table summary="Speadsheet"  width="50%" class="roundTable-left">
 						<TR>
-							<TD width="15%" ROWSPAN=3>OSOPS</TD>
+							<TH class="rounded-left">OSOPS</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>					
+						<TR>
 							<TD width="25%">Public Network</TD>
 							<TD><input name="pubnet" id="pubnet" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Nova Network</TD>
-							<TD><input name="novanet" id="novanet" type="text"></TD>
+							<TD ><input name="novanet" id="novanet" type="text"></TD>
 						</TR>
 						<TR>
-							<TD>Management Network</TD>
-							<TD><input name="mgmtnet" id="mgmtnet" type="text"></TD>
+							<TD class="rounded-foot-left">Management Network</TD>
+							<TD class="rounded-foot-right"><input name="mgmtnet" id="mgmtnet" type="text"></TD>
 						</TR>
 
 					</TABLE>
 				</div>
+		
 
 				<p></p>
-				<table  summary="Speadsheet" border="1" width="50%">
+				<table  summary="Speadsheet" class="roundTable-left" width="50%">
+						<TR>
+							<TH class="rounded-left">Glance</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>				
 					<TR>
-						<TD width="15%">Glance</TD>
-						<TD width="25%">Image Upload</TD>
-						<TD><input id="image_upload" name="image_upload" value="true"
+						<TD class="rounded-foot-left" width="25%">Image Upload</TD>
+						<TD class="rounded-foot-right"><input id="image_upload" name="image_upload" value="true"
 							type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
 							name="image_upload" value="false" type="radio">&nbsp;No</TD>
 					</TR>
@@ -1417,9 +1427,12 @@ console.log("Delete Cluster _rev : " + revID);
 
 				<div id="Quantum" class="Quantum">
 					<p></p>
-					<table summary="Speadsheet" border="1" width="50%">
+					<table summary="Speadsheet" class="roundTable-left" width="50%">
 						<TR>
-							<TD width="15%" ROWSPAN=6>Quantum</TD>
+							<TH class="rounded-left">Quantum</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+						<TR>
 							<TD width="25%">Tenant Network Type</TD>
 							<TD><input name="tenant_network_type" id="tenant_network_type" type="text"></TD>
 						</TR>
@@ -1442,8 +1455,8 @@ console.log("Delete Cluster _rev : " + revID);
 							<TD><input name="bridge_mapping_nic" id="bridge_mapping_nic" type="text"></TD>
 						</TR>
 						<TR>
-							<TD>Floating IP NIC</TD>
-							<TD><input name="floating_if" id="floating_if" type="text"></TD>
+							<TD class="rounded-foot-left">Floating IP NIC</TD>
+							<TD class="rounded-foot-right"><input name="floating_if" id="floating_if" type="text"></TD>
 						</TR>
 					</TABLE>
 				</div>
