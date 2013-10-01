@@ -519,7 +519,7 @@
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
 		jsonPayload['clusterid']=id;
-		//console.log("name : " + $("#name").val());
+		console.log("name : " + $("#name").val());
 		jsonPayload['cluster_name']=$("#name").val();
 
 
@@ -540,12 +540,23 @@
 				quantumPayload[rows[i].name]=rows[i].value;
 			}
 	
-			var rows = $('#Quantum input:radio');
-
-			for(i=0;i<rows .length;i++)
+			/*var rows1 = $('#Quantum input:radio');
+			
+			console.log("rows : " + rows1.length);
+			
+			for(i=0;i<rows1.length;i++)
 			{
-				quantumPayload[rows[i].name]=rows[i].value;
-			}
+				console.log("Radio : " + rows1[i].name);
+				console.log("Radio : " + rows1[i].value);
+				quantumPayload[rows[i].name]=rows1[i].value;
+			}*/
+			
+			//var selectedVal = $("#enableTuneling").val();
+			
+			var selectedVal = $('input[name=enable_tunneling]:radio:checked').val();
+			console.log("selectedVal : " + selectedVal);
+			
+			quantumPayload['enable_tunneling']=selectedVal;
 			
 			jsonPayload['quantum']=quantumPayload;
 		}
