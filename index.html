@@ -1326,26 +1326,26 @@ console.log("Delete Cluster _rev : " + revID);
 				</table>
 			
 		</div>	
-		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   id="tabs-3">
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
 			<h2>Info</h2>
 			<form name="info_form" id="info_form">
-				<table border="0" width="50%">
+				<table border="0" width="60%" class="roundTable-left">
+				
 					<tbody>
+						<TR>
+							<TH class="rounded-left"><label> Select Option: </label></TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>					
+					
 						<tr>
-							<td width="20%"><label> Select Option: </label></td>
-							<td><input id="selectOption" name="selectOption" value="New"
+							<td colspan="2"><input id="selectOption" name="selectOption" value="New"
 								type="radio">&nbsp;Create New
 								Cluster&nbsp;&nbsp;&nbsp;&nbsp;<input name="selectOption"
 								value="Exiting" type="radio">&nbsp;Select Existing
 								Cluster</td>
 						</tr>
 						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>
-
-						<tr>
-							<td width="20%"><label id="selectOptionLabel"></label></td>
+							<td width="30%"><label id="selectOptionLabel"></label></td>
 							<td>
 								<div id="newCluster" class="newCluster">
 									<table class="roundTable-left"  width="100%">
@@ -1379,14 +1379,9 @@ console.log("Delete Cluster _rev : " + revID);
 							</td>
 						</tr>
 						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>
-
-						<tr>
-							<td><input id="1" class="nextButton" value="NEXT"
+							<td class="rounded-foot-left"><input id="1" class="nextButton" value="NEXT"
 								type="button"></td>
-							<td align="left">&nbsp; </td>
+							<td class="rounded-foot-right" align="left">&nbsp; </td>
 						</tr>
 					</tbody>
 				</table>
