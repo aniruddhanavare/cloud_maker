@@ -9,9 +9,15 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/bootstrap-editable.css">
 
- <script src="http://localhost:5984/_utils/script/jquery.js?1.4.2"></script>	
- <script src="http://localhost:5984/_utils/cloud_maker/js/jquery-ui.js"></script>	
- <script src="http://localhost:5984/_utils/script/jquery.couch.js?0.11.0"></script>	
+
+
+ <script src="js/jquery-1.js" type="text/javascript"></script>
+<script src="js/jquery-ui.js" type="text/javascript"></script>
+
+<script src="/_utils/script/json2.js"></script>
+<script src="/_utils/script/sha1.js"></script>
+<script src="/_utils/script/jquery.dialog.js?0.11.0"></script>	
+<script src="js/common.js"></script>	
 
   <script>
   $(function() {
@@ -37,7 +43,8 @@
   
   $(document).ready(function() {
   
-
+  $.getScript("/_utils/script/jquery.js?1.4.2", function(){
+	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
 		setTimeout(function() {chooseNodeMappingOptions(); }, 2000);		
  
 				loadClusterList();
@@ -68,7 +75,8 @@
 					},
 					reduce: false
 				});	
-					  
+		});
+});				  
 					  
 	$('#tabs').tabs({ active: 0 });
 
@@ -361,7 +369,7 @@
 	  
 	  function startTabSave(docID)
 	  {
-
+			console.log("Entering startTabSave");
 			if(docID !=null)
 			{
 				var cloudObj = [];
@@ -375,9 +383,14 @@
 					var haObject = saveHAConfigurationNew(docID);	
 					cloudObj.push(haObject);					
 				}	
-				
+				console.log("Entering startTabSave 1");
 				var rows = $('#NodeMappingTable tr');
+				
 				rows.each(function() {
+				
+				console.log("Entering startTabSave 1 : " + this.id);
+				if(this.id)
+				{
 					var nodeRoleObject = saveNodeRoleMappingNew(docID,this.id);
 					
 					console.log("nodeRoleObject " + nodeRoleObject);
@@ -386,14 +399,16 @@
 					{
 						cloudObj.push(nodeRoleObject);	
 					}
+				}
 				});
-						
+				
+				console.log("Entering startTabSave 2");				
 				$.couch.db("devops").bulkSave({"docs": cloudObj}, {
 					success: function(data) {
 						startDeployment($("#name").val());
 					},
 					error: function(status) {
-						console.log(status);
+						console.log("Error in document save : " + status);
 					}
 				});
 					
@@ -1330,7 +1345,7 @@ console.log("Delete Cluster _rev : " + revID);
 							<td width="20%"><label id="selectOptionLabel"></label></td>
 							<td>
 								<div id="newCluster" class="newCluster">
-									<table border="0" width="100%">
+									<table class="roundTable-left"  width="100%">
 										<tbody>
 											<tr>
 												<td width="30%"><label> Cluster Name</label></td>
