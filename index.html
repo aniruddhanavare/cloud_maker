@@ -1090,11 +1090,16 @@ console.log("Delete Cluster _rev : " + revID);
 });*/
 
     }
+	
+	function removeNode()
+	{
+		$('#newNode').remove();
+	}
 
 	function createNode()
 	{
 		
-	$("#baseTable > tbody").append("<tr align='center'><td><input name=\"name\" id=\"name\" type=\"text\"></td><td><input name=\"install_nic\" id=\"install_nic\"  type=\"text\"></td><td><input name=\"install_ip\" id=\"install_ip\" type=\"text\"></td><td><input name=\"install_gw\" id=\"install_gw\" type=\"text\"></td><td><input name=\"install_nmask\" id=\"install_nmask\" type=\"text\"></td><td><img id=\"addNode\" src=\"img/add.png\"/></a></td></tr>");
+	$("#baseTable > tbody").append("<tr id=\"newNode\" align='center'><td><input name=\"name\" id=\"name\" type=\"text\"></td><td><input name=\"install_nic\" id=\"install_nic\"  type=\"text\"></td><td><input name=\"install_ip\" id=\"install_ip\" type=\"text\"></td><td><input name=\"install_gw\" id=\"install_gw\" type=\"text\"></td><td><input name=\"install_nmask\" id=\"install_nmask\" type=\"text\"></td><td><img id=\"addNode\" src=\"img/add.png\"/></a></td><td><a href=\"javascript:removeNode();\"><img src=\"img/delete.png\"/></a></td></tr>");
 	
 		$('#name').focus();
 		
