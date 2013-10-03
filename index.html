@@ -747,6 +747,8 @@
 			
 	  }
 	  
+	  
+	  
 	function showDeploymentLogs()
 	  {
 
@@ -1935,7 +1937,7 @@ console.log("Delete Cluster _rev : " + revID);
 		</div>
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-7">
-			<h2>Deployment</h2>
+			<h2><div id="cluster_name"></h2>
 			<form name="deployment" id="deployment">
 				<p></p>
 				<table border="0" width="60%">
@@ -1943,8 +1945,8 @@ console.log("Delete Cluster _rev : " + revID);
 						<tr>
 							<th scope="col" width="50%"><input class="btnClass" id="startDeployment"
 								value="Start Deployment" type="button"></th>
-							<th scope="col" width="50%"><input class="btnClass" id="resetCluster"
-								value="Reset Cluster" type="button"></th>
+							<th scope="col" width="50%"><input class="btnClass" id="cleanCluster"
+								value="Clean Cluster" type="button"></th>
 						</tr>
 						<tr align="center">
 							<td colspan="2"><textarea id="result" rows="21" cols="90"></textarea></td>
