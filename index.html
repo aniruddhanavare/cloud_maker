@@ -35,7 +35,9 @@
   
   var isNew=true;
   var currentID;
+  var currentRevID;
   
+  var loadClusterObject;
   var loadedBaseObject;
   var loadedHAObject;
   var loadedNodesObj ={};	
@@ -222,8 +224,40 @@
 		else
 		{
 			console.log("currentID : "+ currentID);	
+			console.log("currentRevID : "+ currentRevID);	
+			
 			if(currentID !=null)
 			{	
+				// Update Cluster Object				
+				// delete loadClusterObject[nodeID];
+				
+				var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+				if(!haEnabledCheck)
+				{
+						loadClusterObject['deploymentSelection']=$('#deploymentSelectionSelect').val();
+						loadClusterObject['haEnabled']='false';
+				}
+				else
+				{
+						if(loadClusterObject.deploymentSelection)
+						{
+							 delete loadClusterObject['deploymentSelection'];
+						}
+						loadClusterObject['haEnabled']='true';
+				}
+				
+				$.couch.db("devops").saveDoc(loadClusterObject, {
+					success: function(data) {
+						//console.log(data.rev);
+						loadClusterObject['_rev'] = data.rev;
+					},
+					error: function(status) {
+						console.log("Error in Cluster Save : " +status);
+					}
+				});
+				
+				console.log("Cluster Saved");
 				
 				// Update Basic Object
 				var basicObject1 = saveBasicConfigurationNew(currentID);	
@@ -262,6 +296,12 @@
 				if(loadedHAObject)
 				{
 					//console.log("loadedHAObject['_id'] " + loadedHAObject['_id']);
+					
+					if(!haObject1)
+					{
+						haObject1 = {};
+					}
+					
 					haObject1['_id'] = loadedHAObject['_id'];
 					haObject1['_rev'] = loadedHAObject['_rev'];
 				}
@@ -310,6 +350,7 @@
 				// Save Node Role Mapping
 							
 				var rows = $('#NodeMappingTable tr');
+			
 				rows.each(function() {
 					
 					var nodeID=this.id;
@@ -317,54 +358,57 @@
 					//console.log(nodeID);
 					//console.log(loadedNodesObj[nodeID]);
 					
-					var oldnodeRoleObject1=loadedNodesObj[nodeID];
-					
-					console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
-					
-					var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
-					
-					//cloudObj.push(nodeRoleObject);	
-					
-					console.log("nodeRoleObject1 : " + nodeRoleObject1);
-					
-					if(nodeRoleObject1)
-					{					
-						if(oldnodeRoleObject1)
-						{
-							nodeRoleObject1['_id'] = oldnodeRoleObject1['_id'];
-							nodeRoleObject1['_rev'] = oldnodeRoleObject1['_rev'];
-						}
+					if(nodeID!="")
+					{
+						var oldnodeRoleObject1=loadedNodesObj[nodeID];
 						
-						nodeRoleObject1['cluster_name'] = loadedBaseObject['cluster_name'];
-					
-						$.couch.db("devops").saveDoc(nodeRoleObject1, {
-							success: function(data) {
-								//console.log(data.rev);
-								oldnodeRoleObject1['_rev'] = data.rev;							
-								loadedNodesObj[nodeID]=oldnodeRoleObject1;
-							},
-							error: function(status) {
-								console.log("Error in Node Role Saving : " +status);
+						console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
+						
+						var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
+						
+						//cloudObj.push(nodeRoleObject);	
+						
+						console.log("nodeRoleObject1 : " + nodeRoleObject1);
+						
+						if(nodeRoleObject1)
+						{					
+							if(oldnodeRoleObject1)
+							{
+								nodeRoleObject1['_id'] = oldnodeRoleObject1['_id'];
+								nodeRoleObject1['_rev'] = oldnodeRoleObject1['_rev'];
 							}
-						});					
-					}
-					else
-					{					
-						console.log("Removing Node Role Mapping : "+ nodeID);
+							
+							nodeRoleObject1['cluster_name'] = loadedBaseObject['cluster_name'];
 						
-						if(oldnodeRoleObject1)
-						{
-							$.couch.db("devops").removeDoc(oldnodeRoleObject1, {
+							$.couch.db("devops").saveDoc(nodeRoleObject1, {
 								success: function(data) {
 									//console.log(data.rev);
-									delete loadedNodesObj[nodeID];
+									oldnodeRoleObject1['_rev'] = data.rev;							
+									loadedNodesObj[nodeID]=oldnodeRoleObject1;
 								},
 								error: function(status) {
-									console.log("Error in Node Role Mapping removal : " +status);
+									console.log("Error in Node Role Saving : " +status);
 								}
-							});						
-						}	
-						
+							});					
+						}
+						else
+						{					
+							console.log("Removing Node Role Mapping : "+ nodeID);
+							
+							if(oldnodeRoleObject1)
+							{
+								$.couch.db("devops").removeDoc(oldnodeRoleObject1, {
+									success: function(data) {
+										//console.log(data.rev);
+										delete loadedNodesObj[nodeID];
+									},
+									error: function(status) {
+										console.log("Error in Node Role Mapping removal : " +status);
+									}
+								});						
+							}	
+							
+						}
 					}
 					
 				});
@@ -703,14 +747,20 @@
 		var currentCluster = $("#existingNodeSelect").val();
 		currentID = currentCluster;
 		
+		
 		console.log("currentCluster : " + currentCluster);
 		//alert(currentCluster);	
 		
 		$.couch.db("devops").openDoc(currentCluster, {
 		success: function(data) {
 		
+		
+			loadClusterObject = data;
 			console.log("data : " + data);
 			console.log("data.deploymentSelection : " + data.deploymentSelection);
+			
+			currentRevID = data._rev;
+			
 			if(data.deploymentSelection)
 			{
 				$('#haEnabledCheck').attr('checked', false);
@@ -809,7 +859,7 @@
 							console.log("HA Enabled Checked");		
 							$('.loadBalancer').show();	
 
-							chooseNodeMappingOptions();
+							//chooseNodeMappingOptions();
 							//console.log("Proceeding");
 
 							$('#hatype').val(jsonValue['hatype']);
@@ -859,7 +909,7 @@
 						}
 						else if(jsonValue.type == "node-role-mapping")
 						{
-							console.log("Loading Node Role Mapping Object");
+							console.log("Loading Node Role Mapping Object for : " + jsonValue['hostname']);
 							loadedNodesObj[jsonValue['hostname']] =jsonValue;
 							//console.log("node");
 							var rows = $('#'+jsonValue['hostname']);						
@@ -879,8 +929,9 @@
 							
 						}
 					}
-
-		
+					
+					//chooseNodeMappingOptions();
+			
 					} } )	
 		
 	
