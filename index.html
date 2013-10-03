@@ -183,6 +183,21 @@
 			jsonPayload['chef_env_name']=$("#name").val();
 			jsonPayload['chef_server_ip']='172.16.0.8';
 			
+			var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+			if(!haEnabledCheck)
+			{
+					jsonPayload['deploymentSelection']=$('#deploymentSelectionSelect').val();
+					jsonPayload['haEnabled']='false';
+			}
+			else
+			{
+					//jsonPayload['deploymentSelection']="";				
+					jsonPayload['haEnabled']='true';
+			}
+			
+
+					
 			var rows = $('#newCluster input:text');
 			for(i=0;i<rows.length;i++)
 			{
@@ -687,10 +702,38 @@
 	
 		var currentCluster = $("#existingNodeSelect").val();
 		currentID = currentCluster;
+		
+		console.log("currentCluster : " + currentCluster);
 		//alert(currentCluster);	
-		$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
+		
+		$.couch.db("devops").openDoc(currentCluster, {
+		success: function(data) {
+		
+			console.log("data : " + data);
+			console.log("data.deploymentSelection : " + data.deploymentSelection);
+			if(data.deploymentSelection)
+			{
+				$('#haEnabledCheck').attr('checked', false);
+				$('#deploymentSelectionSelect').val(data.deploymentSelection);								
+			}
+			else
+			{
+				$('#haEnabledCheck').attr('checked', 'checked');
+			}
+			
+			chooseNodeMappingOptions();
+				
+		},
+		error: function(status) {
+			console.log(status);
+		}	
+		});
+	
+	
+	$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
 
 					var nodes = data.rows;
+					console.log("nodes length : " + nodes.length);
 	
 					for(nodeI=0;nodeI<nodes.length;nodeI++)
 					{
@@ -701,6 +744,7 @@
 						//alert(jsonValue.type);
 						if(jsonValue.type == "cluster-basic-setting")
 						{
+							console.log("Loading Basic Object");
 							loadedBaseObject = jsonValue;
 							var rows = $('#basicConfiguration select');
 							for(i=0;i<rows.length;i++)
@@ -758,9 +802,11 @@
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
+							console.log("Loading HA Object");
 							loadedHAObject=jsonValue;
 							
-							$('#haEnabledCheck').attr('checked', 'checked');							
+							$('#haEnabledCheck').attr('checked', 'checked');		
+							console.log("HA Enabled Checked");		
 							$('.loadBalancer').show();	
 
 							chooseNodeMappingOptions();
@@ -813,6 +859,7 @@
 						}
 						else if(jsonValue.type == "node-role-mapping")
 						{
+							console.log("Loading Node Role Mapping Object");
 							loadedNodesObj[jsonValue['hostname']] =jsonValue;
 							//console.log("node");
 							var rows = $('#'+jsonValue['hostname']);						
@@ -834,7 +881,9 @@
 					}
 
 		
-					} } )
+					} } )	
+		
+	
 
 	}
 		
@@ -842,7 +891,7 @@
 	  function chooseNodeMappingOptions(){
 	  
 		// Check Network Type
-		
+		console.log("inside chooseNodeMappingOptions");
 		var network_type = $('#networktype').val();
 		console.log("network_type : " + network_type);
 						
@@ -873,6 +922,7 @@
 			$("#NodeMappingTable").empty();
 			
 			var deploymentOption = $('#deploymentSelectionSelect').val();
+			console.log("showNodeMappingTable with NoHA : " + deploymentOption );
 			if(deploymentOption!="all")
 			{
 				showNodeMappingTable("NONHA",deploymentOption+"-"+network_type);
@@ -880,8 +930,7 @@
 			else
 			{
 				showNodeMappingTable("NONHA",deploymentOption);
-			}			
-			console.log("showNodeMappingTable with NoHA " );
+			}						
 		}	
 
 		
@@ -945,8 +994,8 @@
 							for (var j in all_keys) {
 								var value = nonhaObject[all_keys[j]];
 							
-								console.log("j : " + j);
-								console.log("all_keys : " + all_keys.length);
+								//console.log("j : " + j);
+								//console.log("all_keys : " + all_keys.length);
 
 								if(i ==nodes.length-1 && j ==all_keys.length-1)
 								{
@@ -1189,8 +1238,8 @@ console.log("Delete Cluster _rev : " + revID);
 				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
 				
 				
-				console.log("jsonValue.key : "+ jsonObject.key);
-				console.log("jsonValue._id : "+ jsonValue._id);
+				//console.log("jsonValue.key : "+ jsonObject.key);
+				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
 						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");
@@ -1732,7 +1781,7 @@ console.log("Delete Cluster _rev : " + revID);
 								</label></td>
 								<td class="rounded-foot-right"><select name="deploymentSelectionSelect" id="deploymentSelectionSelect">
 									<option value="all">All In One</option>
-									<option value="single">Singole-Controller</option>
+									<option value="single">Single-Controller</option>
 									<option value="multi">Multi-Nodes</option>
 							</select></td>
 							</tr>
