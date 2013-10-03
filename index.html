@@ -169,6 +169,12 @@
 			chooseNodeMappingOptions();
 	 });
 	 
+	 $("#cleanCluster").click(function(e){
+		// Save Info Tab
+		console.log("isNew : "+ isNew);	
+		var cluster_name = loadedBaseObject['cluster_name'];
+		cleanCluster(cluster_name);
+	 });	 
 	 
 	 $("#startDeployment").click(function(e){
 		
@@ -675,7 +681,7 @@
 		// Save Info Tab
 		var jsonPayload = {};
 		jsonPayload['type']='action';
-		
+		jsonPayload['user_request']='deployment'; 
 		jsonPayload['status']='start'; //Four status: start, running, end, failed
 		jsonPayload['cluster_name']=cluster_name;
 		jsonPayload['user_name']='root';
@@ -692,7 +698,7 @@
 				if(data.ok)
 				{
 					console.log("action : " + data.rev);
-					alert("Deployment request sent!");
+					alert("Deployment<" + cluster_name +"> request sent!");
 					clearAll();
 					//$("#baseTableCluster  > tbody").empty();	
 					showDeploymentLogs();
@@ -706,6 +712,41 @@
 			
 	  }
 
+	  	function cleanCluster(cluster_name)
+	  {
+		// Save Info Tab
+		var jsonPayload = {};
+		jsonPayload['type']='action';
+		jsonPayload['user_request']='clean';	
+		jsonPayload['status']='start'; //Four status: start, running, end, failed
+		jsonPayload['cluster_name']=cluster_name;
+		jsonPayload['user_name']='root';
+		
+		var rows = $('#newCluster input:text');
+		for(i=0;i<rows.length;i++)
+		{
+			jsonPayload[rows[i].name]=rows[i].value;
+		}
+		
+
+		$.couch.db("devops").saveDoc(jsonPayload, {
+			success: function(data) {
+				if(data.ok)
+				{
+					console.log("action : " + data.rev);
+					alert("Clean<" + cluster_name +"> request sent!");
+					clearAll();
+					showCleanLogs();
+					loadClusterList();
+				}
+			},
+			error: function(status) {
+			console.log("Error in Deployment request " + status);
+			}
+		});
+			
+	  }
+	  
 	function showDeploymentLogs()
 	  {
 
@@ -713,7 +754,7 @@
 		setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
-				  url: 'http://172.16.0.8:5984/devops/logid12345/install.log',     		
+				  url: 'http://172.16.0.8:5984/devops/deployment-log/detail.log',     		
 				  success: function(response) { 
 				  // alert(response);
 				  if(response)
@@ -732,6 +773,31 @@
 		}, 10000 );
 	  }
 	  
+	  function showCleanLogs()
+	  {
+
+	
+		setInterval(function() {
+		  
+		  $.ajax({type:'GET', 
+				  url: 'http://172.16.0.8:5984/devops/clean-log/detail.log',     		
+				  success: function(response) { 
+				  // alert(response);
+				  if(response)
+				  {	
+					//$('#result').append("\n"+response);
+					$('#result').val("\n"+response);
+					tailScroll();
+				  }
+			 },
+			 error: function(jqXHR, textStatus, errorThrown) {
+		  		// alert("Some Error has occurred.");
+			 }   			 
+			 }); 
+
+			
+		}, 10000 );
+	  }
     
 	  function tailScroll() {
 		  var height = $("#result").get(0).scrollHeight;
@@ -1372,7 +1438,9 @@ console.log("Delete Cluster _rev : " + revID);
 		$('#loadBalancer').hide();
 		$('#deploymentSelection').show();
 		
-
+		// Clean Deployment Log Window
+		
+		$('#result').val("");
 		
 	}
 	
