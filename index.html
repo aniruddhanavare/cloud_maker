@@ -78,7 +78,9 @@
 });				  
 					  
 	$('#tabs').tabs({ active: 0 });
-
+	$('#tabs_main').tabs({ active: 0 });
+	$('#tabs1').tabs({ active: 0 });
+	
 	setTimeout(function() {clearAll(); }, 2000);	
 	
 	$('#HAConfigurataion input:checkbox').change(function () {
@@ -1286,16 +1288,23 @@ console.log("Delete Cluster _rev : " + revID);
 	
 	<div
 		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
+		id="tabs_main">
+		
+		<ul 
+			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+			<li><a class="ui-tabs-anchor" href="#tabs-11">Node Registration & Cluster List</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-21">Cluster Configuration</a></li>
+		</ul>
+		
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-11">
+		
+		<div
+		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
 		id="tabs">
 		<ul 
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<li><a class="ui-tabs-anchor" href="#tabs-1">Node Registration</a></li>
 			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-3">Info</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
 		</ul>
 
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1">
@@ -1341,8 +1350,27 @@ console.log("Delete Cluster _rev : " + revID);
 				<tbody></tbody>
 				
 				</table>
-			
+
 		</div>	
+
+</div>
+		
+		
+		</div>
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-21">
+		
+
+<div
+		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
+		id="tabs1">
+		<ul 
+			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+			<li><a class="ui-tabs-anchor" href="#tabs-3">Info</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
+		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
 			<h2>Info</h2>
 			<form name="info_form" id="info_form">
@@ -1759,8 +1787,14 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		</div>
 		
-</div>
 
+</div>		
+		
+		</div>		
+		
+	</div>	
+	
+		
 </div>	
 	
 </body>
