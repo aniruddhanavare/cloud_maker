@@ -1307,7 +1307,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
 		</ul>
 
-		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1">
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1" >
 			
 			<h2>Node Registration</h2>
 				<table border="0" width="70%">
@@ -1319,6 +1319,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<p></p>
 		
 			<form name="create_node" id="create_node" >
+			 <div style="height:300px;overflow:auto;">
 				<table id="baseTable" name="baseTable"  width="80%" class="roundTable">				
 						<tr id="baseTableHeader">
 							<th scope="col" class="rounded-left" width="20%">Node Name</th>
@@ -1330,6 +1331,7 @@ console.log("Delete Cluster _rev : " + revID);
 							<th scope="col" width="5%" class="rounded-right">Delete</th>
 						</tr>																						
 				</table>
+			 </div>	
 			</form>
 
 		</div>
@@ -1338,6 +1340,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<h2>Available Cluster List</h2>
 
 			<p></p>
+				<div style="height:300px;overflow:auto;">
 				<table id="baseTableCluster"  width="70%" class="roundTable">
 				<thead>
 						<tr id="baseTableHeaderCluster">
@@ -1350,6 +1353,7 @@ console.log("Delete Cluster _rev : " + revID);
 				<tbody></tbody>
 				
 				</table>
+				</div>
 
 		</div>	
 
@@ -1736,7 +1740,7 @@ console.log("Delete Cluster _rev : " + revID);
 					</table>				
 			</div>
 				<p></p>
-				<div id="NodeMapping" class="NodeMapping">
+				<div id="NodeMapping" class="NodeMapping" style="height:200px;overflow:auto;">
 					<table id="NodeMappingTable" class="roundTable">
 					</TABLE>
 				</div>
