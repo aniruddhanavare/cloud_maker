@@ -42,6 +42,12 @@
   var loadedHAObject;
   var loadedNodesObj ={};	
   
+  var deploymentLogShowInterval;
+  var cleanLogShowInterval;
+
+  $('#horizon').hide(); 
+  $('#result').val("");
+  
   $(document).ready(function() {
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
@@ -490,7 +496,7 @@
 		
 		
 		var rows1 = $("#"+(rowid)+" input:checkbox");
-		//alert(rows1.length);
+			//alert(rows1.length);
 			
 		var jsonPayload = {};
 		jsonPayload['type']='node-role-mapping';
@@ -710,7 +716,7 @@
 				{
 					console.log("action : " + data.rev);
 					alert("Deployment<" + cluster_name +"> request sent!");
-					clearAll();
+					//clearAll();
 					//$("#baseTableCluster  > tbody").empty();	
 					showDeploymentLogs();
 					loadClusterList();
@@ -746,7 +752,7 @@
 				{
 					console.log("action : " + data.rev);
 					alert("Clean<" + cluster_name +"> request sent!");
-					clearAll();
+					//clearAll();
 					showCleanLogs();
 					loadClusterList();
 				}
@@ -762,18 +768,24 @@
 	  
 	function showDeploymentLogs()
 	  {
-
-	
-		setInterval(function() {
+		clearInterval(cleanLogShowInterval);
+		$('#result').val("");
+		deploymentLogShowInterval = setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
 				  url: 'http://172.16.0.8:5984/devops/deployment-log/detail.log',     		
 				  success: function(response) { 
-				  // alert(response);
 				  if(response)
 				  {	
-					//$('#result').append("\n"+response);
-					$('#result').val("\n"+response);
+					//alert(response);
+					//$('#result').append(response);
+					$('#result').val(response);
+					var index = response.indexOf("Chef Client finished");
+					if (index >=0) {
+						clearInterval(deploymentLogShowInterval);
+						$('#result').val("OpenStack Deployment is successfully accomplished!");
+  						$('#horizon').show();	
+					}
 					tailScroll();
 				  }
 			 },
@@ -783,14 +795,14 @@
 			 }); 
 
 			
-		}, 10000 );
+		}, 2000 );
 	  }
 	  
 	  function showCleanLogs()
 	  {
-
-	
-		setInterval(function() {
+		clearInterval(deploymentLogShowInterval);
+		$('#result').val("");
+		cleanLogShowInterval = setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
 				  url: 'http://172.16.0.8:5984/devops/clean-log/detail.log',     		
@@ -800,6 +812,13 @@
 				  {	
 					//$('#result').append("\n"+response);
 					$('#result').val("\n"+response);
+					//alert(response);
+					
+					var index = response.indexOf("Cleaning up Everything");
+					if (index >=0) {
+						clearInterval(cleanLogShowInterval);
+						$('#result').append("OpenStack Cleanup is successfully accomplished!");
+					}
 					tailScroll();
 				  }
 			 },
@@ -809,7 +828,7 @@
 			 }); 
 
 			
-		}, 10000 );
+		}, 2000 );
 	  }
     
 	  function tailScroll() {
@@ -1466,7 +1485,7 @@ console.log("Delete Cluster _rev : " + revID);
 <body>
 
 	<div id="conteneur">
-		  <div id="header" align="center">Welcome to Cloud Maker</div>
+		  <div id="header" align="center">OpenStack Cloud Maker</div>
 	
 	<div
 		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
@@ -1474,8 +1493,8 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		<ul 
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-			<li><a class="ui-tabs-anchor" href="#tabs-11">Node Registration & Cluster List</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-21">Cluster Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-11">Manage Nodes</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-21">Manage Clusters</a></li>
 		</ul>
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-11">
@@ -1486,7 +1505,6 @@ console.log("Delete Cluster _rev : " + revID);
 		<ul 
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<li><a class="ui-tabs-anchor" href="#tabs-1">Node Registration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
 		</ul>
 
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1" >
@@ -1515,8 +1533,24 @@ console.log("Delete Cluster _rev : " + revID);
 				</table>
 			 </div>	
 			</form>
-
 		</div>
+</div>
+		</div>
+		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-21">
+		
+
+<div
+		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
+		id="tabs1">
+		<ul 
+			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-3">Cluster Info</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
+		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
 			
 			<h2>Available Cluster List</h2>
@@ -1537,26 +1571,7 @@ console.log("Delete Cluster _rev : " + revID);
 				</table>
 				</div>
 
-		</div>	
-
-</div>
-		
-		
-		</div>
-		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-21">
-		
-
-<div
-		class="ui-tabs ui-widget ui-widget-content ui-corner-all  ui-helper-clearfix"
-		id="tabs1">
-		<ul 
-			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-			<li><a class="ui-tabs-anchor" href="#tabs-3">Info</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
-		</ul>
+		</div>  
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
 			<h2>Info</h2>
 			<form name="info_form" id="info_form">
@@ -1934,7 +1949,7 @@ console.log("Delete Cluster _rev : " + revID);
 					</table>				
 			</div>
 				<p></p>
-				<div id="NodeMapping" class="NodeMapping" style="height:200px;overflow:auto;">
+				<div id="NodeMapping" class="NodeMapping" style="height:400px;overflow:auto;">
 					<table id="NodeMappingTable" class="roundTable">
 					</TABLE>
 				</div>
@@ -1961,20 +1976,23 @@ console.log("Delete Cluster _rev : " + revID);
 		</div>
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-7">
-			<h2><div id="cluster_name"></h2>
+			<h2><div id="cluster_name"/></h2>
 			<form name="deployment" id="deployment">
 				<p></p>
-				<table border="0" width="60%">
+				<table border="0" width="80%">
 					<tbody>
-						<tr>
-							<th scope="col" width="50%"><input class="btnClass" id="startDeployment"
+						<tr align="center">
+							<th scope="col" width="60%"><input class="btnClass" id="startDeployment"
 								value="Start Deployment" type="button"></th>
-							<th scope="col" width="50%"><input class="btnClass" id="cleanCluster"
+							<th scope="col" width="60%"><input class="btnClass" id="cleanCluster"
 								value="Clean Cluster" type="button"></th>
 						</tr>
 						<tr align="center">
-							<td colspan="2"><textarea id="result" rows="21" cols="90"></textarea></td>
+							<td colspan="2"><textarea id="result" rows="21" cols="100"></textarea></td>
 							<!--<div class="include-file">this is test</div>-->
+						</tr>
+						<tr align="center">
+							<h2><a id="horizon" href="http://172.16.1.31">Horizon Admin GUI</a></h2>
 						</tr>
 					</tbody>
 				</table>
