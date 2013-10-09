@@ -14,13 +14,13 @@ body {
 
 .roundTable  th.rounded-left {
 	background: #b9c9fe
-		url("http://localhost:5984/_utils/cloud_maker/img/left.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/left.png")
 		left -1px no-repeat;
 }
 
 .roundTable  th.rounded-right {
 	background: #b9c9fe
-		url("http://localhost:5984/_utils/cloud_maker/img/right.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/right.png")
 		right -1px no-repeat;
 }
 
@@ -41,13 +41,13 @@ body {
 
 .roundTable td.rounded-foot-left {
 	background: #e8edff
-		url("http://localhost:5984/_utils/cloud_maker/img/botleft.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/botleft.png")
 		left bottom no-repeat;
 }
 
 .roundTable td.rounded-foot-right {
 	background: #e8edff
-		url("http://localhost:5984/_utils/cloud_maker/img/botright.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/botright.png")
 		right bottom no-repeat;
 }
 
@@ -66,13 +66,13 @@ body {
 
 .roundTable-left  th.rounded-left {
 	background: #b9c9fe
-		url("http://localhost:5984/_utils/cloud_maker/img/left.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/left.png")
 		left -1px no-repeat;
 }
 
 .roundTable-left  th.rounded-right {
 	background: #b9c9fe
-		url("http://localhost:5984/_utils/cloud_maker/img/right.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/right.png")
 		right -1px no-repeat;
 }
 
@@ -93,13 +93,13 @@ body {
 
 .roundTable-left td.rounded-foot-left {
 	background: #e8edff
-		url("http://localhost:5984/_utils/cloud_maker/img/botleft.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/botleft.png")
 		left bottom no-repeat;
 }
 
 .roundTable-left td.rounded-foot-right {
 	background: #e8edff
-		url("http://localhost:5984/_utils/cloud_maker/img/botright.png")
+		url("http://172.16.0.8:5984/_utils/cloud_maker/img/botright.png")
 		right bottom no-repeat;
 }
 
