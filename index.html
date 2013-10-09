@@ -435,7 +435,7 @@
 	  
 	  function startTabSave(docID)
 	  {
-			console.log("Entering startTabSave");
+			console.log("Entering startTabSave with docID : " + docID);
 			if(docID !=null)
 			{
 				var cloudObj = [];
@@ -449,7 +449,6 @@
 					var haObject = saveHAConfigurationNew(docID);	
 					cloudObj.push(haObject);					
 				}	
-				console.log("Entering startTabSave 1");
 				var rows = $('#NodeMappingTable tr');
 				
 				rows.each(function() {
@@ -528,6 +527,9 @@
 		jsonPayload['type']='cluster-ha-setting';
 		jsonPayload['clusterid']=id;
 		jsonPayload['cluster_name']=$("#name").val();
+		
+		jsonPayload['hatype']=$("#hatype").val();
+
 
 			var rows = $('#loadBalancer select');
 			for(i=0;i<rows .length;i++)
@@ -1759,6 +1761,18 @@ console.log("Delete Cluster _rev : " + revID);
 
 					<div id="loadBalancer" class="loadBalancer">
 
+						<table id="hatypeTable" summary="Speadsheet" border="0" width="60%">
+							<tbody>
+								<tr align="center">
+									<td width="40%"><label> Load Balancer: </label></td>
+									<td><select name="hatype" id="hatype">
+											<option value="stingray">Stringray</option>
+											<option value="haproxy">HAProxy</option>
+									</select></td>
+								</tr>
+							</tbody>
+						</table>
+						
 						<p></p>
 						<div id="HAConfigurataion" class="HAConfigurataion">
 							<table class="roundTable">
