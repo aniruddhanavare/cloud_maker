@@ -45,7 +45,7 @@
   var deploymentLogShowInterval;
   var cleanLogShowInterval;
 
-  $('#horizon').hide(); 
+  $('#horizonadmin').hide(); 
   $('#result').val("");
   
   $(document).ready(function() {
@@ -784,7 +784,7 @@
 					if (index >=0) {
 						clearInterval(deploymentLogShowInterval);
 						$('#result').val("OpenStack Deployment is successfully accomplished!");
-  						$('#horizon').show();	
+  						$('#horizonadmin').show();	
 					}
 					tailScroll();
 				  }
@@ -1475,6 +1475,8 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		$('#result').val("");
 		
+		$('#horizonadmin').hide(); 
+		
 	}
 	
     </script> 
@@ -1992,7 +1994,9 @@ console.log("Delete Cluster _rev : " + revID);
 							<!--<div class="include-file">this is test</div>-->
 						</tr>
 						<tr align="center">
-							<h2><a id="horizon" href="http://172.16.1.31">Horizon Admin GUI</a></h2>
+							<div id="horizonadmin" class="horizonadmin">
+								<h2><a href="http://172.16.1.31">Horizon Admin GUI</a></h2>
+							</div>	
 						</tr>
 					</tbody>
 				</table>
