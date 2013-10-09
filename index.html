@@ -366,7 +366,7 @@
 					
 					if(nodeID!="")
 					{
-						var oldnodeRoleObject1=loadedNodesObj[nodeID];
+						var oldnodeRoleObject1=loadedNodesObj[nodeID.replace(/\./g,"-")];
 						
 						console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
 						
@@ -453,7 +453,6 @@
 				
 				rows.each(function() {
 				
-				console.log("Entering startTabSave 1 : " + this.id);
 				if(this.id)
 				{
 					var nodeRoleObject = saveNodeRoleMappingNew(docID,this.id);
@@ -483,15 +482,21 @@
 	  
 	   function saveNodeRoleMappingNew(id,rowid) {
  
+		console.log("Entering saveNodeRoleMappingNew with id : " + id+ ", rowid : " + rowid );
 		var nodeName = rowid;
+		
+		console.log("NodeName : -----------------> " + nodeName);
+		console.log("NodeName : -----------------> " + nodeName.replace(/\./g,"\\."));
+		
+		
 		var rows1 = $("#"+(rowid)+" input:checkbox");
-			//alert(rows1.length);
+		//alert(rows1.length);
 			
 		var jsonPayload = {};
 		jsonPayload['type']='node-role-mapping';
 		jsonPayload['clusterid']=id;
 		jsonPayload['cluster_name']=$("#name").val();			
-		jsonPayload['hostname']=nodeName;
+		jsonPayload['hostname']=nodeName.replace(/-/g,"\.");
 		
 		var rolePayload = new Array();
 		
@@ -500,7 +505,11 @@
 
 			for(i=0;i<rows1.length;i++)
 			{
-				var isEnabledCheck = $('input:checkbox[name='+(rows1[i].name)+']:checked').val();
+				//console.log("rows1[i].name " + rows1[i].name);
+				
+				var isEnabledCheck = $("input:checkbox[name='"+(rows1[i].name)+"']:checked").val();
+				
+				//console.log("isEnabledCheck " + isEnabledCheck);
 				if(isEnabledCheck)
 				{
 					rolePayload.push(rows1[i].value);
@@ -979,21 +988,22 @@
 						}
 						else if(jsonValue.type == "node-role-mapping")
 						{
-							console.log("Loading Node Role Mapping Object for : " + jsonValue['hostname']);
-							loadedNodesObj[jsonValue['hostname']] =jsonValue;
+							console.log("Loading Node Role Mapping Object for : " + jsonValue['hostname'].replace(/\./g,"-"));
+							loadedNodesObj[jsonValue['hostname'].replace(/\./g,"-")] =jsonValue;
 							//console.log("node");
-							var rows = $('#'+jsonValue['hostname']);						
-							
+							var rows = $('#'+jsonValue['hostname'].replace(/\./g,"-"));						
+							console.log("rows.length : -> " + rows.length);
 							if(rows.length !=0)
 							{
 									var roleObj = jsonValue['role'];
 								
 									var roles=String(roleObj).split(",");
 									//alert(roles);
+									//console.log(roles);
 									
 									for (var j in roles) {
-										//console.log('#'+jsonValue['hostname']+roles[j]+'');
-										$('#'+jsonValue['hostname']+roles[j]+'').attr('checked', 'checked');										
+										console.log('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'');
+										$('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'').attr('checked', 'checked');										
 									}										
 							}	
 							
@@ -1098,7 +1108,7 @@
 						for(i=0;i<nodes.length;i++)
 						{
 							var jsonObject = nodes[i];						
-							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key)+"\" align=\"center\">");
+							tableStr = tableStr.concat("<TR id=\""+(jsonObject.key.replace(/\./g,"-"))+"\" align=\"center\">");
 							
 							if(i ==nodes.length-1)
 							{
@@ -1127,7 +1137,7 @@
 									tableStr = tableStr.concat("<TD  align=\"center\" >");	
 								}
 								
-								tableStr = tableStr.concat("<input id=\""+(jsonObject.key)+(value)+"\" name=\""+(jsonObject.key)+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
+								tableStr = tableStr.concat("<input id=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" name=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
 								tableStr = tableStr.concat("</TD>");
 							}
 							tableStr = tableStr.concat("</TR>");			
