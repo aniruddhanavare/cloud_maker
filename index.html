@@ -47,6 +47,10 @@
   $('#horizonadmin').hide(); 
   $('#result').val("");
   
+  var oldID;
+  var oldRevID;
+  var oldClusterName;
+  
   jQuery(document).ready(function($){
     
 	 $(".nextButton").click(function(e){
@@ -197,6 +201,16 @@
 		console.log("isNew : "+ isNew);	
 		if(isNew)
 		{
+		
+			console.log("oldID : " + oldID);
+			console.log("oldRevID : " + oldRevID);
+			console.log("oldClusterName : " + oldClusterName);
+			
+			if(oldID)
+			{
+				deleteCluster(oldID,oldRevID,oldClusterName,'No')
+			}
+			
 			var jsonPayload = {};
 			jsonPayload['type']='cluster';
 			
@@ -233,7 +247,16 @@
 					if(data.ok)
 					{
 						docID = data.id;
-						console.log("ID : " +docID);
+						
+						oldID =  data.id;
+						oldRevID = data.rev;
+						oldClusterName = $("#name").val();		
+						
+						console.log("docID : " +docID);
+						console.log("oldID : " +oldID);
+						console.log("oldRevID : " +oldRevID);
+						console.log("oldClusterName : " +oldClusterName);
+						
 						startTabSave(docID);
 					}
 				},
@@ -472,7 +495,7 @@
 				{
 					var nodeRoleObject = saveNodeRoleMappingNew(docID,this.id);
 					
-					console.log("nodeRoleObject " + nodeRoleObject);
+					//console.log("nodeRoleObject " + nodeRoleObject);
 					
 					if(nodeRoleObject!="")
 					{
@@ -481,7 +504,7 @@
 				}
 				});
 				
-				console.log("Entering startTabSave 2");				
+				//console.log("Entering startTabSave 2");				
 				$.couch.db("devops").bulkSave({"docs": cloudObj}, {
 					success: function(data) {
 						startDeployment($("#name").val());
@@ -500,8 +523,8 @@
 		console.log("Entering saveNodeRoleMappingNew with id : " + id+ ", rowid : " + rowid );
 		var nodeName = rowid;
 		
-		console.log("NodeName : -----------------> " + nodeName);
-		console.log("NodeName : -----------------> " + nodeName.replace(/\./g,"\\."));
+		//console.log("NodeName : -----------------> " + nodeName);
+		//console.log("NodeName : -----------------> " + nodeName.replace(/\./g,"\\."));
 		
 		
 		var rows1 = $("#"+(rowid)+" input:checkbox");
@@ -515,7 +538,7 @@
 		
 		var rolePayload = new Array();
 		
-		console.log("rows1.length " + rows1.length);
+		//console.log("rows1.length " + rows1.length);
 		
 
 			for(i=0;i<rows1.length;i++)
@@ -530,8 +553,8 @@
 					rolePayload.push(rows1[i].value);
 				}				
 			}			
-			console.log("rolePayload : " + rolePayload);
-			console.log("rolePayload.size : " + rolePayload.size);
+			//console.log("rolePayload : " + rolePayload);
+			//console.log("rolePayload.size : " + rolePayload.size);
 			if(rolePayload!="")
 			{			
 				jsonPayload['role']=rolePayload;						
@@ -1222,7 +1245,7 @@ $.couch.db("devops").bulkRemove({"docs": docs}, {
 
 }	
 	
-function deleteCluster(id,revID,cluster_name) {
+function deleteCluster(id,revID,cluster_name,showAlert) {
 
 //var delCloudObj = [];
 var jsonPayload = {};
@@ -1246,12 +1269,12 @@ console.log("Delete Cluster _rev : " + revID);
 });
 //delCloudObj.push(jsonPayload);
 
- console.log("Deleting Child nodes Before");
+ //console.log("Deleting Child nodes Before");
  $.couch.db("devops").view("data/by_clusterid", { key: id, success: function(data) {
 
 	var nodes = data.rows;
 	
-	console.log("Deleting Child nodes");
+	//console.log("Deleting Child nodes");
 	for(nodeI=0;nodeI<nodes.length;nodeI++)
 	{
 		var jsonObject = nodes[nodeI];
@@ -1265,7 +1288,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		$.couch.db("devops").removeDoc(jsonPayload, {
 			success: function(data) {
-				console.log("data 1 : "+ data);
+				//console.log("data 1 : "+ data);
 
     },
     error: function(status) {
@@ -1274,7 +1297,10 @@ console.log("Delete Cluster _rev : " + revID);
 });
 		
 	}
-				alert("Cluster Deleted");
+				if(showAlert =='Yes')
+				{
+					alert("Cluster Deleted");
+				}
 				$('#cluster' + id).remove();
 				
 				setTimeout(function() {populateClusterList(); }, 2000);	
@@ -1445,11 +1471,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
