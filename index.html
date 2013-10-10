@@ -1212,7 +1212,7 @@ $.couch.db("devops").bulkRemove({"docs": docs}, {
 
 }	
 	
-function deleteCluster(id,revID) {
+function deleteCluster(id,revID,cluster_name) {
 
 //var delCloudObj = [];
 var jsonPayload = {};
@@ -1269,6 +1269,9 @@ console.log("Delete Cluster _rev : " + revID);
 				
 				setTimeout(function() {populateClusterList(); }, 2000);	
 				loadClusterList();
+				
+				//var cluster_name = loadedBaseObject['cluster_name'];
+				//cleanCluster(cluster_name);				
 	
 
  },
@@ -1432,11 +1435,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
