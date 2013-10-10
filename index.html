@@ -47,6 +47,34 @@
   $('#horizonadmin').hide(); 
   $('#result').val("");
   
+  jQuery(document).ready(function($){
+    
+	 $(".nextButton").click(function(e){
+			
+		var currentTabIndex = $("#tabs1").tabs("option", "active");
+		console.log("currentTabIndex : " + currentTabIndex);
+		
+		if(currentTabIndex !=6)
+		{
+			$("#tabs1").tabs("option", "active", currentTabIndex+1);
+		}
+	 
+	 });
+	 
+	 $(".backButton").click(function(e){
+			
+		var currentTabIndex = $("#tabs1").tabs("option", "active");
+		console.log("currentTabIndex : " + currentTabIndex);
+		
+		if(currentTabIndex !=2)
+		{
+			$("#tabs1").tabs("option", "active", currentTabIndex-1);
+		}
+	 
+	 });	 
+	 	  
+});
+
   $(document).ready(function() {
   
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
@@ -81,9 +109,13 @@
 					},
 					reduce: false
 				});	
+				
+
 		});
 });				  
-					  
+			
+
+	  
 	$('#tabs').tabs({ active: 0 });
 	$('#tabs_main').tabs({ active: 0 });
 	$('#tabs1').tabs({ active: 0 });
@@ -139,31 +171,9 @@
 			chooseNodeMappingOptions();
 	  });
 	  
+	
 
-	 $(".nextButton").click(function(e){
-			
-		var currentTabIndex = $("#tabs").tabs("option", "active");
-		console.log("currentTabIndex : " + currentTabIndex);
-		
-		if(currentTabIndex !=6)
-		{
-			$("#tabs").tabs("option", "active", currentTabIndex+1);
-		}
-	 
-	 });
-	 
-	 $(".backButton").click(function(e){
-			
-		var currentTabIndex = $("#tabs").tabs("option", "active");
-		console.log("currentTabIndex : " + currentTabIndex);
-		
-		if(currentTabIndex !=2)
-		{
-			$("#tabs").tabs("option", "active", currentTabIndex-1);
-		}
-	 
-	 });	 
-	 
+
 	 
 	 
 	  $("#resetCluster").click(function(e){
