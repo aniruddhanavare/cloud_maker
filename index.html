@@ -796,12 +796,10 @@
 			
 	  }
 	  
-	  
-	  
 	function showDeploymentLogs()
 	  {
 		clearInterval(cleanLogShowInterval);
-		$('#result').val("");
+		$('#result').val("Start preparing chef cookbooks and roles....");
 		deploymentLogShowInterval = setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
@@ -812,10 +810,10 @@
 					//alert(response);
 					//$('#result').append(response);
 					$('#result').val(response);
-					var index = response.indexOf("Chef Client finished");
+					var index = response.indexOf("Total Deployment Finished");
 					if (index >=0) {
 						clearInterval(deploymentLogShowInterval);
-						$('#result').val("OpenStack Deployment is successfully accomplished!");
+						//$('#result').val("OpenStack Deployment is successfully accomplished!");
   						$('#horizonadmin').show();	
 					}
 					tailScroll();
@@ -827,13 +825,13 @@
 			 }); 
 
 			
-		}, 2000 );
+		}, 4000 );
 	  }
 	  
 	  function showCleanLogs()
 	  {
 		clearInterval(deploymentLogShowInterval);
-		$('#result').val("");
+		$('#result').val("Start preparing cluster cleanup....");
 		cleanLogShowInterval = setInterval(function() {
 		  
 		  $.ajax({type:'GET', 
@@ -846,10 +844,10 @@
 					$('#result').val("\n"+response);
 					//alert(response);
 					
-					var index = response.indexOf("Cleaning up Everything");
+					var index = response.indexOf("Total Cleanup Finished");
 					if (index >=0) {
 						clearInterval(cleanLogShowInterval);
-						$('#result').append("OpenStack Cleanup is successfully accomplished!");
+						//$('#result').append("OpenStack Cleanup is successfully accomplished!");
 					}
 					tailScroll();
 				  }
@@ -860,7 +858,7 @@
 			 }); 
 
 			
-		}, 2000 );
+		}, 4000 );
 	  }
     
 	  function tailScroll() {
@@ -1590,10 +1588,12 @@ console.log("Delete Cluster _rev : " + revID);
 
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom "  align="center" id="tabs-1" >
 			
+			<!--
 			<h2>Node Registration</h2>
+			-->
 				<table border="0" width="70%">
 						<tr id="baseTableHeader">
-							<th scope="col" width="50%"><a href="javascript:createNode()">Create New Node</a></th>
+							<th scope="col" width="50%"><a href="javascript:createNode()">Register New Node</a></th>
 						</tr>					
 				</table>			
 			
@@ -1629,12 +1629,13 @@ console.log("Delete Cluster _rev : " + revID);
 			<li><a class="ui-tabs-anchor" href="#tabs-3">Cluster Info</a></li>
 			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
 			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-6">Node Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" href="#tabs-6">Node-Role Mapping</a></li>
 			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
 		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
-			
+			<!--	
 			<h2>Available Cluster List</h2>
+			-->
 
 			<p></p>
 				<div style="height:300px;overflow:auto;">
@@ -1654,7 +1655,9 @@ console.log("Delete Cluster _rev : " + revID);
 
 		</div>  
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
+			<!--
 			<h2>Info</h2>
+			-->
 			<form name="info_form" id="info_form">
 				<table border="0" width="60%" class="roundTable-left">
 				
@@ -1716,7 +1719,9 @@ console.log("Delete Cluster _rev : " + revID);
 			<p></p>		
 		</div>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-4">
+			<!--
 			<h2>Basic Configuration</h2>
+			-->
 			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
@@ -1849,8 +1854,10 @@ console.log("Delete Cluster _rev : " + revID);
 		</div>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom" align="center"  id="tabs-5">
 
-			
+			<!--	
 			<h2>HA Configuration</h2>
+			-->
+
 			<form name="ha_configuration" id="ha_configuration">
 
 				<div id="haEnabled"  class="haEnabled">
@@ -1880,7 +1887,7 @@ console.log("Delete Cluster _rev : " + revID);
 						</table>
 						
 						<p></p>
-						<div id="HAConfigurataion" class="HAConfigurataion">
+						<div id="HAConfigurataion" class="HAConfigurataion" style="height:200px;overflow:auto;">
 							<table class="roundTable">
 								<TR>
 									<TH align="center" width="10%" class="rounded-left">&nbsp;</TH>
@@ -2006,7 +2013,9 @@ console.log("Delete Cluster _rev : " + revID);
 
 		</div>	
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom" align="center"  id="tabs-6">
+			<!--
 			<h2>Node Role Mapping</h2>
+			-->
 			<form name="node_role_mapping" id="node_role_mapping">
 	
 			<div id="deploymentSelection" class="deploymentSelection">
@@ -2023,7 +2032,7 @@ console.log("Delete Cluster _rev : " + revID);
 								<td class="rounded-foot-right"><select name="deploymentSelectionSelect" id="deploymentSelectionSelect">
 									<option value="all">All In One</option>
 									<option value="single">Single-Controller</option>
-									<option value="multi">Multi-Nodes</option>
+									<option value="multi">Multi-Node</option>
 							</select></td>
 							</tr>
 						</tbody>
