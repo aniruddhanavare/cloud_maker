@@ -1508,6 +1508,53 @@ console.log("Delete Cluster _rev : " + revID);
 			
 					
 	}
+	
+	var hostcluster_name;
+	
+	function getClusterName(nodeNameOld)
+	{
+	
+	var nodeName = nodeNameOld.replace(/\-/g,".");
+	
+console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
+		
+	$.ajax({
+   url: 'http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22',
+   type: 'get',
+   async: false,
+   dataType: 'json',
+   
+   success: function(data) {
+
+		console.log(data.rows[0].value.cluster_name);
+		hostcluster_name = data.rows[0].value.cluster_name;
+   },
+			error: function(status) {
+				console.log("Error in node-query/all : " + status);
+			}
+});
+	}
+	function getClusterName1(nodeName)
+	{
+			$.couch.db("devops").view("data/by_hostname", { key: nodeName, success: function(data) {
+
+			var nodes_hosts = data.rows;
+			console.log("nodes_hosts length : " + nodes_hosts.length);
+			
+			if(nodes_hosts.length >0)
+			{
+				var jsonObjectHost = nodes_hosts[0];
+				
+				console.log(jsonObjectHost.value.cluster_name);
+				hostcluster_name = jsonObjectHost.value.cluster_name;
+				
+			}
+
+			} } )	
+		
+		console.log("returned");		
+		return "aniruddha "+ nodeName;
+	}
 		
 	function loadAllNodes()
 	{
@@ -1521,19 +1568,27 @@ console.log("Delete Cluster _rev : " + revID);
 				//$("#baseTable").empty();
 				var nodes = data.rows;
 				for(i=0;i<nodes.length;i++)
+				//for(i=0;i<2;i++)
 				{
 					var jsonObject = nodes[i];
 					var jsonValue = jsonObject.value;
 					
-					//alert(jsonValue._id);
+					console.log("Key ->>>>> " + jsonObject.key);
+					
+					hostcluster_name="";
+					getClusterName(jsonObject.key);
+					
+					//hostcluster_name = getClusterName(jsonObject.key);
+					
+					console.log("hostcluster_name : " + hostcluster_name);
 					
 					if(i == nodes.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 
 				}
@@ -1705,6 +1760,7 @@ console.log("Delete Cluster _rev : " + revID);
 				<table id="baseTable" name="baseTable"  width="80%" class="roundTable">				
 						<tr id="baseTableHeader">
 							<th scope="col" class="rounded-left" width="20%">Node Name</th>
+							<th scope="col" width="10%">Cluster Name</th>
 							<th scope="col" width="10%">Install NIC</th>
 							<th scope="col" width="20%">Install IP</th>
 							<th scope="col" width="20%">Install Gateway</th>
