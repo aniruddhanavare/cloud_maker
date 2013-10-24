@@ -758,6 +758,7 @@
 					//$("#baseTableCluster  > tbody").empty();	
 					showDeploymentProgress();
 					loadClusterList();
+					loadAllNodes();
 				}
 			},
 			error: function(status) {
@@ -1403,6 +1404,8 @@ console.log("Delete Cluster _rev : " + revID);
 				
 				setTimeout(function() {populateClusterList(); }, 2000);	
 				loadClusterList();
+				loadAllNodes();
+				
 				
 				//var cluster_name = loadedBaseObject['cluster_name'];
 				//cleanCluster(cluster_name);				
@@ -1516,10 +1519,10 @@ console.log("Delete Cluster _rev : " + revID);
 	
 	var nodeName = nodeNameOld.replace(/\-/g,".");
 	
-console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
+//console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
 		
 	$.ajax({
-   url: 'http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22',
+   url: 'http://'+(SERVER_IP)+':5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22',
    type: 'get',
    async: false,
    dataType: 'json',
@@ -1566,6 +1569,8 @@ console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startke
 				
 				
 				//$("#baseTable").empty();
+				
+				$("#baseTable  > tbody > tr").empty();	
 				var nodes = data.rows;
 				for(i=0;i<nodes.length;i++)
 				//for(i=0;i<2;i++)
