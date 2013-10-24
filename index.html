@@ -948,7 +948,7 @@
 					//$("#baseTableCluster  > tbody").empty();	
 					showDeploymentProgress();
 					loadClusterList();
-					loadAllNodes();
+					loadAllNodesNew();
 				}
 			},
 			error: function(status) {
@@ -1594,7 +1594,7 @@ console.log("Delete Cluster _rev : " + revID);
 				
 				setTimeout(function() {populateClusterList(); }, 2000);	
 				loadClusterList();
-				loadAllNodes();
+				loadAllNodesNew();
 				
 				
 				//var cluster_name = loadedBaseObject['cluster_name'];
