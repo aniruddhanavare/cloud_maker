@@ -159,16 +159,14 @@
 					
 					if(i == rows.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"'  nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
 					}
 					
 				}
-				
-				//<a class='editable editable-click' href='#' id='country' data-type='select2' data-pk='1' data-value='BS' data-original-title='Select country'>Bahamas</a>
 				
 				var rows = $('#baseTable tbody tr');
 					
@@ -181,6 +179,7 @@
 					var nodeID = this.id.substr(4);
 					var nodemappingID = this.getAttribute("nodemappingID");
 					var clusterID = this.getAttribute("nodemappingclusterid");
+					var hostname = this.getAttribute("hostname");
 					
 										
                     var td = $(this).find('td');
@@ -201,7 +200,9 @@
 							console.log("Changed to -> " + params.value);
 							console.log("Node ID -> " + nodeID);
 							console.log("Mapping ID -> " + nodemappingID);
-							console.log("Cluter ID -> " + clusterID);
+							console.log("Cluster ID -> " + clusterID);
+							console.log("Host Name -> " + hostname);
+							
 							
 							var newClusterID   = params.value.substr(0,params.value.indexOf("-"));							
 							var newClusterName = params.value.substr(params.value.indexOf("-")+1);							
@@ -209,8 +210,9 @@
 							console.log("newClusterName -> " + newClusterName);
 							console.log("newClusterID -> " + newClusterID);							
 							
-							
-							$.couch.db("devops").openDoc(nodemappingID, {
+							if(nodemappingID!="")
+							{
+								$.couch.db("devops").openDoc(nodemappingID, {
 								success: function(data) {
 									
 									var nodeMappingObject = data;
@@ -232,7 +234,30 @@
 									console.log(status);
 								}	
 								});
-						
+							}
+							else
+							{
+							
+								var jsonPayload = {};
+								
+								jsonPayload['type']='node-role-mapping';
+								jsonPayload['clusterid']=newClusterID;
+								jsonPayload['cluster_name']=newClusterName;			
+								jsonPayload['hostname']=hostname.replace(/\./g,"-");
+								
+								var rolePayload = new Array();								
+								
+								jsonPayload['role']=rolePayload;	
+								
+								$.couch.db("devops").saveDoc(jsonPayload, {
+									success: function(data) {
+										alert("Saved");
+									},
+									error: function(status) {
+										console.log("Error in Node Role Saving : " +status);
+									}
+								});	
+							}
 						},						
 					}); 					
 					
@@ -1711,6 +1736,8 @@ console.log("Delete Cluster _rev : " + revID);
 		else
 		{
 			hostcluster_name ="";
+			hostcluster_id="";
+			hostnodemappingID="";
 		}
    },
 			error: function(status) {
