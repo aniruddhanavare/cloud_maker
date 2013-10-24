@@ -70,7 +70,7 @@
 	 $(".nextButton").click(function(e){
 			
 		var currentTabIndex = $("#tabs1").tabs("option", "active");
-		console.log("currentTabIndex : " + currentTabIndex);
+		//console.log("currentTabIndex : " + currentTabIndex);
 		
 		if(currentTabIndex !=6)
 		{
@@ -82,7 +82,7 @@
 	 $(".backButton").click(function(e){
 			
 		var currentTabIndex = $("#tabs1").tabs("option", "active");
-		console.log("currentTabIndex : " + currentTabIndex);
+		//console.log("currentTabIndex : " + currentTabIndex);
 		
 		if(currentTabIndex !=2)
 		{
@@ -154,8 +154,8 @@
 					hostcluster_name="";
 					getClusterName(jsonObject.key);
 									
-					console.log("hostcluster_name : " + hostcluster_name);
-					console.log("hostnodemappingID : " + hostnodemappingID);
+					//console.log("hostcluster_name : " + hostcluster_name);
+					//console.log("hostnodemappingID : " + hostnodemappingID);
 					
 					if(i == rows.length-1)
 					{
@@ -174,7 +174,7 @@
 					rows.each(function() {
 					
 					//console.log("ID ---- " + this.id);
-					console.log("hostnodemappingID ---- " + this.getAttribute("nodemappingID"));
+					//console.log("hostnodemappingID ---- " + this.getAttribute("nodemappingID"));
 					
 					var nodeID = this.id.substr(4);
 					var nodemappingID = this.getAttribute("nodemappingID");
@@ -197,18 +197,18 @@
 						} ,
 						url: function(params) {
 
-							console.log("Changed to -> " + params.value);
-							console.log("Node ID -> " + nodeID);
-							console.log("Mapping ID -> " + nodemappingID);
-							console.log("Cluster ID -> " + clusterID);
-							console.log("Host Name -> " + hostname);
+							//console.log("Changed to -> " + params.value);
+							//console.log("Node ID -> " + nodeID);
+							//console.log("Mapping ID -> " + nodemappingID);
+							//console.log("Cluster ID -> " + clusterID);
+							//console.log("Host Name -> " + hostname);
 							
 							
 							var newClusterID   = params.value.substr(0,params.value.indexOf("-"));							
 							var newClusterName = params.value.substr(params.value.indexOf("-")+1);							
 							
-							console.log("newClusterName -> " + newClusterName);
-							console.log("newClusterID -> " + newClusterID);							
+							//console.log("newClusterName -> " + newClusterName);
+							//console.log("newClusterID -> " + newClusterID);							
 							
 							if(nodemappingID!="")
 							{
@@ -286,7 +286,7 @@
 				$.couch.db("devops").view("node-query/all", {
 					success: function(data) {					
 						cloud_nodes = data;		
-						console.log("cloud_nodes : " + cloud_nodes);								
+						//console.log("cloud_nodes : " + cloud_nodes);								
 					},
 					error: function(status) {
 						console.log("Error in node-query/all : " + status);		
@@ -299,7 +299,7 @@
 					success: function(data) {
 					
 						chef_roles = data;		
-						console.log("chef_roles : " + chef_roles);		
+						//console.log("chef_roles : " + chef_roles);		
 						
 					},
 					error: function(status) {
@@ -384,7 +384,7 @@
 	 
 	 $("#cleanCluster").click(function(e){
 		// Save Info Tab
-		console.log("isNew : "+ isNew);	
+		//console.log("isNew : "+ isNew);	
 		var cluster_name = loadedBaseObject['cluster_name'];
 		cleanCluster(cluster_name);
 	 });	 
@@ -396,9 +396,9 @@
 		if(isNew)
 		{
 		
-			console.log("oldID : " + oldID);
-			console.log("oldRevID : " + oldRevID);
-			console.log("oldClusterName : " + oldClusterName);
+			//console.log("oldID : " + oldID);
+			//console.log("oldRevID : " + oldRevID);
+			//console.log("oldClusterName : " + oldClusterName);
 			
 			if(oldID)
 			{
@@ -446,10 +446,10 @@
 						oldRevID = data.rev;
 						oldClusterName = $("#name").val();		
 						
-						console.log("docID : " +docID);
-						console.log("oldID : " +oldID);
-						console.log("oldRevID : " +oldRevID);
-						console.log("oldClusterName : " +oldClusterName);
+						//console.log("docID : " +docID);
+						//console.log("oldID : " +oldID);
+						//console.log("oldRevID : " +oldRevID);
+						//console.log("oldClusterName : " +oldClusterName);
 						
 						startTabSave(docID);
 					}
@@ -461,8 +461,8 @@
 		}
 		else
 		{
-			console.log("currentID : "+ currentID);	
-			console.log("currentRevID : "+ currentRevID);	
+			//console.log("currentID : "+ currentID);	
+			//console.log("currentRevID : "+ currentRevID);	
 			
 			if(currentID !=null)
 			{	
@@ -528,8 +528,8 @@
 					haObject1['cluster_name'] = loadedBaseObject['cluster_name'];
 				}
 				
-				console.log("loadedHAObject : "+ loadedHAObject);
-				console.log("haObject1 : "+ haObject1);
+				//console.log("loadedHAObject : "+ loadedHAObject);
+				//console.log("haObject1 : "+ haObject1);
 				
 				if(loadedHAObject)
 				{
@@ -551,7 +551,7 @@
 					
 				if(haEnabledCheck)
 				{			
-					console.log("Saving HA Object");	
+					//console.log("Saving HA Object");	
 					$.couch.db("devops").saveDoc(haObject1, {
 						success: function(data) {
 							//console.log(data.rev);
@@ -592,7 +592,7 @@
 				rows.each(function() {
 					
 					var nodeID=this.id;
-					console.log("nodeID : " + nodeID);
+					//console.log("nodeID : " + nodeID);
 					//console.log(nodeID);
 					//console.log(loadedNodesObj[nodeID]);
 					
@@ -600,13 +600,13 @@
 					{
 						var oldnodeRoleObject1=loadedNodesObj[nodeID.replace(/\./g,"-")];
 						
-						console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
+						//console.log("oldnodeRoleObject1 : " + oldnodeRoleObject1);
 						
 						var nodeRoleObject1 = saveNodeRoleMappingNew(currentID,nodeID);
 						
 						//cloudObj.push(nodeRoleObject);	
 						
-						console.log("nodeRoleObject1 : " + nodeRoleObject1);
+						//console.log("nodeRoleObject1 : " + nodeRoleObject1);
 						
 						if(nodeRoleObject1)
 						{					
@@ -631,7 +631,7 @@
 						}
 						else
 						{					
-							console.log("Removing Node Role Mapping : "+ nodeID);
+							//console.log("Removing Node Role Mapping : "+ nodeID);
 							
 							if(oldnodeRoleObject1)
 							{
@@ -829,7 +829,7 @@
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
 		jsonPayload['clusterid']=id;
-		console.log("name : " + $("#name").val());
+		//console.log("name : " + $("#name").val());
 		jsonPayload['cluster_name']=$("#name").val();
 
 
@@ -864,7 +864,7 @@
 			//var selectedVal = $("#enableTuneling").val();
 			
 			var selectedVal = $('input[name=enable_tunneling]:radio:checked').val();
-			console.log("selectedVal : " + selectedVal);
+			//console.log("selectedVal : " + selectedVal);
 			
 			quantumPayload['enable_tunneling']=selectedVal;
 			
@@ -940,7 +940,7 @@
 			success: function(data) {
 				if(data.ok)
 				{
-					console.log("action : " + data.rev);
+					//console.log("action : " + data.rev);
 					alert("Deployment<" + cluster_name +"> request sent!");
                                         $("#startDeployment").attr('disabled', true);
                                         $("#cleanCluster").attr('disabled', true); 
@@ -979,7 +979,7 @@
 			success: function(data) {
 				if(data.ok)
 				{
-					console.log("action : " + data.rev);
+					//console.log("action : " + data.rev);
 					alert("Clean<" + cluster_name +"> request sent!");
 					//clearAll();
 					showCleanLogs();
@@ -1167,7 +1167,7 @@
 		currentID = currentCluster;
 		
 		
-		console.log("currentCluster : " + currentCluster);
+		//console.log("currentCluster : " + currentCluster);
 		//alert(currentCluster);	
 		
 		$.couch.db("devops").openDoc(currentCluster, {
@@ -1175,8 +1175,8 @@
 		
 		
 			loadClusterObject = data;
-			console.log("data : " + data);
-			console.log("data.deploymentSelection : " + data.deploymentSelection);
+			//console.log("data : " + data);
+			//console.log("data.deploymentSelection : " + data.deploymentSelection);
 			
 			currentRevID = data._rev;
 			
@@ -1202,7 +1202,7 @@
 	$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
 
 					var nodes = data.rows;
-					console.log("nodes length : " + nodes.length);
+					//console.log("nodes length : " + nodes.length);
 	
 					for(nodeI=0;nodeI<nodes.length;nodeI++)
 					{
@@ -1213,7 +1213,7 @@
 						//alert(jsonValue.type);
 						if(jsonValue.type == "cluster-basic-setting")
 						{
-							console.log("Loading Basic Object");
+							//console.log("Loading Basic Object");
 							loadedBaseObject = jsonValue;
 							var rows = $('#basicConfiguration select');
 							for(i=0;i<rows.length;i++)
@@ -1271,11 +1271,11 @@
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
-							console.log("Loading HA Object");
+							//console.log("Loading HA Object");
 							loadedHAObject=jsonValue;
 							
 							$('#haEnabledCheck').attr('checked', 'checked');		
-							console.log("HA Enabled Checked");		
+							//console.log("HA Enabled Checked");		
 							$('.loadBalancer').show();	
 
 							//chooseNodeMappingOptions();
@@ -1332,7 +1332,7 @@
 							loadedNodesObj[jsonValue['hostname'].replace(/\./g,"-")] =jsonValue;
 							//console.log("node");
 							var rows = $('#'+jsonValue['hostname'].replace(/\./g,"-"));						
-							console.log("rows.length : -> " + rows.length);
+							//console.log("rows.length : -> " + rows.length);
 							if(rows.length !=0)
 							{
 									var roleObj = jsonValue['role'];
@@ -1342,7 +1342,7 @@
 									//console.log(roles);
 									
 									for (var j in roles) {
-										console.log('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'');
+										//console.log('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'');
 										$('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'').attr('checked', 'checked');										
 									}										
 							}	
@@ -1712,7 +1712,7 @@ console.log("Delete Cluster _rev : " + revID);
 	
 	var nodeName = nodeNameOld.replace(/\-/g,".");
 	
-	console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
+	//console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
 		
 	$.ajax({
    url: 'http://'+(SERVER_IP)+':5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22',
@@ -1722,12 +1722,12 @@ console.log("Delete Cluster _rev : " + revID);
    
    success: function(data) {
 
-		console.log(data.rows.length);
+		//console.log(data.rows.length);
 		if(data.rows.length>0)
 		{
 			
-			console.log("Cluster Name - " + data.rows[0].value.cluster_name);
-			console.log("Cluster ID - " + data.rows[0].value._id);
+			//console.log("Cluster Name - " + data.rows[0].value.cluster_name);
+			//console.log("Cluster ID - " + data.rows[0].value._id);
 			
 			hostcluster_id = data.rows[0].value.clusterid;
 			hostcluster_name = data.rows[0].value.cluster_name;
@@ -1750,7 +1750,7 @@ console.log("Delete Cluster _rev : " + revID);
 			$.couch.db("devops").view("data/by_hostname", { key: nodeName, success: function(data) {
 
 			var nodes_hosts = data.rows;
-			console.log("nodes_hosts length : " + nodes_hosts.length);
+			//console.log("nodes_hosts length : " + nodes_hosts.length);
 			
 			if(nodes_hosts.length >0)
 			{
@@ -1763,7 +1763,7 @@ console.log("Delete Cluster _rev : " + revID);
 
 			} } )	
 		
-		console.log("returned");		
+		//console.log("returned");		
 		return "aniruddha "+ nodeName;
 	}
 
@@ -1786,12 +1786,12 @@ console.log("Delete Cluster _rev : " + revID);
 					var jsonObject = nodes[i];
 					var jsonValue = jsonObject.value;
 					
-					console.log("Key ->>>>> " + jsonObject.key);
+					//console.log("Key ->>>>> " + jsonObject.key);
 					
 					hostcluster_name="";
 					getClusterName(jsonObject.key);
 									
-					console.log("hostcluster_name : " + hostcluster_name);
+					//console.log("hostcluster_name : " + hostcluster_name);
 					
 					if(i == nodes.length-1)
 					{
@@ -1895,7 +1895,7 @@ console.log("Delete Cluster _rev : " + revID);
 				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');			
 			}
 			
-			console.log("Populated Cluster List");
+			//console.log("Populated Cluster List");
 			
 			},
 			error: function(status) {
@@ -1908,7 +1908,7 @@ console.log("Delete Cluster _rev : " + revID);
 	function clearAll()
 	{
 		$("form").each(function() {
-				console.log(this.id);
+				//console.log(this.id);
 				if(this.id!="deployment")
 				{
 					$("#"+(this.id)+"").each(function() {
