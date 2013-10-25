@@ -143,7 +143,7 @@
 		   success: function(data) {
 	
 				var rows = data.rows;
-				
+				$("#baseTable  > tbody > tr").empty();	
 				for(i=0;i<rows.length;i++)
 				{
 					//console.log(rows[i].value.name);
