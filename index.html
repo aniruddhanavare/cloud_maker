@@ -1166,6 +1166,8 @@
 		var currentCluster = $("#existingNodeSelect").val();
 		currentID = currentCluster;
 		
+
+		loadedNodesObj ={};	
 		
 		//console.log("currentCluster : " + currentCluster);
 		//alert(currentCluster);	
@@ -1351,14 +1353,43 @@
 					}
 					
 					//chooseNodeMappingOptions();
+					
+					// show only node rols in mapping which are needed
+					
+					hideNodeMappingRows(loadedNodesObj);
 			
 					} } )	
 		
 	
 
 	}
+	  function hideNodeMappingRows(loadedNodesObjNew){
+	  
+			//alert("here");
+
+			var rows = $('#NodeMappingTable tbody tr');
+			
+			console.log(rows.length);
+			for(i=0;i<rows.length;i++)
+			{
+				//jsonPayload[rows[i].name]=rows[i].value;
+				var currentlROWID = rows[i].id;
+				
+				var oldnodeRoleObject1=loadedNodesObjNew[currentlROWID.replace(/\./g,"-")];
+				console.log(oldnodeRoleObject1);
+				
+				if(!oldnodeRoleObject1)
+				{
+					$('#'+currentlROWID).hide(); 
+				}
+				
+			}
+			
+			
+			
+			
 		
-		
+		}
 	  function chooseNodeMappingOptions(){
 	  
 		// Check Network Type
