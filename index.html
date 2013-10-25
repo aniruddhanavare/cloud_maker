@@ -1382,7 +1382,10 @@
 				
 				if(!oldnodeRoleObject1)
 				{
-					$('#'+currentlROWID).hide(); 
+					if(currentlROWID)
+					{
+						$('#'+currentlROWID).hide(); 
+					}
 				}
 				else
 				{
