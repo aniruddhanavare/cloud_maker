@@ -1378,11 +1378,26 @@
 				var currentlROWID = rows[i].id;
 				
 				var oldnodeRoleObject1=loadedNodesObjNew[currentlROWID.replace(/\./g,"-")];
-				console.log(oldnodeRoleObject1);
+				console.log("oldnodeRoleObject1 " + oldnodeRoleObject1);
 				
 				if(!oldnodeRoleObject1)
 				{
 					$('#'+currentlROWID).hide(); 
+				}
+				else
+				{
+					console.log("Roles : " + Object.keys(oldnodeRoleObject1));
+					
+					var roleObj = oldnodeRoleObject1['role'];
+								
+					var roles=String(roleObj).split(",");
+					//alert(roles);
+					//console.log(roles);
+					
+					for (var j in roles) {
+						//console.log('#'+jsonValue['hostname'].replace(/\./g,"-")+roles[j]+'');
+						$('#'+oldnodeRoleObject1['hostname'].replace(/\./g,"-")+roles[j]+'').attr('checked', 'checked');										
+					}					
 				}
 				
 			}
