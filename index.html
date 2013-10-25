@@ -274,6 +274,8 @@
   $(document).ready(function() {
  
   loadAllNodesNew(); 
+  isNew = true;
+  console.log("isNew ---------> " + isNew);
   							
   $.getScript("/_utils/script/jquery.js?1.4.2", function(){
 	$.getScript("/_utils/script/jquery.couch.js?0.11.0", function(){
@@ -335,7 +337,7 @@
 	});
 	 $('#tabs-3 input:radio').change(function () {
 			var selectedVal = $("#tabs-3 input:radio:checked").val();
-
+			
 			if(selectedVal=="New")
 			{
 				isNew=true;
@@ -1432,7 +1434,19 @@
 			else
 			{
 				showNodeMappingTable("NONHA",deploymentOption);
-			}						
+			}					
+
+			console.log("isNew -> " + isNew);	
+
+			if(!isNew)
+			{
+				if(Object.keys(loadedNodesObj).length!=0)
+				{
+					console.log("here " + Object.keys(loadedNodesObj).length);
+					hideNodeMappingRows(loadedNodesObj);
+				}
+			}
+			
 		}	
 
 		
