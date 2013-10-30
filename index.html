@@ -63,7 +63,7 @@
   var oldClusterName;
 
   var SERVER_IP = location.hostname;
-  var countries = [];
+  var cluster_list_all = [];
   
   var isDeployOnly=false;
   var deployActionName;
@@ -117,7 +117,7 @@
 
 	function loadAllClusterList(){
 	
-		countries =[];
+		cluster_list_all =[];
 
 		$.ajax({
 		   url: 'http://'+(SERVER_IP)+':5984/devops/_design/cluster-query/_view/all',
@@ -133,7 +133,7 @@
 				{
 					//console.log(rows[i].value.name);	
 					var rowValue = rows[i].value._id +"-"+rows[i].value.name;
-					countries.push({id: rowValue, text: rows[i].value.name});					
+					cluster_list_all.push({id: rowValue, text: rows[i].value.name});					
 				}
 			
 		   },
@@ -178,11 +178,11 @@
 					
 					if(i == rows.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"'  nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"'  nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
 					}
 					
 				}
@@ -203,14 +203,14 @@
 										
                     var td = $(this).find('td');
 										 
-					$(td.eq(1)).css( 'cursor', 'text' );					 
+					$(td.eq(1)).css( 'cursor', 'pointer' );					 
 					$(td.eq(1)).attr( 'class', 'editable editable-click' );
 					$(td.eq(1)).attr( 'data-type', 'select2' );
 					$(td.eq(1)).attr( 'data-pk', '1' );
 					$(td.eq(1)).attr( 'data-original-title', 'Select Cluster Name' );
 					 
 					$(td.eq(1)).editable({
-						source: countries,
+						source: cluster_list_all,
 						select2: {
 							width: 200
 						} ,
@@ -1861,7 +1861,7 @@ console.log("Delete Cluster _rev : " + revID);
 
 
 	
-	function loadAllNodes()
+	/*function loadAllNodes()
 	{
 		
 		$.couch.db("devops").view("node-query/all", {
@@ -1906,7 +1906,7 @@ console.log("Delete Cluster _rev : " + revID);
                     var td = $(this).find('td');
 										
 					$(td.eq(2)).editable({
-						source: countries,
+						source: cluster_list_all,
 						select2: {
 							width: 200
 						} 
@@ -1927,7 +1927,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		
 		
-	}
+	}*/
 
 	function loadClusterList()
 	{
@@ -2085,15 +2085,15 @@ console.log("Delete Cluster _rev : " + revID);
 		
 			<form name="create_node" id="create_node" >
 			 <div style="height:300px;overflow:auto;">
-				<table id="baseTable" name="baseTable"  width="80%" class="roundTable">		
+				<table id="baseTable" name="baseTable"  width="95%" class="roundTable">		
 				<thead>		
 						<tr id="baseTableHeader">
-							<th scope="col" class="rounded-left" width="20%">Node Name</th>
-							<th scope="col" width="10%">Cluster Name</th>
+							<th scope="col" class="rounded-left" width="25%">Node Name</th>
+							<th scope="col" width="25%">Cluster Name</th>
 							<th scope="col" width="10%">Install NIC</th>
-							<th scope="col" width="20%">Install IP</th>
-							<th scope="col" width="20%">Install Gateway</th>
-							<th scope="col" width="20%">Net Mask</th>
+							<th scope="col" width="10%">Install IP</th>
+							<th scope="col" width="10%">Install Gateway</th>
+							<th scope="col" width="10%">Net Mask</th>
 							<th scope="col" width="5%" >Edit</th>
 							<th scope="col" width="5%" class="rounded-right">Delete</th>
 						</tr>		
