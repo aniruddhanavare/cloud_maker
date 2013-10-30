@@ -154,7 +154,7 @@
 			
 		//console.log('http://localhost:5984/devops/_design/data/_view/by_hostname?startkey=%22'+(nodeName)+'%22&endkey=%22'+(nodeName)+'0%22');
 
-			loadAllClusterList();	
+		   loadAllClusterList();	
 		   //console.log("aaa11");
 		   $.ajax({
 		   url: 'http://'+(SERVER_IP)+':5984/devops/_design/node-query/_view/all',
@@ -165,7 +165,7 @@
 		   success: function(data) {
 	
 				var rows = data.rows;
-				$("#baseTable  > tbody > tr").empty();	
+				$("#baseTable  > tbody > tr").remove();	
 				for(i=0;i<rows.length;i++)
 				{
 					//console.log(rows[i].value.name);
@@ -1764,18 +1764,18 @@ console.log("Delete Cluster _rev : " + revID);
 			
 		var tws = $("#node"+(id));	
 		
-		//console.log(tws.html());
+		console.log(tws.html());
 		var oldTDValue = tws.html();
 		var tds = $("#node"+(id)+" td");
 			
 		$(tws).html("<td><input name=\"name\" size=\"10\" id=\"name\" type=\"text\" value=\""+(tds[0].innerHTML)+"\"></td><td><select name=\"groupid\" style=\"width:100%;\" id=\"select-cluster"+(id)+"\"></select></td><td><input name=\"install_nic\" size=\"10\" id=\"install_nic\"  type=\"text\" size=\"10\" value=\""+(tds[2].innerHTML)+"\"></td><td><input name=\"install_ip\" id=\"install_ip\" size=\"10\" type=\"text\"  value=\""+(tds[3].innerHTML)+"\"></td><td><input size=\"10\" name=\"install_gw\" id=\"install_gw\" type=\"text\" value=\""+(tds[4].innerHTML)+"\"></td><td><input name=\"install_nmask\" size=\"10\" id=\"install_nmask\" type=\"text\" value=\""+(tds[5].innerHTML)+"\"></td><td><img id=\"addNode\" src=\"img/add.png\"/></a></td><td><img id=\"removeNode\" src=\"img/delete.png\"/></td>");	
 			
 					var data_rows = cluster_list_data.rows;
-					console.log("nodeMappingClusterID " + nodeMappingClusterID);
+					//console.log("nodeMappingClusterID " + nodeMappingClusterID);
 					for(i=0;i<data_rows.length;i++)
 					{				
 						
-						console.log("data_rows[i].value._id " + data_rows[i].value._id);
+						//console.log("data_rows[i].value._id " + data_rows[i].value._id);
 						
 						if(nodeMappingClusterID == data_rows[i].value._id)
 						{
@@ -1789,7 +1789,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 					$("#removeNode").click(function(e){
 						//$(tws).html(oldTDValue);
-						//loadAllNodesNew();
+						loadAllNodesNew();
 						//location.reload(true);						
 					});
 					
@@ -1829,11 +1829,8 @@ console.log("Delete Cluster _rev : " + revID);
 							console.log("Error in Node Role Saving : " +status);
 						}
 					});		*/				
-					
-					
-					
-					
-					/*$.couch.db("devops").saveDoc(jsonPayload, {
+
+					$.couch.db("devops").saveDoc(jsonPayload, {
 						success: function(data) {
 						
 							
@@ -1845,7 +1842,7 @@ console.log("Delete Cluster _rev : " + revID);
 						error: function(status) {
 							console.log("Error in Updating Node : " + status);
 						}
-					});*/
+					});
 					
 				});	
 			
