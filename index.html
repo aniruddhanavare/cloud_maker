@@ -64,6 +64,10 @@
 
   var SERVER_IP = location.hostname;
   var countries = [];
+  
+  var isDeployOnly=false;
+  var deployActionName;
+  var deployActionDescription;
    
   jQuery(document).ready(function($){
     
@@ -93,24 +97,24 @@
 	 		  
 	var c = 'popup';
     $.fn.editable.defaults.mode = c === 'inline' ? 'inline' : 'popup';	
-
-	 $(document).on('click', '#startDeploymentOnly', function(event){
-		//alert(event.data);
-		$("#tabs1").tabs("option", "active",5);
-	});
-	 
+	
+		$(document).on('click', '.startDeploymentOnly', function(event){
+			//alert(this.getAttribute("desc"));
+			
+			//$('.newCluster').show();			
+			$("#tabs1").tabs("option", "active",5);
+		
+			deployActionName = this.id;
+			deployActionDescription = this.getAttribute("desc");
+			
+			isDeployOnly=true;
+			
+			startDeployment(this.id);
+			
+		});
 });
 
 
-	/*function startDeploymentOnly(cluster_name)
-	{
-		console.log("startDeploymentOnly");
-		var currentTabIndex = $("#tabs1").tabs("option", "active");
-		console.log("currentTabIndex : " + currentTabIndex);
-		
-	} */
-	
-	
 	function loadAllClusterList(){
 	
 		countries =[];
@@ -410,6 +414,7 @@
 		
 			// Save Info Tab
 		console.log("isNew : "+ isNew);	
+		isDeployOnly = false;
 		if(isNew)
 		{
 		
@@ -945,13 +950,22 @@
 		jsonPayload['status']='start'; //Four status: start, running, end, failed
 		jsonPayload['cluster_name']=cluster_name;
 		jsonPayload['user_name']='root';
+
+		console.log("isDeployOnly -> " + isDeployOnly);	
 		
-		var rows = $('#newCluster input:text');
-		for(i=0;i<rows.length;i++)
+		if(isDeployOnly==true)
 		{
-			jsonPayload[rows[i].name]=rows[i].value;
+			jsonPayload['name']=deployActionName;
+			jsonPayload['description']=deployActionDescription;
 		}
-		
+		else
+		{
+			var rows = $('#newCluster input:text');
+			for(i=0;i<rows.length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}
+		}
 
 		$.couch.db("devops").saveDoc(jsonPayload, {
 			success: function(data) {
@@ -1938,11 +1952,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a id=\"startDeploymentOnly\" href=\"javascript:startDeploymentOnly('"+(jsonObject.key)+"');\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"startDeploymentOnly\" href=\"javascript:startDeploymentOnly('"+(jsonObject.key)+"');\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
@@ -2114,9 +2128,6 @@ console.log("Delete Cluster _rev : " + revID);
 			<p></p>
 				<div style="height:300px;overflow:auto;">
 				
-				<input class="mydeployment" value="NEXT" type="button">
-				
-				
 				<table id="baseTableCluster"  width="100%" class="roundTable">
 				<thead>
 						<tr id="baseTableHeaderCluster">
@@ -2166,7 +2177,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<tr>
 												<td id="subCategory"><label> Cluster
 														Description: </label></td>
-												<td><input name="description" type="text"/></td>
+												<td><input name="description" id="description" type="text"/></td>
 											</tr>
 
 										</tbody>
