@@ -92,10 +92,25 @@
 	 });	 
 	 		  
 	var c = 'popup';
-    $.fn.editable.defaults.mode = c === 'inline' ? 'inline' : 'popup';					  
-		  
+    $.fn.editable.defaults.mode = c === 'inline' ? 'inline' : 'popup';	
+
+	 $(document).on('click', '#startDeploymentOnly', function(event){
+		//alert(event.data);
+		$("#tabs1").tabs("option", "active",5);
+	});
+	 
 });
 
+
+	/*function startDeploymentOnly(cluster_name)
+	{
+		console.log("startDeploymentOnly");
+		var currentTabIndex = $("#tabs1").tabs("option", "active");
+		console.log("currentTabIndex : " + currentTabIndex);
+		
+	} */
+	
+	
 	function loadAllClusterList(){
 	
 		countries =[];
@@ -920,7 +935,7 @@
 	  
  
   });	
-	
+
 	function startDeployment(cluster_name)
 	  {
 		// Save Info Tab
@@ -1923,11 +1938,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a id=\"startDeploymentOnly\" href=\"javascript:startDeploymentOnly('"+(jsonObject.key)+"');\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a id=\"startDeploymentOnly\" href=\"javascript:startDeploymentOnly('"+(jsonObject.key)+"');\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
@@ -2098,12 +2113,17 @@ console.log("Delete Cluster _rev : " + revID);
 
 			<p></p>
 				<div style="height:300px;overflow:auto;">
-				<table id="baseTableCluster"  width="70%" class="roundTable">
+				
+				<input class="mydeployment" value="NEXT" type="button">
+				
+				
+				<table id="baseTableCluster"  width="100%" class="roundTable">
 				<thead>
 						<tr id="baseTableHeaderCluster">
 							<th scope="col" width="20%" class="rounded-left">Cluster Name</th>
 							<th scope="col" width="40%">Description</th>
 							<th scope="col" width="20%">Username</th>
+							<th scope="col" width="5%" >Deploy</th>
 							<th scope="col" width="5%" class="rounded-right">Delete</th>
 						</tr>					
 				</thead>		
