@@ -131,8 +131,9 @@
 				
 				for(i=0;i<rows.length;i++)
 				{
-					//console.log(rows[i].value.name);	
+					
 					var rowValue = rows[i].value._id +"-"+rows[i].value.name;
+					//alert("rowValue -> " + rowValue);	
 					cluster_list_all.push({id: rowValue, text: rows[i].value.name});					
 				}
 			
@@ -178,11 +179,11 @@
 					
 					if(i == rows.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostclustername='"+(hostcluster_name)+"' hostname='"+(jsonObject.key)+"' nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostname='"+(jsonObject.key)+"'  nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' hostclustername='"+(hostcluster_name)+"' hostname='"+(jsonObject.key)+"'  nodemappingclusterid='"+(hostcluster_id)+"' nodemappingID='"+(hostnodemappingID)+"' align='center'><td>"+(jsonObject.key)+"</td><td title=\"Click to Change Cluster Name\">"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>")						
 					}
 					
 				}
@@ -199,14 +200,15 @@
 					var nodemappingID = this.getAttribute("nodemappingID");
 					var clusterID = this.getAttribute("nodemappingclusterid");
 					var hostname = this.getAttribute("hostname");
-					
+					var hostclustername = this.getAttribute("hostclustername");
 										
                     var td = $(this).find('td');
-										 
+										 		 
 					$(td.eq(1)).css( 'cursor', 'pointer' );					 
 					$(td.eq(1)).attr( 'class', 'editable editable-click' );
 					$(td.eq(1)).attr( 'data-type', 'select2' );
 					$(td.eq(1)).attr( 'data-pk', '1' );
+					$(td.eq(1)).attr( 'data-value', clusterID+"-"+hostclustername );//var rowValue = rows[i].value._id +"-"+rows[i].value.name;
 					$(td.eq(1)).attr( 'data-original-title', 'Select Cluster Name' );
 					 
 					$(td.eq(1)).editable({
