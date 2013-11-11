@@ -103,7 +103,12 @@
 			//alert(this.getAttribute("desc"));
 			
 			//$('.newCluster').show();			
-			$("#tabs1").tabs("option", "active",5);
+			$("#basic_configuration").show();
+			$("#ha_configuration").show();
+			$("#deployment").show();		
+			$("#node_role_mapping").show();
+			
+			$('#tabs1').tabs({ active: 4 });
 		
 			deployActionName = this.id;
 			deployActionDescription = this.getAttribute("desc");
@@ -113,6 +118,23 @@
 			startDeployment(this.id);
 			
 		});
+		
+		$(document).on('click', '.editCluster', function(event){
+		
+			//alert(this.id);
+			currentID = this.id;
+
+			$("#basic_configuration").show();
+			$("#ha_configuration").show();
+			$("#deployment").show();		
+			$("#node_role_mapping").show();
+			
+			$('#tabs1').tabs({ active: 1 });
+		
+			loadClusterConfiguration();
+			
+		});
+		
 });
 
 
@@ -347,6 +369,11 @@
 	$('#tabs_main').tabs({ active: 0 });
 	$('#tabs1').tabs({ active: 0 });
 	
+	$("#basic_configuration").hide();
+	$("#ha_configuration").hide();
+	$("#node_role_mapping").hide();
+	$("#deployment").hide();
+	
 	setTimeout(function() {clearAll(); }, 2000);	
 	
 	$('#HAConfigurataion input:checkbox').change(function () {
@@ -380,12 +407,15 @@
 				$("#selectOptionLabel").text("Please Choose Node");
 				$('.newCluster').hide();
 				$('.existingNode').show();
+				
+				currentID = $("#existingNodeSelect").val();
 				loadClusterConfiguration();
 			}	
 		
 	 });
 	 
 	 $('#existingNodeSelect').change(function () {
+			currentID = $("#existingNodeSelect").val();
 			loadClusterConfiguration();
 	 });
 	 
@@ -1202,8 +1232,8 @@
 	function loadClusterConfiguration()
 	{
 	
-		var currentCluster = $("#existingNodeSelect").val();
-		currentID = currentCluster;
+		//var currentCluster = $("#existingNodeSelect").val();
+		//currentID = currentCluster;
 		
 
 		loadedNodesObj ={};	
@@ -1211,7 +1241,7 @@
 		//console.log("currentCluster : " + currentCluster);
 		//alert(currentCluster);	
 		
-		$.couch.db("devops").openDoc(currentCluster, {
+		$.couch.db("devops").openDoc(currentID, {
 		success: function(data) {
 		
 		
@@ -1240,7 +1270,7 @@
 		});
 	
 	
-	$.couch.db("devops").view("data/by_clusterid", { key: currentCluster, success: function(data) {
+	$.couch.db("devops").view("data/by_clusterid", { key: currentID, success: function(data) {
 
 					var nodes = data.rows;
 					//console.log("nodes length : " + nodes.length);
@@ -1726,6 +1756,17 @@ console.log("Delete Cluster _rev : " + revID);
 		$('#newNode').remove();
 	}
 
+	function createCluster()
+	{
+			$("#basic_configuration").show();
+			$("#ha_configuration").show();
+			$("#deployment").show();		
+			$("#node_role_mapping").show();
+			
+			$('#tabs1').tabs({ active: 0 });
+			
+	}
+	
 	function createNode()
 	{
 		
@@ -2066,11 +2107,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
@@ -2228,17 +2269,22 @@ console.log("Delete Cluster _rev : " + revID);
 		<ul 
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-3">Cluster Info</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-4">Basic Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-5">HA Configuration</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-6">Node-Role Mapping</a></li>
-			<li><a class="ui-tabs-anchor" href="#tabs-7">Deployment</a></li>
+			<!--<li><a class="ui-tabs-anchor" href="#tabs-3">Cluster Info</a></li>-->
+			<li><a class="ui-tabs-anchor" id="basic_configuration" href="#tabs-4">Basic Configuration</a></li>
+			<li><a class="ui-tabs-anchor" id="ha_configuration" href="#tabs-5">HA Configuration</a></li>
+			<li><a class="ui-tabs-anchor" id="node_role_mapping" href="#tabs-6">Node-Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" id="deployment" href="#tabs-7">Deployment</a></li>
 		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
 			<!--	
 			<h2>Available Cluster List</h2>
 			-->
-
+				<table border="0" width="70%">
+						<tr id="baseTableHeader">
+							<th scope="col" width="50%"><a href="javascript:createCluster()">Create New Cluster</a></th>
+						</tr>					
+				</table>
+				
 			<p></p>
 				<div style="height:300px;overflow:auto;">
 				
@@ -2248,6 +2294,7 @@ console.log("Delete Cluster _rev : " + revID);
 							<th scope="col" width="20%" class="rounded-left">Cluster Name</th>
 							<th scope="col" width="40%">Description</th>
 							<th scope="col" width="20%">Username</th>
+							<th scope="col" width="5%" >Edit</th>
 							<th scope="col" width="5%" >Deploy</th>
 							<th scope="col" width="5%" class="rounded-right">Delete</th>
 						</tr>					
@@ -2258,10 +2305,10 @@ console.log("Delete Cluster _rev : " + revID);
 				</div>
 
 		</div>  
-		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
-			<!--
+		<!--<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-3">
+			
 			<h2>Info</h2>
-			-->
+			
 			<form name="info_form" id="info_form">
 				<table border="0" width="60%" class="roundTable-left">
 				
@@ -2286,12 +2333,12 @@ console.log("Delete Cluster _rev : " + revID);
 										<tbody>
 											<tr>
 												<td width="30%"><label> Cluster Name</label></td>
-												<td><input name="name" id="name" type="text"/></td>
+												<td></td>
 											</tr>
 											<tr>
 												<td id="subCategory"><label> Cluster
 														Description: </label></td>
-												<td><input name="description" id="description" type="text"/></td>
+												<td></td>
 											</tr>
 
 										</tbody>
@@ -2321,7 +2368,8 @@ console.log("Delete Cluster _rev : " + revID);
 				</table>
 			</form>
 			<p></p>		
-		</div>
+		</div>-->
+		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-4">
 			<!--
 			<h2>Basic Configuration</h2>
@@ -2329,6 +2377,26 @@ console.log("Delete Cluster _rev : " + revID);
 			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
+
+				<div id="cluster_info">
+					<table width="60%" class="roundTable-left">
+						<TR>
+							<TH class="rounded-left">Create Node</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>					
+						<TR>
+							<TD width="25%">Cluster Name</TD>
+							<TD><input name="name" id="name" type="text"/></TD>
+						</TR>
+						<TR>
+							<TD class="rounded-foot-left" >Cluster Description</TD>
+							<TD class="rounded-foot-right" ><input name="description" id="description" type="text"/></TD>
+						</TR>
+
+					</TABLE>
+				</div>				
+				<p></p>
+				
 				<div id="basicConfiguration">
 					<table class="roundTable-left" width="60%">
 						<tbody>
