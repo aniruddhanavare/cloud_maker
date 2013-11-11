@@ -95,6 +95,20 @@
 		}
 	 
 	 });	 
+	 
+	 $("#createCluster").click(function(e){
+	 
+			$("#basic_configuration").show();
+			$("#ha_configuration").show();
+			$("#deployment").show();		
+			$("#node_role_mapping").show();
+		
+			$("#name").removeAttr("disabled");
+			$("#description").removeAttr("disabled");
+			
+			$('#tabs1').tabs({ active: 1 });
+			
+	 });	 
 	 		  
 	var c = 'inline';
     $.fn.editable.defaults.mode = c === 'inline' ? 'inline' : 'popup';	
@@ -130,7 +144,13 @@
 			$("#node_role_mapping").show();
 			
 			$('#tabs1').tabs({ active: 1 });
-		
+
+			$('#name').attr('disabled', true);			
+			$('#description').attr('disabled', true);
+			
+			$('#description').val(this.getAttribute("desc"));
+			$('#name').val(this.getAttribute("cname"));
+					
 			loadClusterConfiguration();
 			
 		});
@@ -389,7 +409,7 @@
 		}
 		
 	});
-	 $('#tabs-3 input:radio').change(function () {
+	 /*$('#tabs-3 input:radio').change(function () {
 			var selectedVal = $("#tabs-3 input:radio:checked").val();
 			
 			if(selectedVal=="New")
@@ -417,7 +437,7 @@
 	 $('#existingNodeSelect').change(function () {
 			currentID = $("#existingNodeSelect").val();
 			loadClusterConfiguration();
-	 });
+	 });*/
 	 
 	 
 	 $('#networktype').change(function () {
@@ -449,7 +469,8 @@
 	 });	 
 	 
 	 $("#startDeployment").click(function(e){
-		
+
+	 
 			// Save Info Tab
 		console.log("isNew : "+ isNew);	
 		isDeployOnly = false;
@@ -1722,7 +1743,7 @@ console.log("Delete Cluster _rev : " + revID);
 				}
 				$('#cluster' + id).remove();
 				
-				setTimeout(function() {populateClusterList(); }, 2000);	
+				//setTimeout(function() {populateClusterList(); }, 2000);	
 				loadClusterList();
 				loadAllNodesNew();
 				
@@ -1756,16 +1777,7 @@ console.log("Delete Cluster _rev : " + revID);
 		$('#newNode').remove();
 	}
 
-	function createCluster()
-	{
-			$("#basic_configuration").show();
-			$("#ha_configuration").show();
-			$("#deployment").show();		
-			$("#node_role_mapping").show();
-			
-			$('#tabs1').tabs({ active: 0 });
-			
-	}
+
 	
 	function createNode()
 	{
@@ -2042,7 +2054,7 @@ console.log("Delete Cluster _rev : " + revID);
 					
 					if(i == nodes.length-1)
 					{
-						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTable > tbody").append("<tr id='node"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(hostcluster_name)+"</td><td>"+(jsonValue.install_nic)+"</td><td>"+(jsonValue.install_ip)+"</td><td>"+(jsonValue.install_gw)+"</td><td>"+(jsonValue.install_nmask)+"</td><td><a id=\"aaaa\" href=\"javascript:editNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/edit.pngedit.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteNode('"+(jsonValue._id)+"','"+(jsonValue._rev)+"');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 					else
 					{
@@ -2092,7 +2104,7 @@ console.log("Delete Cluster _rev : " + revID);
 			var nodes = data.rows;
 				
 			console.log("Entering loadClusterList");
-			$('#existingNodeSelect').empty();
+			//$('#existingNodeSelect').empty();
 			$("#baseTableCluster  > tbody > tr").empty();		
 	
 			
@@ -2100,18 +2112,18 @@ console.log("Delete Cluster _rev : " + revID);
 			{
 				var jsonObject = nodes[i];
 				var jsonValue = jsonObject.value;		
-				$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
+				//$('#existingNodeSelect').append('<option value='+jsonValue._id+'>'+jsonValue.name+'</option>');
 				
 				
 				//console.log("jsonValue.key : "+ jsonObject.key);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
@@ -2126,7 +2138,7 @@ console.log("Delete Cluster _rev : " + revID);
 		});
 	}
 	
-	function populateClusterList()
+/*	function populateClusterList()
 	{
 
 		$.couch.db("devops").view("cluster-query/all", {
@@ -2150,7 +2162,7 @@ console.log("Delete Cluster _rev : " + revID);
 			},
 			reduce: false
 		});
-	}
+	}*/
 	
 	function clearAll()
 	{
@@ -2281,7 +2293,7 @@ console.log("Delete Cluster _rev : " + revID);
 			-->
 				<table border="0" width="70%">
 						<tr id="baseTableHeader">
-							<th scope="col" width="50%"><a href="javascript:createCluster()">Create New Cluster</a></th>
+							<th scope="col" width="50%"><a id="createCluster" href="#">Create New Cluster</a></th>
 						</tr>					
 				</table>
 				
@@ -2378,7 +2390,7 @@ console.log("Delete Cluster _rev : " + revID);
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
 
-				<div id="cluster_info">
+				<div id="newCluster" class="newCluster">
 					<table width="60%" class="roundTable-left">
 						<TR>
 							<TH class="rounded-left">Create Node</TH>
