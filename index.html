@@ -2781,6 +2781,25 @@ console.log("Delete Cluster _rev : " + revID);
 			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
+				<div id="newCluster" class="newCluster">
+					<table width="60%" class="roundTable-left">
+						<TR>
+							<TH class="rounded-left">Cluster Info</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>					
+						<TR>
+							<TD width="25%">Cluster Name</TD>
+							<TD><input name="name" id="name" type="text"/></TD>
+						</TR>
+						<TR>
+							<TD class="rounded-foot-left" >Cluster Description</TD>
+							<TD class="rounded-foot-right" ><input name="description" id="description" type="text"/></TD>
+						</TR>
+
+					</TABLE>
+				</div>				
+				<p></p>
+				
 				<div id="amqpConfiguration">
 					<table class="roundTable-left" width="60%">
 
