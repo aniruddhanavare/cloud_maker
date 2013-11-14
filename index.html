@@ -102,7 +102,6 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
-			$("#upgrade").show();		
 		
 			$("#name").removeAttr("disabled");
 			$("#description").removeAttr("disabled");
@@ -122,7 +121,6 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
-			$("#upgrade").show();
 			
 			$('#tabs1').tabs({ active: 4 });
 		
@@ -144,7 +142,6 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
-			$("#upgrade").show();
 			
 			$('#tabs1').tabs({ active: 1 });
 
@@ -396,7 +393,6 @@
 	$("#ha_configuration").hide();
 	$("#node_role_mapping").hide();
 	$("#deployment").hide();
-	$("#upgrade").hide();
 	
 	setTimeout(function() {clearAll(); }, 2000);	
 	
@@ -928,10 +924,128 @@
 		jsonPayload['cluster_name']=$("#name").val();
 
 
-		var rows = $('#basicConfiguration select');
+		var rows = $('#amqpConfiguration input:text');
+		var rows2 = $('#amqpConfiguration input:radio');
+		var rows3 = $('#amqpConfiguration select');
+		var opsmessaging = {}
+		for(i=0;i<rows.length;i++)
+		{
+			opsmessaging[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2.length;i++)
+		{
+			opsmessaging[rows2[i].name]=rows2[i].value;
+		}
+		for(i=0;i<rows3.length;i++)
+		{
+			opsmessaging[rows3[i].name]=rows3[i].value;
+		}
+
+		var rows = $('#databaseConfiguration input:text');
+		var rows2 = $('#databaseConfiguration input:radio');
+		var rows3 = $('#databaseConfiguration select');
+		var opsdatabase = {}
+		for(i=0;i<rows.length;i++)
+		{
+			opsdatabase[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2.length;i++)
+		{
+			opsdatabase[rows2[i].name]=rows2[i].value;
+		}
+		for(i=0;i<rows3.length;i++)
+		{
+			opsdatabase[rows3[i].name]=rows3[i].value;
+		}
+
+		var rows = $('#identityConfiguration input:text');
+		var identitypayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			jsonPayload[rows[i].name]=rows[i].value;
+			identitypayload[rows[i].name]=rows[i].value;
+		}
+		var rows = $('#imageConfiguration input:text');
+		var rows2 = $('#imageConfiguration input:radio');
+		var imagepayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			imagepayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			imagepayload[rows2[i].name]=rows2[i].value;
+		}
+		var image_upload = $('input:radio[name=image_upload]:checked').val();
+		imagepayload['image_upload']=image_upload;		
+
+		var rows = $('#computeConfiguration input:text');
+		var rows2 = $('#computeConfiguration input:radio');
+		var computepayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			computepayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			computepayload[rows2[i].name]=rows2[i].value;
+		}
+	var rows = $('#vncConfiguration input:text');
+		var rows2 = $('#vncConfiguration input:radio');
+		var vncpayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			vncpayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			vncpayload[rows2[i].name]=rows2[i].value;
+		}
+
+	var rows = $('#volumeConfiguration input:text');
+		var rows2 = $('#volumeConfiguration input:radio');
+		var volumepayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			volumepayload[rows[i].name]=rows[i].value;
+
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			volumepayload[rows2[i].name]=rows2[i].value;
+
+		}
+	var rows = $('#networkapiConfiguration input:text');
+		var rows2 = $('#networkapiConfiguration input:radio');
+		var networkapipayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			networkapipayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			networkapipayload[rows2[i].name]=rows2[i].value;
+		}
+	var rows = $('#yumpackagesConfiguration input:text');
+		var rows2 = $('#yumpackagesConfiguration input:radio');
+		var yumpackagespayload = {}
+		for(i=0;i<rows .length;i++)
+		{
+			yumpackagespayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2 .length;i++)
+		{
+			yumpackagespayload[rows2[i].name]=rows2[i].value;
+		}
+	var rows = $('#Networks input:text');
+		var rows2 = $('#Networks input:radio');
+		var networksPayload = {}
+		for(i=0;i<rows.length;i++)
+		{
+			networksPayload[rows[i].name]=rows[i].value;
+		}
+		for(i=0;i<rows2.length;i++)
+		{
+			networksPayload[rows2[i].name]=rows2[i].value;
 		}
 
 		if($("#networktype").val() == 'quantum')
@@ -940,33 +1054,33 @@
 			var quantumPayload = {};			
 			var rows = $('#Quantum input:text');
 
-			for(i=0;i<rows .length;i++)
+			for(i=0;i<rows.length;i++)
 			{
+				console.log("Quantum Text : " + rows[i].name);
+				console.log("Quantum Text : " + rows[i].value);
 				quantumPayload[rows[i].name]=rows[i].value;
 			}
 	
-			/*var rows1 = $('#Quantum input:radio');
+			var rows1 = $('#Quantum input:radio');
 			
 			console.log("rows : " + rows1.length);
 			
 			for(i=0;i<rows1.length;i++)
 			{
-				console.log("Radio : " + rows1[i].name);
-				console.log("Radio : " + rows1[i].value);
-				quantumPayload[rows[i].name]=rows1[i].value;
-			}*/
-			
-			//var selectedVal = $("#enableTuneling").val();
-			
-			var selectedVal = $('input[name=enable_tunneling]:radio:checked').val();
-			//console.log("selectedVal : " + selectedVal);
-			
-			quantumPayload['enable_tunneling']=selectedVal;
+				console.log("Quantum Radio : " + rows1[i].name);
+				console.log("Quantum Radio : " + rows1[i].value);
+				quantumPayload[rows1[i].name]=rows1[i].value;
+			}
+
+			var enable_tunneling= $('input:radio[name=enable_tunneling]:checked').val();
+			quantumPayload['enable_tunneling']=enable_tunneling;		
 			
 			jsonPayload['quantum']=quantumPayload;
+		
 		}
 
 		
+		/*
 		var networksPayload = {};
 		
 		var rows = $('#OSOPS input:text');
@@ -975,37 +1089,123 @@
 		{
 			networksPayload[rows[i].name]=rows[i].value;
 		}
-		
+
 		networksPayload['dns1']="172.16.0.1";
 		networksPayload['bridge']="br-vmnet";
 		networksPayload['bridgedev']="eth1";
+		networksPayload['bridge_mapping']="physnet1:br-eth1";
 		networksPayload['vmnet']="192.168.1.0/24";
 		networksPayload['vmnetnum']="1";
 		networksPayload['vmnetsize']="256";
 		networksPayload['firewall_driver']="nova.virt.firewall.NoopFirewallDriver";
 		networksPayload['network_manager']="nova.network.manager.FlatDHCPManager";
+		*/
 		
 		var vlanPayload = {};
 		vlanPayload['vlan_start']="520";
 		vlanPayload['vlan_end']="550";
 		vlanPayload['vlan_interface']="vlan1";
-		networksPayload['vlan']=vlanPayload;
+		jsonPayload['vlans']=vlanPayload;
+
+
+		/*adding empty nova network config */
+		var nova_network_payload = {}
+		networksPayload['nova-network']=nova_network_payload;
 		
 		jsonPayload['networks']=networksPayload;
-		
-				
+		/*hardcoding the networks payload here */	
+			
+		/*obtaining glance payload*/	
+		/*
 		var glancePayload = {};
 		var image_upload = $('input:radio[name=image_upload]:checked').val();
 		glancePayload['image_upload']=image_upload;		
 		jsonPayload['glance']=glancePayload;
-
+		*/
+		
+		/*hardcoding gpfs payload*/
 		var gpfsPayload = {};
 		gpfsPayload['gpfs_cluster_name']="gpfs_01";
+		gpfsPayload['gpfs_repo_url']="http://172.16.0.13:8080/gpfs-3.5.0-7/"; /*adding this new field to gpfs */
+		gpfsPayload['gpfs_upgrade_rpms_url']="http://172.16.0.13:8080/gpfs-3.5.0-10/"; /*adding this new field to gpfs */
+		
 		jsonPayload['gpfs']=gpfsPayload;
 		
+		/*
 		jsonPayload['enable_iptables']='true';
 		jsonPayload['packageserver']=SERVER_IP;
 		jsonPayload['imageserver']=SERVER_IP;
+		*/
+		/*removing these fields since they are now part of image configuration */
+			
+		/*Additions by Rahul */
+		var openstackpayload = {};
+		openstackpayload['devmode'] = 'true';
+		openstackpayload['enable_iptables'] = 'false';
+
+		/*
+		var yumpackages = {};
+		yumpackages['sce_repo'] = "http://172.16.0.13:8080/sce/$releasever/$basearch";
+		yumpackages['rhel_repo'] = "http://172.16.0.13:8080/redhat/rhel/$releasever/$basearch"
+		yumpackages['epel_repo'] = "http://172.16.0.13:8080/redhat/rhel/$releasever/$basearch"
+		yumpackages['openstack_repo'] = "http://172.16.0.13:8080/openstack/$releasever"
+		yumpackages['middleware_repo' ] = "http://172.16.0.13:8080/addition/$releasever"
+
+		var opsmessaging = {};
+		
+		opsmessaging['mqtype'] = "qpid";
+		opsmessaging['mqhost'] = "172.16.1.31";
+		
+		var opsdatabase = {};
+		
+		opsdatabase['dbtype'] = "eth0";
+		opsdatabase['dbhost'] = "172.16.1.31";
+		opsdatabase['dbport'] = "3306";
+		opsdatabase['db_bind_if'] = "eth0";
+		
+
+		var identity = {};
+		identity['identity_bind_if'] = "eth0";
+		identity['identity_host']= "172.16.1.31"; 
+
+		var imagepayload = {};
+		imagepayload['image_bind_if'] = "eth0";
+		imagepayload['image_host' ] = "172.16.1.31";
+		imagepayload['image_upload' ] = "true";
+		imagepayload['image_precise_url' ] = "http://172.16.0.13:8080/images/precise-server-cloudimg-amd64-disk1.img";
+		imagepayload['image_cirros_url'] = "http://172.16.0.13:8080/images/cirros-0.3.0-x86_64-uec.tar.gz"; 
+
+		var computepayload = {};
+		computepayload [ 'compute_bind_if' ] = "eth0";
+		computepayload[ 'compute_api_host' ] = "172.16.1.31";
+		computepayload[ 'ec2_api_host' ] = "172.16.1.31";
+		computepayload[ 'vnc_bind_if' ] = "eth0" ;
+		computepayload[ 'libvirt_bind_if' ] = "eth0";
+
+		var vncpayload = {};
+		vncpayload['xvpvnc_host'] = "9.47.240.192";
+		vncpayload['novnc_host' ] = "9.47.240.192";
+
+		var volumepayload = {};
+		volumepayload['volume_bind_if'] = "eth0";
+		volumepayload['volume_host'] = "172.16.1.31";
+
+	
+		var networkapipayload = {};
+		networkapipayload['network_api_bind_if'] = "eth0";
+		networkapipayload['network_api_host' ] = "172.16.1.31"; */
+
+
+		jsonPayload['openstack'] = openstackpayload;
+		jsonPayload['yumpackages'] = yumpackagespayload;
+		jsonPayload['ops-messaging'] = opsmessaging;
+		jsonPayload['ops-database'] = opsdatabase;		
+		jsonPayload['identity']= identitypayload;
+		jsonPayload['image'] = imagepayload;
+		jsonPayload['compute'] = computepayload;
+		jsonPayload['vnc'] = vncpayload;
+		jsonPayload['volume'] = volumepayload;
+		jsonPayload['network-api'] = networkapipayload;
 	
 		return jsonPayload;
 		
@@ -1258,7 +1458,7 @@
 
 			
 		}, 4000 );
- 	  }
+	  }
     
 	  function tailScroll() {
 		  var height = $("#result").get(0).scrollHeight;
@@ -1325,7 +1525,12 @@
 						{
 							//console.log("Loading Basic Object");
 							loadedBaseObject = jsonValue;
-							var rows = $('#basicConfiguration select');
+							/*var rows = $('#basicConfiguration select'); */ /*Commenting this out for now */
+
+							console.log(" Printing yum info " + jsonValue['yumpackages'] );
+							console.log(" Printing yum info " + jsonValue.yumpackages );
+
+							/*
 							for(i=0;i<rows.length;i++)
 							{
 								$('#'+(rows[i].name)).val(jsonValue[rows[i].name]);
@@ -1376,7 +1581,114 @@
 							else
 							{
 								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
-							}							
+							} */	
+
+							var yumpackagesObj = jsonValue['yumpackages'];
+							var rows = $('#yumpackagesConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(yumpackagesObj[rows[k].name]);
+							}
+
+							var messagingObj = jsonValue['ops-messaging'];
+							var rows = $('#amqpConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(messagingObj[rows[k].name]);
+
+							}	 
+							var databaseObj = jsonValue['ops-database'];
+							var rows = $('#databaseConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(databaseObj[rows[k].name]);
+
+							}	 
+							var identityObj = jsonValue['identity'];
+							var rows = $('#identityConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(identityObj[rows[k].name]);
+
+							}	 
+							var imageObj = jsonValue['image'];
+							var rows = $('#imageConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(imageObj[rows[k].name]);
+
+							}	 
+							if(imageObj['image_upload'] == 'true')
+							{
+								$('input:radio[name=image_upload]:nth(0)').attr('checked',true);
+							}
+							else
+							{
+								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
+							}
+							var computeObj = jsonValue['compute'];
+							var rows = $('#computeConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(computeObj[rows[k].name]);
+
+							}	 
+							var vncObj = jsonValue['vnc'];
+							var rows = $('#vncConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(vncObj[rows[k].name]);
+
+							}	 
+							var volumeObj = jsonValue['volume'];
+							var rows = $('#volumeConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(volumeObj[rows[k].name]);
+
+							}	 
+							var networkapiObj = jsonValue['network-api'];
+							var rows = $('#networkapiConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(networkapiObj[rows[k].name]);
+
+							}
+
+							var networksObj = jsonValue['networks'];
+							var rows = $('#Networks input:text');
+							for(k=0;k<rows.length;k++)
+							{
+							
+								console.log("Rows inside networks = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(networksObj[rows[k].name]);
+							} 
+							var vlansObj = jsonValue['vlans'];
+							var rows = $('#Vlans input:text');
+							for(k=0;k<rows.length;k++)
+							{
+							
+								console.log("Rows inside networks = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(vlansObj[rows[k].name]);
+							} 
+							var quantumObj = jsonValue['quantum'];
+							var rows = $('#Quantum input:text');
+							for(k=0;k<rows.length;k++)
+							{
+							
+								console.log("Rows inside networks = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(quantumObj[rows[k].name]);
+							} 
+							if(quantumObj['enable_tunneling'] == 'true')
+							{
+								$('input:radio[name=enable_tunneling]:nth(0)').attr('checked',true);
+							}
+							else
+							{
+								$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
+							}
+							
+						
 							
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
@@ -1579,9 +1891,8 @@
 
 	  
 	  function showNodeMappingTable(hanonha,options) {
-
-				console.log("HA non-HA object:" + hanonha);	
-				console.log("Options:" + options);	
+	 			
+				
 				var nodes = chef_roles.rows;
 				var jsonObject = nodes[0];
 				var jsonValue = jsonObject.value;
@@ -2305,7 +2616,6 @@ console.log("Delete Cluster _rev : " + revID);
 			<li><a class="ui-tabs-anchor" id="ha_configuration" href="#tabs-5">HA Configuration</a></li>
 			<li><a class="ui-tabs-anchor" id="node_role_mapping" href="#tabs-6">Node-Role Mapping</a></li>
 			<li><a class="ui-tabs-anchor" id="deployment" href="#tabs-7">Deployment</a></li>
-			<li><a class="ui-tabs-anchor" id="upgrade" href="#tabs-8">Upgrade</a></li>
 		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
 			<!--	
@@ -2429,14 +2739,21 @@ console.log("Delete Cluster _rev : " + revID);
 				</div>				
 				<p></p>
 				
-				<div id="amqpConfiguration">
+				<div id="basicConfiguration">
 					<table class="roundTable-left" width="60%">
-
 						<tbody>
 						<TR>
-							<TH width="25%" class="rounded-left">AMQP Configuration</TH>
+							<TH width="25%" class="rounded-left">Configuration</TH>
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
+							<tr>
+								<td id="featureCodeCategory"><label> Database Type:
+								</label></td>
+								<td><select name="dbtype" id="dbtype">
+										<option value="mysql">MySQL</option>
+										<option value="db2">DB2</option>
+								</select></td>
+							</tr>
 							<tr>
 								<td><label> AMQP Type: </label></td>
 								<td><select name="mqtype" id="mqtype">
@@ -2444,342 +2761,59 @@ console.log("Delete Cluster _rev : " + revID);
 										<option value="rabbitmq">RabbitMQ</option>
 								</select></td>
 							</tr>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">AMQP Host</TD>
-							<TD class="rounded-foot-right"><input name="mqhost" id="mqhost" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>				
-				<p></p>
-				
-				<div id="databaseConfiguration">
-						<table class="roundTable-left" width="60%">
-
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">Database Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
 							<tr>
-								<td><label> DB Type: </label></td>
-								<td><select name="dbtype" id="dbtype">
-										<option value="mysql">mysql</option>
-										<option value="db2">DB2</option>
+								<td class="rounded-foot-left" ><label> Network Type: </label></td>
+								<td class="rounded-foot-right" ><select name="networktype" id="networktype">
+										<option value="quantum">Quantum</option>
+										<option value="nova-network">Nova-Network</option>
 								</select></td>
 							</tr>
-							<TR>
-							<TD width="25%">DB Host</TD>
-							<TD><input name="dbhost" id="dbhost" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">DB Port</TD>
-							<TD><input name="dbport" id="dbport" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">DB Bind Interface</TD>
-							<TD class="rounded-foot-right"><input name="db_bind_if" id="db_bind_if" type="text"></TD>
-							</TR>
-				
+
 						</tbody>
 					</table>
-				</div>				
-				<p></p>
-				
-				<div id="identityConfiguration">
-						<table class="roundTable-left" width="60%">
+				</div>
 
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">Identity Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">Identity Bind Interface</TD>
-							<TD><input name="identity_bind_if" id="identity_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Identity Host</TD>
-							<TD class="rounded-foot-right"><input name="identity_host" id="identity_host" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>				
-				<p></p>
-				
-				<div id="imageConfiguration">
-						<table class="roundTable-left" width="60%">
 
-						<tbody>
+				<p></p>
+				<div id="OSOPS">
+					<table summary="Speadsheet"  width="60%" class="roundTable-left">
 						<TR>
-							<TH width="25%" class="rounded-left">Image Configuration</TH>
+							<TH class="rounded-left">OSOPS</TH>
 							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">Image Bind Interface</TD>
-							<TD><input name="image_bind_if" id="image_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">Image Host</TD>
-							<TD><input name="image_host" id="image_host" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">Image Precise URL</TD>
-							<TD><input name="image_precise_url" id="image_precise_url" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">Image Cirros URL</TD>
-							<TD><input name="image_cirros_url" id="image_cirros_url" type="text"></TD>
-							</TR>
+						</TR>					
+						<TR>
+							<TD width="25%">Public Network</TD>
+							<TD><input name="pubnet" id="pubnet" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>Nova Network</TD>
+							<TD ><input name="novanet" id="novanet" type="text"></TD>
+						</TR>
+						<TR>
+							<TD class="rounded-foot-left">Management Network</TD>
+							<TD class="rounded-foot-right"><input name="mgmtnet" id="mgmtnet" type="text"></TD>
+						</TR>
+
+					</TABLE>
+				</div>
+		
+
+				<p></p>
+				<table  summary="Speadsheet" class="roundTable-left" width="60%">
+						<TR>
+							<TH class="rounded-left">Glance</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>				
 					<TR>
-
 						<TD class="rounded-foot-left" width="25%">Image Upload</TD>
 						<TD class="rounded-foot-right"><input id="image_upload" name="image_upload" value="true"
 							type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
 							name="image_upload" value="false" type="radio">&nbsp;No</TD>
 					</TR>
-				
-						</tbody>
-					</table>
 
-		
-				</div>				
-				<p></p>
-				
 
-				
-				<div id="computeConfiguration">
-						<table class="roundTable-left" width="60%">
+				</TABLE>
 
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">Compute Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">Compute Bind Interface</TD>
-							<TD><input name="compute_bind_if" id="compute_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">Compute API Host</TD>
-							<TD><input name="compute_api_host" id="compute_api_host" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">EC2 API Host</TD>
-							<TD><input name="ec2_api_host" id="ec2_api_host" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">VNC Bind Interface</TD>
-							<TD><input name="vnc_bind_if" id="vnc_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Libvirt Bind Interface</TD>
-							<TD class="rounded-foot-right"><input name="libvirt_bind_if" id="libvirt_bind_if" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>				
-				<p></p>
-
-				<div id="vncConfiguration">
-						<table class="roundTable-left" width="60%">
-
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">VNC Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">Xvpvnc Host</TD>
-							<TD><input name="xvpvnc_host" id="xvpvnc_host" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Novnc Host</TD>
-							<TD class="rounded-foot-right"><input name="novnc_host" id="novnc_host" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-
-		
-				</div>				
-				<p></p>
-				
-				<div id="volumeConfiguration">
-						<table class="roundTable-left" width="60%">
-
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">Volume Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">Volume Bind Interface</TD>
-							<TD><input name="volume_bind_if" id="volume_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Volume Host</TD>
-							<TD class="rounded-foot-right"><input name="volume_host" id="volume_host" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>
-				<p></p>
-				
-				
-				<div id="networkapiConfiguration">
-						<table class="roundTable-left" width="60%">
-
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">Network API Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">N/W API Bind Interface</TD>
-							<TD><input name="network_api_bind_if" id="network_api_bind_if" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">N/W API Host</TD>
-							<TD class="rounded-foot-right"><input name="network_api_host" id="network_api_host" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>				
-				<p></p>
-				
-				
-
-				<div id="yumpackagesConfiguration">
-						<table class="roundTable-left" width="60%">
-
-						<tbody>
-						<TR>
-							<TH width="25%" class="rounded-left">yum Packages Configuration</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>						
-							<TR>
-							<TD width="25%">SCE Repo</TD>
-							<TD><input name="sce_repo" id="sce_repo" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">RHEL Repo</TD>
-							<TD><input name="rhel_repo" id="rhel_repo" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">EPEL Repo</TD>
-							<TD><input name="epel_repo" id="epel_repo" type="text"></TD>
-							</TR>
-							<TR>
-							<TD width="25%">Openstack Repo</TD>
-							<TD><input name="openstack_repo" id="openstack_repo" type="text"></TD>
-							</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Middleware Repo</TD>
-							<TD class="rounded-foot-right"><input name="middleware_repo" id="middleware_repo" type="text"></TD>
-							</TR>
-				
-						</tbody>
-					</table>
-				</div>				
-				<p></p>
-				
-				<div id="Networks" class="Networks">
-					<table summary="Speadsheet"  width="60%" class="roundTable-left">
-						<TR>
-							<TH class="rounded-left">Networks</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>					
-						<TR>
-							<td class="rounded-foot-left" ><label> Network Type: </label></td>
-							<td class="rounded-foot-right" >
-								<select name="networktype" id="networktype">
-									<option value="quantum">Quantum</option>
-									<option value="nova-network">Nova-Network</option>
-								</select>
-							</td>
-						</TR>
-						<TR>
-							<TD width="25%">Bridge</TD>
-							<TD><input name="bridge" id="bridge" type="text"></TD>
-						</TR>
-							<TR>
-							<TD width="25%">VMNet Size</TD>
-							<TD><input name="vmnetsize" id="vmnetsize" type="text"></TD>
-						</TR>
-							<TR>
-							<TD width="25%">Network Manager</TD>
-							<TD><input name="network_manager" id="network_manager" type="text"></TD>
-						</TR>
-							<TR>
-							<TD width="25%">DNS1</TD>
-							<TD><input name="dns1" id="dns1" type="text"></TD>
-						</TR>
-						<TR>
-							<TD width="25%">Firewall Driver</TD>
-							<TD><input name="firewall_driver" id="firewall_driver" type="text"></TD>
-						</TR>
-						<TR>
-							<TD width="25%">VMNet Number</TD>
-							<TD><input name="vmnetnum" id="vmnetnum" type="text"></TD>
-						</TR>	
-							<TR>
-							<TD width="25%">VMNet</TD>
-							<TD><input name="vmnet" id="vmnet" type="text"></TD>
-						</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">Bridge Dev</TD>
-							<TD class="rounded-foot-right"><input name="bridgedev" id="bridgedev" type="text"></TD>
-						</TR>
-
-					</TABLE>
-				</div>				
-				<p></p>
-				
-				<div id="Vlans" class="Vlans">
-					<table summary="Speadsheet"  width="60%" class="roundTable-left">
-						<TR>
-							<TH class="rounded-left">VLAN</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>				
-								
-								<TR>
-							<TD width="25%">VLAN Start</TD>
-							<TD><input name="vlan_start" id="vlan_start" type="text"></TD>
-						</TR>
-							<TR>
-							<TD width="25%">VLAN End</TD>
-							<TD><input name="vlan_end" id="vlan_end" type="text"></TD>
-						</TR>
-							<TR>
-							<TD class="rounded-foot-left" width="25%">VLAN Interface</TD>
-							<TD class="rounded-foot-right"><input name="vlan_interface" id="vlan_interface" type="text"></TD>
-						</TR>
-
-					</table>
-				</div>
-				<p></p>
-				
-				<div id="GPFS">
-					<table summary="Speadsheet"  width="60%" class="roundTable-left">
-						<TR>
-							<TH class="rounded-left">GPFS</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>					
-						<TR>
-							<TD class="rounded-foot-left" width="25%">GPFS Cluster Name</TD>
-							<TD class="rounded-foot-right"><input name="gpfs_cluster_name" id="gpfs_cluster_name" type="text"></TD>
-						</TR>
-
-					</TABLE>
-				</div>	
-				<p></p>				
-				
 				<div id="Quantum" class="Quantum">
 					<p></p>
 					<table summary="Speadsheet" class="roundTable-left" width="60%">
@@ -2788,30 +2822,26 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 						<TR>
-							<TD>OVS PHY IF </TD>
-							<TD><input id="ovs_phy_if" name="ovs_phy_if" type="text"></TD>
-						</TR>
-						<TR>
-							<TD>OVS NODE IF</TD>
-							<TD><input id="ovs_node_if" name="ovs_node_if" type="text"></TD>
-						</TR>
-						<TR>
 							<TD width="25%">Tenant Network Type</TD>
 							<TD><input name="tenant_network_type" id="tenant_network_type" type="text"></TD>
 						</TR>
 						<TR>
-							<TD>Network VLAN Range</TD>
-							<TD><input name="network_vlan_ranges" id="network_vlan_ranges" type="text"></TD>
+							<TD>Network VLAN Rang</TD>
+							<TD><input name="network_vlan_range" id="network_vlan_range" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Tunnel ID Range</TD>
-							<TD><input name="tunnel_id_ranges" id="tunnel_id_ranges" type="text"></TD>
+							<TD><input name="tunnel_id_range" id="tunnel_id_range" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Enable Tunneling</TD>
-							<TD><input id="enable_tunneling" name="enable_tunneling"
+							<TD><input id="enableTuneling" name="enable_tunneling"
 								value="true" type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
 								name="enable_tunneling" value="false" type="radio">&nbsp;No</TD>
+						</TR>
+						<TR>
+							<TD>Bridge Mapping NIC</TD>
+							<TD><input name="bridge_mapping_nic" id="bridge_mapping_nic" type="text"></TD>
 						</TR>
 						<TR>
 							<TD class="rounded-foot-left">Floating IP NIC</TD>
@@ -3083,58 +3113,6 @@ console.log("Delete Cluster _rev : " + revID);
 				<p></p>		
 			</form>			
 		</div>
-		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-8">
-			<h2><div id="cluster_name"/></h2>
-			<form name="upgrade" id="upgrade">
-				<p></p>
-				<table border="0" width="100%">
-					<tbody>
-						<tr align="center">
-							<td width="20%" align="left">Select Repo</td>
-							<td width="80%" align="left">
-								<select id="upgrade_repo" width="100" size="5">
-								  <option value="grizzly_repo">Grizzly</option>
-								  <option value="havana_repo">Havana</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td width="20%"></td>
-							<td width="80%"><input class="btnClass" id="startUpdate" value="Update" type="button"></td>
-						</tr>
-						<tr align="center">
-							<td width="20%" align="left">Select Node</td>
-							<td width="80%" align="left">
-								<div id="upgrade_node">
-								<table class="roundTable">
-									<tr><th>Node</th><th>Role</th><th>Upgrade</th><th>Status</th></tr>
-									<tr><td>Controller Node</td><td>All-in-one Controller</td><td>
-								  		<input type="checkbox" name="controller" value="controller">controller-node</option>
-									</td><td><div id="progress"></div></td></tr>	
-									<tr><td>Network Node</td><td>Quantum Server, Quantum DHCP Agent</td><td>
-								  		<input type="checkbox" name="network" value="network">network-node</option>
-									</td><td></td></tr>
-									<tr><td>Compute Node</td><td>Nova Compute</td><td>
-								  		<input type="checkbox" name="compute" value="compute">compute-node</option>
-									</td><td></td></tr>
-								</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="20%"></td>
-							<td width="80%"><input class="btnClass" id="startUpgrade" value="Upgrade" type="button"></td>
-						</tr>
-							</td>
-							<!--<div class="include-file">this is test</div>-->
-						</tr>
-					</tbody>
-				</table>
-				<p></p>
-				<p></p>		
-			</form>			
-		</div>		
-		
 		
 		</div>
 		
@@ -3145,7 +3123,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 	</div>	
 	
-		
+
 </div>	
 
 </body>
