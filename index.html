@@ -102,6 +102,7 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
+			$("#upgrade").show();		
 		
 			$("#name").removeAttr("disabled");
 			$("#description").removeAttr("disabled");
@@ -121,6 +122,7 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
+			$("#upgrade").show();
 			
 			$('#tabs1').tabs({ active: 4 });
 		
@@ -142,6 +144,7 @@
 			$("#ha_configuration").show();
 			$("#deployment").show();		
 			$("#node_role_mapping").show();
+			$("#upgrade").show();
 			
 			$('#tabs1').tabs({ active: 1 });
 
@@ -393,6 +396,7 @@
 	$("#ha_configuration").hide();
 	$("#node_role_mapping").hide();
 	$("#deployment").hide();
+	$("#upgrade").hide();
 	
 	setTimeout(function() {clearAll(); }, 2000);	
 	
@@ -466,6 +470,16 @@
 		//console.log("isNew : "+ isNew);	
 		var cluster_name = loadedBaseObject['cluster_name'];
 		cleanCluster(cluster_name);
+	 });	 
+
+	 $("#startUpdate").click(function(e){
+		var cluster_name = loadedBaseObject['cluster_name'];
+		startUpdate(cluster_name);
+	 });	 
+
+	 $("#startUpgrade").click(function(e){
+		var cluster_name = loadedBaseObject['cluster_name'];
+		startUpgrade(cluster_name);
 	 });	 
 	 
 	 $("#startDeployment").click(function(e){
@@ -1081,6 +1095,10 @@
 			}
 		});
 			
+	  }
+
+	function showUpgradeProgress()
+	  {
 	  }
 
 	function showDeploymentProgress()
@@ -2286,6 +2304,7 @@ console.log("Delete Cluster _rev : " + revID);
 			<li><a class="ui-tabs-anchor" id="ha_configuration" href="#tabs-5">HA Configuration</a></li>
 			<li><a class="ui-tabs-anchor" id="node_role_mapping" href="#tabs-6">Node-Role Mapping</a></li>
 			<li><a class="ui-tabs-anchor" id="deployment" href="#tabs-7">Deployment</a></li>
+			<li><a class="ui-tabs-anchor" id="upgrade" href="#tabs-8">Upgrade</a></li>
 		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
 			<!--	
@@ -2492,26 +2511,30 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 						<TR>
+							<TD>OVS PHY IF </TD>
+							<TD><input id="ovs_phy_if" name="ovs_phy_if" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>OVS NODE IF</TD>
+							<TD><input id="ovs_node_if" name="ovs_node_if" type="text"></TD>
+						</TR>
+						<TR>
 							<TD width="25%">Tenant Network Type</TD>
 							<TD><input name="tenant_network_type" id="tenant_network_type" type="text"></TD>
 						</TR>
 						<TR>
-							<TD>Network VLAN Rang</TD>
-							<TD><input name="network_vlan_range" id="network_vlan_range" type="text"></TD>
+							<TD>Network VLAN Range</TD>
+							<TD><input name="network_vlan_ranges" id="network_vlan_ranges" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Tunnel ID Range</TD>
-							<TD><input name="tunnel_id_range" id="tunnel_id_range" type="text"></TD>
+							<TD><input name="tunnel_id_ranges" id="tunnel_id_ranges" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Enable Tunneling</TD>
-							<TD><input id="enableTuneling" name="enable_tunneling"
+							<TD><input id="enable_tunneling" name="enable_tunneling"
 								value="true" type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
 								name="enable_tunneling" value="false" type="radio">&nbsp;No</TD>
-						</TR>
-						<TR>
-							<TD>Bridge Mapping NIC</TD>
-							<TD><input name="bridge_mapping_nic" id="bridge_mapping_nic" type="text"></TD>
 						</TR>
 						<TR>
 							<TD class="rounded-foot-left">Floating IP NIC</TD>
@@ -2783,6 +2806,58 @@ console.log("Delete Cluster _rev : " + revID);
 				<p></p>		
 			</form>			
 		</div>
+	<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-8">
+			<h2><div id="cluster_name"/></h2>
+			<form name="upgrade" id="upgrade">
+				<p></p>
+				<table border="0" width="100%">
+					<tbody>
+						<tr align="center">
+							<td width="20%" align="left">Select Repo</td>
+							<td width="80%" align="left">
+								<select id="upgrade_repo" width="100" size="5">
+								  <option value="grizzly_repo">Grizzly</option>
+								  <option value="havana_repo">Havana</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="20%"></td>
+							<td width="80%"><input class="btnClass" id="startUpdate" value="Update" type="button"></td>
+						</tr>
+						<tr align="center">
+							<td width="20%" align="left">Select Node</td>
+							<td width="80%" align="left">
+								<div id="upgrade_node">
+								<table class="roundTable">
+									<tr><th>Node</th><th>Role</th><th>Upgrade</th><th>Status</th></tr>
+									<tr><td>Controller Node</td><td>All-in-one Controller</td><td>
+								  		<input type="checkbox" name="controller" value="controller">controller-node</option>
+									</td><td><div id="progress"></div></td></tr>	
+									<tr><td>Network Node</td><td>Quantum Server, Quantum DHCP Agent</td><td>
+								  		<input type="checkbox" name="network" value="network">network-node</option>
+									</td><td></td></tr>
+									<tr><td>Compute Node</td><td>Nova Compute</td><td>
+								  		<input type="checkbox" name="compute" value="compute">compute-node</option>
+									</td><td></td></tr>
+								</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="20%"></td>
+							<td width="80%"><input class="btnClass" id="startUpgrade" value="Upgrade" type="button"></td>
+						</tr>
+							</td>
+							<!--<div class="include-file">this is test</div>-->
+						</tr>
+					</tbody>
+				</table>
+				<p></p>
+				<p></p>		
+			</form>			
+		</div>		
+		
 		
 		</div>
 		
@@ -2793,7 +2868,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 	</div>	
 	
-
+		
 </div>	
 
 </body>
