@@ -2724,41 +2724,14 @@ console.log("Delete Cluster _rev : " + revID);
 			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
-
-				<div id="newCluster" class="newCluster">
-					<table width="60%" class="roundTable-left">
-						<TR>
-							<TH class="rounded-left">Cluster Info</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>					
-						<TR>
-							<TD width="25%">Cluster Name</TD>
-							<TD><input name="name" id="name" type="text"/></TD>
-						</TR>
-						<TR>
-							<TD class="rounded-foot-left" >Cluster Description</TD>
-							<TD class="rounded-foot-right" ><input name="description" id="description" type="text"/></TD>
-						</TR>
-
-					</TABLE>
-				</div>				
-				<p></p>
-				
-				<div id="basicConfiguration">
+				<div id="amqpConfiguration">
 					<table class="roundTable-left" width="60%">
+
 						<tbody>
 						<TR>
-							<TH width="25%" class="rounded-left">Configuration</TH>
+							<TH width="25%" class="rounded-left">AMQP Configuration</TH>
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
-							<tr>
-								<td id="featureCodeCategory"><label> Database Type:
-								</label></td>
-								<td><select name="dbtype" id="dbtype">
-										<option value="mysql">MySQL</option>
-										<option value="db2">DB2</option>
-								</select></td>
-							</tr>
 							<tr>
 								<td><label> AMQP Type: </label></td>
 								<td><select name="mqtype" id="mqtype">
@@ -2766,37 +2739,346 @@ console.log("Delete Cluster _rev : " + revID);
 										<option value="rabbitmq">RabbitMQ</option>
 								</select></td>
 							</tr>
-							<tr>
-								<td class="rounded-foot-left" ><label> Network Type: </label></td>
-								<td class="rounded-foot-right" ><select name="networktype" id="networktype">
-										<option value="quantum">Quantum</option>
-										<option value="nova-network">Nova-Network</option>
-								</select></td>
-							</tr>
-
+							<TR>
+							<TD class="rounded-foot-left" width="25%">AMQP Host</TD>
+							<TD class="rounded-foot-right"><input name="mqhost" id="mqhost" type="text"></TD>
+							</TR>
+				
 						</tbody>
 					</table>
 				</div>
 
+				<p></p>
+				<div id="databaseConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">Database Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<tr>
+								<td><label> DB Type: </label></td>
+								<td><select name="dbtype" id="dbtype">
+										<option value="mysql">mysql</option>
+										<option value="db2">DB2</option>
+								</select></td>
+							</tr>
+							<TR>
+							<TD width="25%">DB Host</TD>
+							<TD><input name="dbhost" id="dbhost" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">DB Port</TD>
+							<TD><input name="dbport" id="dbport" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">DB Bind Interface</TD>
+							<TD class="rounded-foot-right"><input name="db_bind_if" id="db_bind_if" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
 
 				<p></p>
-				<div id="OSOPS">
+				<div id="identityConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">Identity Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">Identity Bind Interface</TD>
+							<TD><input name="identity_bind_if" id="identity_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Identity Host</TD>
+							<TD class="rounded-foot-right"><input name="identity_host" id="identity_host" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+				
+				<p></p>
+				<div id="imageConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">Image Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">Image Bind Interface</TD>
+							<TD><input name="image_bind_if" id="image_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">Image Host</TD>
+							<TD><input name="image_host" id="image_host" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">Image Precise URL</TD>
+							<TD><input name="image_precise_url" id="image_precise_url" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">Image Cirros URL</TD>
+							<TD><input name="image_cirros_url" id="image_cirros_url" type="text"></TD>
+							</TR>
+					<TR>
+
+						<TD class="rounded-foot-left" width="25%">Image Upload</TD>
+						<TD class="rounded-foot-right"><input id="image_upload" name="image_upload" value="true"
+							type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
+							name="image_upload" value="false" type="radio">&nbsp;No</TD>
+					</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+				<p></p>
+				<div id="computeConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">Compute Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">Compute Bind Interface</TD>
+							<TD><input name="compute_bind_if" id="compute_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">Compute API Host</TD>
+							<TD><input name="compute_api_host" id="compute_api_host" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">EC2 API Host</TD>
+							<TD><input name="ec2_api_host" id="ec2_api_host" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">VNC Bind Interface</TD>
+							<TD><input name="vnc_bind_if" id="vnc_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Libvirt Bind Interface</TD>
+							<TD class="rounded-foot-right"><input name="libvirt_bind_if" id="libvirt_bind_if" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+				<p></p>
+				<div id="vncConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">VNC Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">Xvpvnc Host</TD>
+							<TD><input name="xvpvnc_host" id="xvpvnc_host" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Novnc Host</TD>
+							<TD class="rounded-foot-right"><input name="novnc_host" id="novnc_host" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+
+				<p></p>
+				<div id="volumeConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">Volume Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">Volume Bind Interface</TD>
+							<TD><input name="volume_bind_if" id="volume_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Volume Host</TD>
+							<TD class="rounded-foot-right"><input name="volume_host" id="volume_host" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+				<p></p>
+				<div id="networkapiConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">network API Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">N/W API Bind Interface</TD>
+							<TD><input name="network_api_bind_if" id="network_api_bind_if" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">N/W API Host</TD>
+							<TD class="rounded-foot-right"><input name="network_api_host" id="network_api_host" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+				<p></p>
+				<div id="yumpackagesConfiguration">
+						<table class="roundTable-left" width="60%">
+
+						<tbody>
+						<TR>
+							<TH width="25%" class="rounded-left">yum Packages Configuration</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>						
+							<TR>
+							<TD width="25%">SCE Repo</TD>
+							<TD><input name="sce_repo" id="sce_repo" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">RHEL Repo</TD>
+							<TD><input name="rhel_repo" id="rhel_repo" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">EPEL Repo</TD>
+							<TD><input name="epel_repo" id="epel_repo" type="text"></TD>
+							</TR>
+							<TR>
+							<TD width="25%">Openstack Repo</TD>
+							<TD><input name="openstack_repo" id="openstack_repo" type="text"></TD>
+							</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Middleware Repo</TD>
+							<TD class="rounded-foot-right"><input name="middleware_repo" id="middleware_repo" type="text"></TD>
+							</TR>
+				
+						</tbody>
+					</table>
+
+		
+				</div>
+
+
+				<p></p>
+				<div id="Networks" class="Networks">
 					<table summary="Speadsheet"  width="60%" class="roundTable-left">
 						<TR>
-							<TH class="rounded-left">OSOPS</TH>
+							<TH class="rounded-left">Networks</TH>
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>					
 						<TR>
-							<TD width="25%">Public Network</TD>
-							<TD><input name="pubnet" id="pubnet" type="text"></TD>
+							<td class="rounded-foot-left" ><label> Network Type: </label></td>
+							<td class="rounded-foot-right" >
+								<select name="networktype" id="networktype">
+									<option value="quantum">Quantum</option>
+									<option value="nova-network">Nova-Network</option>
+								</select>
+							</td>
 						</TR>
 						<TR>
-							<TD>Nova Network</TD>
-							<TD ><input name="novanet" id="novanet" type="text"></TD>
+							<TD width="25%">Bridge</TD>
+							<TD><input name="bridge" id="bridge" type="text"></TD>
+						</TR>
+							<TR>
+							<TD width="25%">VMNet Size</TD>
+							<TD><input name="vmnetsize" id="vmnetsize" type="text"></TD>
+						</TR>
+							<TR>
+							<TD width="25%">Network Manager</TD>
+							<TD><input name="network_manager" id="network_manager" type="text"></TD>
+						</TR>
+							<TR>
+							<TD width="25%">DNS1</TD>
+							<TD><input name="dns1" id="dns1" type="text"></TD>
 						</TR>
 						<TR>
-							<TD class="rounded-foot-left">Management Network</TD>
-							<TD class="rounded-foot-right"><input name="mgmtnet" id="mgmtnet" type="text"></TD>
+							<TD width="25%">Firewall Driver</TD>
+							<TD><input name="firewall_driver" id="firewall_driver" type="text"></TD>
+						</TR>
+						<TR>
+							<TD width="25%">VMNet Number</TD>
+							<TD><input name="vmnetnum" id="vmnetnum" type="text"></TD>
+						</TR>	
+							<TR>
+							<TD width="25%">VMNet</TD>
+							<TD><input name="vmnet" id="vmnet" type="text"></TD>
+						</TR>
+							<TR>
+							<TD class="rounded-foot-left" width="25%">Bridge Dev</TD>
+							<TD class="rounded-foot-right"><input name="bridgedev" id="bridgedev" type="text"></TD>
+						</TR>
+
+					</TABLE>
+				</div>
+
+		<p></p>
+				<div id="Vlans" class="Vlans">
+					<table summary="Speadsheet"  width="60%" class="roundTable-left">
+						<TR>
+							<TH class="rounded-left">VLAN</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>				
+								
+								<TR>
+							<TD width="25%">VLAN Start</TD>
+							<TD><input name="vlan_start" id="vlan_start" type="text"></TD>
+						</TR>
+							<TR>
+							<TD width="25%">VLAN End</TD>
+							<TD><input name="vlan_end" id="vlan_end" type="text"></TD>
+						</TR>
+							<TR>
+							<TD width="25%">VLAN Interface</TD>
+							<TD class="rounded-foot-right"><input name="vlan_interface" id="vlan_interface" type="text"></TD>
+						</TR>
+
+					</table>
+				</div>
+
+
+					<p></p>
+				<div id="GPFS">
+					<table summary="Speadsheet"  width="60%" class="roundTable-left">
+						<TR>
+							<TH class="rounded-left">GPFS</TH>
+							<TH class="rounded-right">&nbsp;</TH>
+						</TR>					
+						<TR>
+							<TD class="rounded-foot-left" width="25%">GPFS Cluster Name</TD>
+							<TD class="rounded-foot-right"><input name="gpfs_cluster_name" id="gpfs_cluster_name" type="text"></TD>
 						</TR>
 
 					</TABLE>
@@ -2804,21 +3086,6 @@ console.log("Delete Cluster _rev : " + revID);
 		
 
 				<p></p>
-				<table  summary="Speadsheet" class="roundTable-left" width="60%">
-						<TR>
-							<TH class="rounded-left">Glance</TH>
-							<TH class="rounded-right">&nbsp;</TH>
-						</TR>				
-					<TR>
-						<TD class="rounded-foot-left" width="25%">Image Upload</TD>
-						<TD class="rounded-foot-right"><input id="image_upload" name="image_upload" value="true"
-							type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
-							name="image_upload" value="false" type="radio">&nbsp;No</TD>
-					</TR>
-
-
-				</TABLE>
-
 				<div id="Quantum" class="Quantum">
 					<p></p>
 					<table summary="Speadsheet" class="roundTable-left" width="60%">
@@ -2827,26 +3094,30 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 						<TR>
+							<TD>OVS PHY IF </TD>
+							<TD><input id="ovs_phy_if" name="ovs_phy_if" type="text"></TD>
+						</TR>
+						<TR>
+							<TD>OVS NODE IF</TD>
+							<TD><input id="ovs_node_if" name="ovs_node_if" type="text"></TD>
+						</TR>
+						<TR>
 							<TD width="25%">Tenant Network Type</TD>
 							<TD><input name="tenant_network_type" id="tenant_network_type" type="text"></TD>
 						</TR>
 						<TR>
-							<TD>Network VLAN Rang</TD>
-							<TD><input name="network_vlan_range" id="network_vlan_range" type="text"></TD>
+							<TD>Network VLAN Range</TD>
+							<TD><input name="network_vlan_ranges" id="network_vlan_ranges" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Tunnel ID Range</TD>
-							<TD><input name="tunnel_id_range" id="tunnel_id_range" type="text"></TD>
+							<TD><input name="tunnel_id_ranges" id="tunnel_id_ranges" type="text"></TD>
 						</TR>
 						<TR>
 							<TD>Enable Tunneling</TD>
-							<TD><input id="enableTuneling" name="enable_tunneling"
+							<TD><input id="enable_tunneling" name="enable_tunneling"
 								value="true" type="radio">&nbsp;Yes&nbsp;&nbsp;&nbsp;&nbsp;<input
 								name="enable_tunneling" value="false" type="radio">&nbsp;No</TD>
-						</TR>
-						<TR>
-							<TD>Bridge Mapping NIC</TD>
-							<TD><input name="bridge_mapping_nic" id="bridge_mapping_nic" type="text"></TD>
 						</TR>
 						<TR>
 							<TD class="rounded-foot-left">Floating IP NIC</TD>
