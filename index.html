@@ -1218,6 +1218,63 @@
  
   });	
 
+	function startUpgrade(cluster_name)
+	  {
+		// Save Info Tab
+		var jsonPayload = {};
+		var allVals = [];
+		$('#upgrade_node :checked').each(function() {
+			allVals.push($(this).val());
+		});
+
+		jsonPayload['type']='action';
+		jsonPayload['user_request']='upgrade';
+		jsonPayload['status']='start'; //Four status: start, running, end, failed
+		jsonPayload['cluster_name']=cluster_name;
+		jsonPayload['user_name']='root';
+		jsonPayload['upgrade_repo']=$("#upgrade_repo").val();
+		jsonPayload['node_name']=allVals.toString();
+
+		/*
+		console.log("isUpgradeOnly -> " + isUpgradeOnly);	
+		
+		if(isUpgradeOnly==true)
+		{
+			jsonPayload['name']=upgradeActionName;
+			jsonPayload['description']=upgradeActionDescription;
+		}
+		else
+		{
+			var rows = $('#newCluster input:text');
+			for(i=0;i<rows.length;i++)
+			{
+				jsonPayload[rows[i].name]=rows[i].value;
+			}
+		}
+		*/
+
+		$.couch.db("devops").saveDoc(jsonPayload, {
+			success: function(data) {
+				if(data.ok)
+				{
+					//console.log("action : " + data.rev);
+					alert("Upgrade<" + cluster_name +"> request sent!");
+					alert(JSON.stringify(jsonPayload));
+                                        //$("#startDeployment").attr('disabled', true);
+                                        //$("#cleanCluster").attr('disabled', true); 
+					showUpgradeProgress();
+					//loadClusterList();
+					//loadAllNodesNew();
+				}
+			},
+			error: function(status) {
+			console.log("Error in upgrade request " + status);
+			}
+		});
+			
+	  }
+	  
+  
 	function startDeployment(cluster_name)
 	  {
 		// Save Info Tab
