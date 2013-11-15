@@ -926,6 +926,8 @@
 		jsonPayload['clusterid']=id;
 		//console.log("name : " + $("#name").val());
 		jsonPayload['cluster_name']=$("#name").val();
+		jsonPayload['networktype']=$('#networktype').val();
+		
 
 
 		var rows = $('#amqpConfiguration input:text');
@@ -1106,9 +1108,9 @@
 		*/
 		
 		var vlanPayload = {};
-		vlanPayload['vlan_start']="520";
-		vlanPayload['vlan_end']="550";
-		vlanPayload['vlan_interface']="vlan1";
+		vlanPayload['vlan_start']=$("#vlan_start").val();
+		vlanPayload['vlan_end']=$("#vlan_end").val();
+		vlanPayload['vlan_interface']=$("#vlan_interface").val();
 		jsonPayload['vlans']=vlanPayload;
 
 
@@ -1129,10 +1131,16 @@
 		
 		/*hardcoding gpfs payload*/
 		var gpfsPayload = {};
-		gpfsPayload['gpfs_cluster_name']="gpfs_01";
-		gpfsPayload['gpfs_repo_url']="http://172.16.0.13:8080/gpfs-3.5.0-7/"; /*adding this new field to gpfs */
-		gpfsPayload['gpfs_upgrade_rpms_url']="http://172.16.0.13:8080/gpfs-3.5.0-10/"; /*adding this new field to gpfs */
+		//gpfsPayload['gpfs_cluster_name']="gpfs_01";
+		//gpfsPayload['gpfs_repo_url']="http://172.16.0.13:8080/gpfs-3.5.0-7/"; /*adding this new field to gpfs */
+		//gpfsPayload['gpfs_upgrade_rpms_url']="http://172.16.0.13:8080/gpfs-3.5.0-10/"; /*adding this new field to gpfs */
 		
+		var rows = $('#GPFS input:text');
+		for(i=0;i<rows.length;i++)
+		{
+			gpfsPayload[rows[i].name]=rows[i].value;
+		}
+				
 		jsonPayload['gpfs']=gpfsPayload;
 		
 		/*
@@ -3137,7 +3145,7 @@ console.log("Delete Cluster _rev : " + revID);
 							<TD><input name="vlan_end" id="vlan_end" type="text"></TD>
 						</TR>
 							<TR>
-							<TD width="25%">VLAN Interface</TD>
+							<TD class="rounded-foot-left" width="25%">VLAN Interface</TD>
 							<TD class="rounded-foot-right"><input name="vlan_interface" id="vlan_interface" type="text"></TD>
 						</TR>
 
@@ -3153,8 +3161,16 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>					
 						<TR>
-							<TD class="rounded-foot-left" width="25%">GPFS Cluster Name</TD>
-							<TD class="rounded-foot-right"><input name="gpfs_cluster_name" id="gpfs_cluster_name" type="text"></TD>
+							<TD width="25%">GPFS Cluster Name</TD>
+							<TD><input name="gpfs_cluster_name" id="gpfs_cluster_name" type="text"></TD>
+						</TR>
+						<TR>
+							<TD width="25%">GPFS Repo URL</TD>
+							<TD><input name="gpfs_repo_url" id="gpfs_repo_url" type="text"></TD>
+						</TR>
+						<TR>
+							<TD class="rounded-foot-left" width="25%">GPFS Upgrade RPMS URL</TD>
+							<TD class="rounded-foot-right"><input name="gpfs_upgrade_rpms_url" id="gpfs_upgrade_rpms_url" type="text"></TD>
 						</TR>
 
 					</TABLE>
