@@ -896,7 +896,7 @@
 				if(isEnabledCheck)
 				{
 					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
-					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"text").val();
+					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"iptext").val();
 					
 					if(rows[i].name=='db')
 					{
@@ -3280,100 +3280,136 @@ console.log("Delete Cluster _rev : " + revID);
 						</table>
 						
 						<p></p>
-						<div id="HAConfigurataion" class="HAConfigurataion" style="height:200px;overflow:auto;">
+						<div id="HAConfigurataion" class="HAConfigurataion" style="height:250px;overflow:auto;">
 							<table class="roundTable">
 								<TR>
 									<TH align="center" width="10%" class="rounded-left">&nbsp;</TH>
-									<TH align="center" width="10%">DB</TH>
 									<TH align="center" width="10%">MQ</TH>
-									<TH align="center" width="10%">KeyStone</TH>
-									<TH align="center" width="10%">Glance API</TH>
-									<TH align="center" width="10%">Glance Registry</TH>
-									<TH align="center" width="10%">Cinder API</TH>
-									<TH align="center" width="10%">NOVA API</TH>
-									<TH align="center" width="10%">EC2-API</TH>
-									<TH align="center" width="10%" class="rounded-right">Qunatum Server</TH>
+									<TH align="center" width="10%">DB</TH>
+									<TH align="center" width="10%">Identity</TH>
+									<TH align="center" width="10%">Image</TH>
+									<TH align="center" width="10%">Volume</TH>
+									<TH align="center" width="10%">Compute</TH>
+									<TH align="center" width="10%">Network API</TH>
+									<TH align="center" width="10%" class="rounded-right">Metering-API</TH>
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%">HA Component</TD>
 									<TD align="center" width="10%"><input
-										name="db" id="db" value="true" type="checkbox"></TD>
-									<TD align="center" width="10%"><input
 										name="mq" id="mq" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="keystone" id="keystone" value="true" type="checkbox"></TD>
+										name="db" id="db" value="true" type="checkbox"></TD>										
 									<TD align="center" width="10%"><input
-										name="glance_api" id="glance_api"  value="true" type="checkbox"></TD>
+										name="identity" id="identity" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="glance_registry" id="glance_registry"  value="true" type="checkbox"></TD>
+										name="image" id="image"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="cinder_api" id="cinder_api" value="true" type="checkbox"></TD>
+										name="volume" id="volume"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="nova_api" id="nova_api"  value="true" type="checkbox"></TD>
+										name="compute" id="compute" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="ec2_api" id="ec2_api"  value="true" type="checkbox"></TD>
+										name="network_api" id="network_api"  value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
-										name="quantum_server" id="quantum_server"  value="true" type="checkbox"></TD>
+										name="metering_api" id="metering_api"  value="true" type="checkbox"></TD>
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%" class="rounded-foot-left">Virtual IP</TD>
+									<TD align="center" width="10%" >
+										<div id="rowmq">										
+											<label id="mqPrimaryHost"> Primary </label>
+											<input id="mqtext1" name="mqtext1" type="text" size="12">
+											
+											<label id="mqSecondaryHost">Secondary </label>											
+											<input id="mqtext2" name="mqtext2" type="text" size="12">
+											
+											<label id="mqVirtualIPL"> Virtual IP </label>											
+											<input id="mqiptext" name="mqiptext" type="text" size="12">											
+										</div>
+									</TD>									
 									<TD align="center" width="10%">
 										<div id="rowdb">
-											<label id="dbPrimaryHost"> DB2 Primary </label> <input
-												id="dbtext1" name="dbtext1"
-												type="text" size="12"> <label id="dbSecondaryHost">DB2
-												Secondary </label><input id="dbtext2"
-												name="dbtext2" type="text" size="12">
-											<label id="dbVirtualIPL"> Virtual IP </label><input
-												id="dbtext" name="dbtext" type="text" size="12">
+											<label id="dbPrimaryHost"> Primary </label> 
+											<input id="dbtext1" name="dbtext1" type="text" size="12"> 
+											
+											<label id="dbSecondaryHost">Secondary </label>
+											<input id="dbtext2" name="dbtext2" type="text" size="12">
+											
+											<label id="dbVirtualIPL"> Virtual IP </label>
+											<input id="dbiptext" name="dbiptext" type="text" size="12">											
 										</div>
 									</TD>
-									<TD align="center" width="10%" >
-										<div id="rowmq">
-											<label id="mqPrimaryHost"> QPID Primary </label><input
-												id="mqtext1" name="mqtext1"
-												type="text" size="12"><label id="mqSecondaryHost">QPID
-												Secondary </label><input id="mqtext2"
-												name="mqtext2" type="text" size="12"><label
-												id="mqVirtualIPL"> Virtual IP </label><input
-												id="mqtext" name="mqtext" type="text" size="12">
+									<TD align="center" width="10%">
+										<div id="rowidentity">										
+											<label id="identityPrimaryHost"> Primary </label> 
+											<input id="identitytext1" name="identitytext1" type="text" size="12"> 
+											
+											<label id="identitySecondaryHost">Secondary </label>
+											<input id="identitytext2" name="identitytext2" type="text" size="12">
+											
+											<label id="identityVirtualIPL"> Virtual IP </label>
+											<input id="identityiptext" name="identityiptext" type="text" size="12">												
 										</div>
 									</TD>
-									<TD align="center" width="10%"><div
-											id="rowkeystone">
-											<input name="keystonetext" id="keystonetext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%"><div
-											id="rowglance_api">
-											<input name="glance_apitext" id="glance_apitext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%"><div
-											id="rowglance_registry">
-											<input name="glance_registrytext" id="glance_registrytext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%"><div
-											id="rowcinder_api">
-											<input name="cinder_apitext" id="cinder_apitext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%" id><div
-											id="rownova_api">
-											<input name="nova_apitext" id="nova_apitext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%"><div
-											id="rowec2_api">
-											<input name="ec2_apitext" id="ec2_apitext"
-												type="text" size="12">
-										</div></TD>
-									<TD align="center" width="10%" class="rounded-foot-right" id=><div
-											id="rowquantum_server">
-											<input name="quantum_servertext" id="quantum_servertext"
-												type="text" size="12">
-										</div></TD>
+									<TD align="center" width="10%">
+										<div id="rowimage">											
+											<label id="imagePrimaryHost"> Primary </label> 
+											<input id="imagetext1" name="imagetext1" type="text" size="12"> 
+											
+											<label id="imageSecondaryHost">Secondary </label>
+											<input id="imagetext2" name="imagetext2" type="text" size="12">
+											
+											<label id="imageVirtualIPL"> Virtual IP </label>
+											<input id="imageiptext" name="imageiptext" type="text" size="12">	
+										</div>
+									</TD>
+									<TD align="center" width="10%">
+										<div id="rowvolume">
+											<label id="volumePrimaryHost"> Primary </label> 
+											<input id="volumetext1" name="volumetext1" type="text" size="12"> 
+											
+											<label id="volumeSecondaryHost">Secondary </label>
+											<input id="volumetext2" name="volumetext2" type="text" size="12">
+											
+											<label id="volumeVirtualIPL"> Virtual IP </label>
+											<input id="volumeiptext" name="volumeiptext" type="text" size="12">	
+										</div>
+									</TD>
+									<TD align="center" width="10%">
+										<div id="rowcompute">
+											<label id="computePrimaryHost"> Primary </label> 
+											<input id="computetext1" name="computetext1" type="text" size="12"> 
+											
+											<label id="computeSecondaryHost">Secondary </label>
+											<input id="computetext2" name="computetext2" type="text" size="12">
+											
+											<label id="computeVirtualIPL"> Virtual IP </label>
+											<input id="computeiptext" name="computeiptext" type="text" size="12">												
+										</div>
+									</TD>
+									<TD align="center" width="10%" id>
+										<div id="rownetwork_api">
+											<label id="network_apiPrimaryHost"> Primary </label> 
+											<input id="network_apitext1" name="network_apitext1" type="text" size="12"> 
+											
+											<label id="network_apiSecondaryHost">Secondary </label>
+											<input id="network_apitext2" name="network_apitext2" type="text" size="12">
+											
+											<label id="network_apiVirtualIPL"> Virtual IP </label>
+											<input id="network_apiiptext" name="network_apiiptext" type="text" size="12">	
+										</div>
+									</TD>
+									<TD align="center" width="10%" class="rounded-foot-right">
+										<div id="rowmetering_api">
+											<label id="metering_apiPrimaryHost"> Primary </label> 
+											<input id="metering_apitext1" name="metering_apitext1" type="text" size="12"> 
+											
+											<label id="metering_apiSecondaryHost">Secondary </label>
+											<input id="metering_apitext2" name="metering_apitext2" type="text" size="12">
+											
+											<label id="metering_apiVirtualIPL"> Virtual IP </label>
+											<input id="metering_apiiptext" name="metering_apiiptext" type="text" size="12">	
+										</div>
+									</TD>
 								</TR>
 							</TABLE>
 						</div>
