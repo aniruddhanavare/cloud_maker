@@ -1616,8 +1616,22 @@
 								$('#'+(rows[i].name)).val(messagingObj[rows[i].name]);
 							}
 							
-							
+							// Load Database Configuration							
+							var databaseObj = jsonValue['ops-database'];
+							var rows = $('#databaseConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(databaseObj[rows[k].name]);
 
+							}		
+							var rows = $('#databaseConfiguration select');
+							for(i=0;i<rows.length;i++)
+							{							
+								$('#'+(rows[i].name)).val(databaseObj[rows[i].name]);
+							}							
+
+							// Load Identity Configuration
+							
 							var yumpackagesObj = jsonValue['yumpackages'];
 							var rows = $('#yumpackagesConfiguration input:text');
 							for(k=0;k<rows.length;k++)
@@ -1626,13 +1640,6 @@
 							}
 
 	 
-							var databaseObj = jsonValue['ops-database'];
-							var rows = $('#databaseConfiguration input:text');
-							for(k=0;k<rows.length;k++)
-							{
-								$('#'+(rows[k].name)).val(databaseObj[rows[k].name]);
-
-							}	 
 							var identityObj = jsonValue['identity'];
 							var rows = $('#identityConfiguration input:text');
 							for(k=0;k<rows.length;k++)
