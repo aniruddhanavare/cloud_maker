@@ -98,6 +98,7 @@
 	 
 	 $("#createCluster").click(function(e){
 	 
+			clearAll();
 			$("#basic_configurationTAB").show();
 			$("#ha_configurationTAB").show();
 			$("#deploymentTAB").show();		
@@ -144,6 +145,11 @@
 			oldID = this.id; 
 			oldRevID = this.getAttribute("revID");
 			oldClusterName = this.getAttribute("cname");
+			
+			var rows = $('.clusterNameTAB');
+			rows.each(function() {
+				$(this).html("Cluster Name : " + oldClusterName);
+			});
 
 			$("#basic_configurationTAB").show();
 			$("#ha_configurationTAB").show();
@@ -2789,9 +2795,9 @@ console.log("Delete Cluster _rev : " + revID);
 		</div>-->
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center"  id="tabs-4">
-			<!--
-			<h2>Basic Configuration</h2>
-			-->
+			
+			<h2 class="clusterNameTAB">Basic Configuration</h2>
+			
 			<form name="basic_configuration" id="basic_configuration">
 				<input name="featureCodeGroupID" value="FOD" type="hidden">
 
@@ -3241,10 +3247,9 @@ console.log("Delete Cluster _rev : " + revID);
 			</form>	
 		</div>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom" align="center"  id="tabs-5">
-
-			<!--	
-			<h2>HA Configuration</h2>
-			-->
+			
+			<h2  class="clusterNameTAB">HA Configuration</h2>
+			
 
 			<form name="ha_configuration" id="ha_configuration">
 
@@ -3401,9 +3406,7 @@ console.log("Delete Cluster _rev : " + revID);
 
 		</div>	
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom" align="center"  id="tabs-6">
-			<!--
-			<h2>Node Role Mapping</h2>
-			-->
+			<h2 class="clusterNameTAB">Node Role Mapping</h2>
 			<form name="node_role_mapping" id="node_role_mapping">
 	
 			<div id="deploymentSelection" class="deploymentSelection">
@@ -3455,6 +3458,8 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-7">
 			<h2><div id="cluster_name"/></h2>
+			<h2 class="clusterNameTAB">Deployment</h2>			
+			
 			<form name="deployment" id="deployment">
 				<p></p>
 				<table border="0" width="80%">
@@ -3489,6 +3494,7 @@ console.log("Delete Cluster _rev : " + revID);
 		</div>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"  align="center" id="tabs-8">
 			<h2><div id="cluster_name"/></h2>
+			<h2 class="clusterNameTAB">Upgrade</h2>	
 			<form name="upgrade" id="upgrade">
 				<p></p>
 				<table border="0" width="100%">
