@@ -889,6 +889,8 @@
 			
 			var haPayload = {};
 			var vipsPayload = {};
+			var vipifsPayload = {};
+			var nodesPayload = {};
 			
 			for(i=0;i<rows.length;i++)
 			{
@@ -896,24 +898,12 @@
 				if(isEnabledCheck)
 				{
 					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
-					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"iptext").val();
 					
-					if(rows[i].name=='db')
-					{
-						var dbPayload = {};
-						dbPayload['db2_primary_host']=$("#dbtext1").val();
-						dbPayload['db2_standby_host']=$("#dbtext2").val();
-						
-						jsonPayload['db']=dbPayload;
-					}
+					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"iptext").val();			
+					vipifsPayload[rows[i].name+"_vipif"]=$("#"+rows[i].name+"iftext").val();	
 					
-					if(rows[i].name=='mq')
-					{
-						var mqPayload = {};
-						mqPayload['qpid_nodes']=$("#mqtext1").val()+","+$("#mqtext2").val();
-						
-						jsonPayload['mq']=mqPayload;
-					}					
+					// Store value as ["192.168.122.13","192.168.122.14"]
+					nodesPayload[rows[i].name+"_nodes"]='["' + $("#"+rows[i].name+"text1").val() + '","' + $("#"+rows[i].name+"text2").val() +'"]';	
 				}
 				else
 				{
@@ -923,7 +913,9 @@
 			}				
 						
 			jsonPayload['ha']=haPayload;
-			jsonPayload['vips']=vipsPayload;
+			jsonPayload['vips']=vipsPayload ;
+			jsonPayload['vipifs']=vipifsPayload;
+			jsonPayload['nodes']=nodesPayload;
 			
 			return jsonPayload;
 
@@ -1612,9 +1604,7 @@
 													
 							for(k=0;k<rows.length;k++)
 							{
-								console.log("Rows inside messagingObj = " + rows[k].name);	
 								$('#'+(rows[k].name)).val(messagingObj[rows[k].name]);
-
 							}			
 							var rows = $('#amqpConfiguration select');
 							for(i=0;i<rows.length;i++)
@@ -1712,9 +1702,7 @@
 							var networksObj = jsonValue['networks'];
 							var rows = $('#Networks input:text');
 							for(k=0;k<rows.length;k++)
-							{
-							
-								console.log("Rows inside networks = " + rows[k].name);	
+							{							
 								$('#'+(rows[k].name)).val(networksObj[rows[k].name]);
 							} 
 							
@@ -1725,8 +1713,6 @@
 							var rows = $('#Vlans input:text');
 							for(k=0;k<rows.length;k++)
 							{
-							
-								console.log("Rows inside networks = " + rows[k].name);	
 								$('#'+(rows[k].name)).val(vlansObj[rows[k].name]);
 							} 
 							
@@ -1736,7 +1722,6 @@
 							var rows = $('#GPFS input:text');
 							for(k=0;k<rows.length;k++)
 							{							
-								console.log("Rows inside GPFS = " + rows[k].name);	
 								$('#'+(rows[k].name)).val(GPFSObj[rows[k].name]);
 							} 	
 							
@@ -1748,7 +1733,6 @@
 								var rows = $('#Quantum input:text');
 								for(k=0;k<rows.length;k++)
 								{
-									console.log("Rows inside networks = " + rows[k].name);	
 									$('#'+(rows[k].name)).val(quantumObj[rows[k].name]);
 								} 
 								if(quantumObj['enable_tunneling'] == 'true')
@@ -1773,7 +1757,7 @@
 						}
 						else if(jsonValue.type == "cluster-ha-setting")
 						{
-							//console.log("Loading HA Object");
+							console.log("Loading HA Object");
 							loadedHAObject=jsonValue;
 							
 							$('#haEnabledCheck').attr('checked', 'checked');		
@@ -1787,6 +1771,8 @@
 							
 							var haObj = jsonValue['ha'];
 							var vipsObj = jsonValue['vips'];
+							var vipifsObj = jsonValue['vipifs'];
+							var nodesObj = jsonValue['nodes'];
 
 							var all_keys = Object.keys(haObj);
 													
@@ -1795,34 +1781,23 @@
 								//alert(value);
 								
 								if(value == 'true')
-								{									
-									//alert(all_keys[j].indexOf("_ha"));
-									
+								{																	
 									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_ha"));
-									//alert(objName);									
+									//console.log("objName -> " + objName);		
+									
 									$('#'+objName+'').attr('checked', 'checked');
 									$('#row'+objName).show();
-
-									$('#'+(objName)+'text').val(vipsObj[objName+"_vip"]);
 									
-									if(objName=="db")
-									{
-										var dbObj = jsonValue['db'];
-										
-										$('#dbtext1').val(dbObj['db2_primary_host']);			
-										$('#dbtext2').val(dbObj['db2_standby_host']);			
-																				
-									}
-									else if(objName=="mq")
-									{
+									// Stored value as ["192.168.122.13","192.168.122.14"]
 									
-										var mqObj = jsonValue['mq'];
-										var qpid_nodes = mqObj['qpid_nodes'];
-										
-										$('#mqtext1').val(qpid_nodes.substr(0,qpid_nodes.indexOf(",")));			
-										$('#mqtext2').val(qpid_nodes.substr(qpid_nodes.indexOf(",")+1));										
+									var nodeValues = nodesObj[objName+"_nodes"];								
+									var secValue = nodeValues.substr(nodeValues.indexOf(",")+2, nodeValues.length-2 );
 									
-									}
+									$('#'+(objName)+'text1').val(nodeValues.substr(2,nodeValues.indexOf(",")-3));
+									$('#'+(objName)+'text2').val(secValue.substr(0, secValue.length-2 ));
+									
+									$('#'+(objName)+'iptext').val(vipsObj[objName+"_vip"]);
+									$('#'+(objName)+'iftext').val(vipifsObj[objName+"_vipif"]);
 								}
 								
 							}
@@ -3324,6 +3299,9 @@ console.log("Delete Cluster _rev : " + revID);
 											
 											<label id="mqVirtualIPL"> Virtual IP </label>											
 											<input id="mqiptext" name="mqiptext" type="text" size="12">											
+
+											<label id="mqVirtualIPF"> Interface </label>											
+											<input id="mqiftext" name="mqiftext" type="text" size="12">
 										</div>
 									</TD>									
 									<TD align="center" width="10%">
@@ -3335,7 +3313,10 @@ console.log("Delete Cluster _rev : " + revID);
 											<input id="dbtext2" name="dbtext2" type="text" size="12">
 											
 											<label id="dbVirtualIPL"> Virtual IP </label>
-											<input id="dbiptext" name="dbiptext" type="text" size="12">											
+											<input id="dbiptext" name="dbiptext" type="text" size="12">			
+
+											<label id="dbVirtualIPF"> Interface </label>											
+											<input id="dbiftext" name="dbiftext" type="text" size="12">											
 										</div>
 									</TD>
 									<TD align="center" width="10%">
@@ -3347,7 +3328,10 @@ console.log("Delete Cluster _rev : " + revID);
 											<input id="identitytext2" name="identitytext2" type="text" size="12">
 											
 											<label id="identityVirtualIPL"> Virtual IP </label>
-											<input id="identityiptext" name="identityiptext" type="text" size="12">												
+											<input id="identityiptext" name="identityiptext" type="text" size="12">		
+
+											<label id="identityVirtualIPF"> Interface </label>											
+											<input id="identityiftext" name="identityiftext" type="text" size="12">												
 										</div>
 									</TD>
 									<TD align="center" width="10%">
@@ -3360,6 +3344,9 @@ console.log("Delete Cluster _rev : " + revID);
 											
 											<label id="imageVirtualIPL"> Virtual IP </label>
 											<input id="imageiptext" name="imageiptext" type="text" size="12">	
+											
+											<label id="imageVirtualIPF"> Interface </label>											
+											<input id="imageiftext" name="imageiftext" type="text" size="12">												
 										</div>
 									</TD>
 									<TD align="center" width="10%">
@@ -3372,6 +3359,9 @@ console.log("Delete Cluster _rev : " + revID);
 											
 											<label id="volumeVirtualIPL"> Virtual IP </label>
 											<input id="volumeiptext" name="volumeiptext" type="text" size="12">	
+
+											<label id="volumeVirtualIPF"> Interface </label>											
+											<input id="volumeiftext" name="volumeiftext" type="text" size="12">												
 										</div>
 									</TD>
 									<TD align="center" width="10%">
@@ -3383,7 +3373,10 @@ console.log("Delete Cluster _rev : " + revID);
 											<input id="computetext2" name="computetext2" type="text" size="12">
 											
 											<label id="computeVirtualIPL"> Virtual IP </label>
-											<input id="computeiptext" name="computeiptext" type="text" size="12">												
+											<input id="computeiptext" name="computeiptext" type="text" size="12">	
+
+											<label id="computeVirtualIPF"> Interface </label>											
+											<input id="computeiftext" name="computeiftext" type="text" size="12">												
 										</div>
 									</TD>
 									<TD align="center" width="10%" id>
@@ -3396,6 +3389,9 @@ console.log("Delete Cluster _rev : " + revID);
 											
 											<label id="network_apiVirtualIPL"> Virtual IP </label>
 											<input id="network_apiiptext" name="network_apiiptext" type="text" size="12">	
+											
+											<label id="network_apiVirtualIPF"> Interface </label>											
+											<input id="network_apiiftext" name="network_apiiftext" type="text" size="12">												
 										</div>
 									</TD>
 									<TD align="center" width="10%" class="rounded-foot-right">
@@ -3408,9 +3404,13 @@ console.log("Delete Cluster _rev : " + revID);
 											
 											<label id="metering_apiVirtualIPL"> Virtual IP </label>
 											<input id="metering_apiiptext" name="metering_apiiptext" type="text" size="12">	
+											
+											<label id="metering_apiVirtualIPF"> Interface </label>											
+											<input id="metering_apiiftext" name="metering_apiiftext" type="text" size="12">												
 										</div>
 									</TD>
 								</TR>
+								
 							</TABLE>
 						</div>
 
