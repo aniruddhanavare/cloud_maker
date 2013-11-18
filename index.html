@@ -98,11 +98,11 @@
 	 
 	 $("#createCluster").click(function(e){
 	 
-			$("#basic_configuration").show();
-			$("#ha_configuration").show();
-			$("#deployment").show();		
-			$("#upgrade").show();		
-			$("#node_role_mapping").show();
+			$("#basic_configurationTAB").show();
+			$("#ha_configurationTAB").show();
+			$("#deploymentTAB").show();		
+			$("#upgradeTAB").show();		
+			$("#node_role_mappingTAB").show();
 		
 			$("#name").removeAttr("disabled");
 			$("#description").removeAttr("disabled");
@@ -118,11 +118,11 @@
 			//alert(this.getAttribute("desc"));
 			
 			//$('.newCluster').show();			
-			$("#basic_configuration").show();
-			$("#ha_configuration").show();
-			$("#deployment").show();	
-			$("#upgrade").show();					
-			$("#node_role_mapping").show();
+			$("#basic_configurationTAB").show();
+			$("#ha_configurationTAB").show();
+			$("#deploymentTAB").show();	
+			$("#upgradeTAB").show();					
+			$("#node_role_mappingTAB").show();
 			
 			$('#tabs1').tabs({ active: 4 });
 		
@@ -139,12 +139,17 @@
 		
 			//alert(this.id);
 			currentID = this.id;
+			currentRevID = this.getAttribute("revID");
+						
+			oldID = this.id; 
+			oldRevID = this.getAttribute("revID");
+			oldClusterName = this.getAttribute("cname");
 
-			$("#basic_configuration").show();
-			$("#ha_configuration").show();
-			$("#deployment").show();
-			$("#upgrade").show();					
-			$("#node_role_mapping").show();
+			$("#basic_configurationTAB").show();
+			$("#ha_configurationTAB").show();
+			$("#deploymentTAB").show();
+			$("#upgradeTAB").show();					
+			$("#node_role_mappingTAB").show();
 			
 			$('#tabs1').tabs({ active: 1 });
 
@@ -154,7 +159,7 @@
 			$('#description').val(this.getAttribute("desc"));
 			$('#name').val(this.getAttribute("cname"));
 					
-			loadClusterConfiguration();
+			//loadClusterConfiguration();
 			
 		});
 		
@@ -392,11 +397,11 @@
 	$('#tabs_main').tabs({ active: 0 });
 	$('#tabs1').tabs({ active: 0 });
 	
-	$("#basic_configuration").hide();
-	$("#ha_configuration").hide();
-	$("#node_role_mapping").hide();
-	$("#deployment").hide();
-	$("#upgrade").hide();		
+	$("#basic_configurationTAB").hide();
+	$("#ha_configurationTAB").hide();
+	$("#node_role_mappingTAB").hide();
+	$("#deploymentTAB").hide();
+	$("#upgradeTAB").hide();		
 	
 	setTimeout(function() {clearAll(); }, 2000);	
 	
@@ -491,9 +496,9 @@
 		if(isNew)
 		{
 		
-			//console.log("oldID : " + oldID);
-			//console.log("oldRevID : " + oldRevID);
-			//console.log("oldClusterName : " + oldClusterName);
+			console.log("oldID : " + oldID);
+			console.log("oldRevID : " + oldRevID);
+			console.log("oldClusterName : " + oldClusterName);
 			
 			if(oldID)
 			{
@@ -2525,11 +2530,11 @@ console.log("Delete Cluster _rev : " + revID);
 				//console.log("jsonValue._id : "+ jsonValue._id);
 					if(i == nodes.length-1)
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td class=\"rounded-foot-left\">"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(jsonValue.user_name)+"</td><td><a class=\"editCluster\" revID='"+(jsonValue._rev)+"' id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"' desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td class=\"rounded-foot-right\"><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");
 					}
 					else
 					{
-						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a class=\"editCluster\" id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
+						$("#baseTableCluster > tbody").append("<tr id='cluster"+(jsonValue._id)+"' align='center'><td>"+(jsonObject.key)+"</td><td>"+(jsonValue.description)+"</td><td>"+(	jsonValue.user_name)+"</td><td><a class=\"editCluster\" revID='"+(jsonValue._rev)+"' id='"+(jsonValue._id)+"' desc='"+(jsonValue.description)+"' cname='"+(jsonValue.name)+"' href=\"#\"><img src=\"img/edit.png\"/></a></td><td ><a class=\"startDeploymentOnly\" id='"+(jsonObject.key)+"'  desc='"+(jsonValue.description)+"' href=\"#\"><img src=\"img/install.png\"/></a></td><td ><a id=\"aaaa\" href=\"javascript:deleteCluster('"+(jsonValue._id)+"','"+(jsonValue._rev)+"','"+(jsonObject.key)+"','Yes');\"><img src=\"img/delete.png\"/></a></td></tr>");						
 					}
 				
 			}
@@ -2573,7 +2578,6 @@ console.log("Delete Cluster _rev : " + revID);
 	function clearAll()
 	{
 		$("form").each(function() {
-				//console.log(this.id);
 				if(this.id!="deployment")
 				{
 					$("#"+(this.id)+"").each(function() {
@@ -2688,11 +2692,11 @@ console.log("Delete Cluster _rev : " + revID);
 			class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<li><a class="ui-tabs-anchor" href="#tabs-2">Cluster List</a></li>
 			<!--<li><a class="ui-tabs-anchor" href="#tabs-3">Cluster Info</a></li>-->
-			<li><a class="ui-tabs-anchor" id="basic_configuration" href="#tabs-4">Basic Configuration</a></li>
-			<li><a class="ui-tabs-anchor" id="ha_configuration" href="#tabs-5">HA Configuration</a></li>
-			<li><a class="ui-tabs-anchor" id="node_role_mapping" href="#tabs-6">Node-Role Mapping</a></li>
-			<li><a class="ui-tabs-anchor" id="deployment" href="#tabs-7">Deployment</a></li>
-			<li><a class="ui-tabs-anchor" id="upgrade" href="#tabs-8">Upgrade</a></li>
+			<li><a class="ui-tabs-anchor" id="basic_configurationTAB" href="#tabs-4">Basic Configuration</a></li>
+			<li><a class="ui-tabs-anchor" id="ha_configurationTAB" href="#tabs-5">HA Configuration</a></li>
+			<li><a class="ui-tabs-anchor" id="node_role_mappingTAB" href="#tabs-6">Node-Role Mapping</a></li>
+			<li><a class="ui-tabs-anchor" id="deploymentTAB" href="#tabs-7">Deployment</a></li>
+			<li><a class="ui-tabs-anchor" id="upgradeTAB" href="#tabs-8">Upgrade</a></li>
 		</ul>
 		<div class="ui-tabs-panel ui-widget-content ui-corner-bottom"   align="center" id="tabs-2">
 			<!--	
