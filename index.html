@@ -1631,22 +1631,15 @@
 							}							
 
 							// Load Identity Configuration
-							
-							var yumpackagesObj = jsonValue['yumpackages'];
-							var rows = $('#yumpackagesConfiguration input:text');
-							for(k=0;k<rows.length;k++)
-							{
-								$('#'+(rows[k].name)).val(yumpackagesObj[rows[k].name]);
-							}
-
-	 
 							var identityObj = jsonValue['identity'];
 							var rows = $('#identityConfiguration input:text');
 							for(k=0;k<rows.length;k++)
 							{
 								$('#'+(rows[k].name)).val(identityObj[rows[k].name]);
 
-							}	 
+							}			
+
+							// Load Image Configuration	
 							var imageObj = jsonValue['image'];
 							var rows = $('#imageConfiguration input:text');
 							for(k=0;k<rows.length;k++)
@@ -1661,28 +1654,36 @@
 							else
 							{
 								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
-							}
+							}		
+
+							// Load Compute Configuration	
 							var computeObj = jsonValue['compute'];
 							var rows = $('#computeConfiguration input:text');
 							for(k=0;k<rows.length;k++)
 							{
 								$('#'+(rows[k].name)).val(computeObj[rows[k].name]);
 
-							}	 
+							}				
+
+							// Load VNC Configuration
 							var vncObj = jsonValue['vnc'];
 							var rows = $('#vncConfiguration input:text');
 							for(k=0;k<rows.length;k++)
 							{
 								$('#'+(rows[k].name)).val(vncObj[rows[k].name]);
 
-							}	 
+							}							
+							
+							// Load Volumn Configuration								
 							var volumeObj = jsonValue['volume'];
 							var rows = $('#volumeConfiguration input:text');
 							for(k=0;k<rows.length;k++)
 							{
 								$('#'+(rows[k].name)).val(volumeObj[rows[k].name]);
 
-							}	 
+							}
+							
+							// Load Network API Configuration
 							var networkapiObj = jsonValue['network-api'];
 							var rows = $('#networkapiConfiguration input:text');
 							for(k=0;k<rows.length;k++)
@@ -1691,6 +1692,17 @@
 
 							}
 
+							
+							// Load YUM Configuration
+							var yumpackagesObj = jsonValue['yumpackages'];
+							var rows = $('#yumpackagesConfiguration input:text');
+							for(k=0;k<rows.length;k++)
+							{
+								$('#'+(rows[k].name)).val(yumpackagesObj[rows[k].name]);
+							}
+
+	 
+							// Load Networks Configuration
 							var networksObj = jsonValue['networks'];
 							var rows = $('#Networks input:text');
 							for(k=0;k<rows.length;k++)
@@ -1699,6 +1711,10 @@
 								console.log("Rows inside networks = " + rows[k].name);	
 								$('#'+(rows[k].name)).val(networksObj[rows[k].name]);
 							} 
+							
+							$('#networktype').val(jsonValue['networktype']);
+							
+							// Load VLAN Configuration
 							var vlansObj = jsonValue['vlans'];
 							var rows = $('#Vlans input:text');
 							for(k=0;k<rows.length;k++)
@@ -1707,6 +1723,18 @@
 								console.log("Rows inside networks = " + rows[k].name);	
 								$('#'+(rows[k].name)).val(vlansObj[rows[k].name]);
 							} 
+							
+							
+							// Load GPFS Configuration						
+							var GPFSObj = jsonValue['gpfs'];
+							var rows = $('#GPFS input:text');
+							for(k=0;k<rows.length;k++)
+							{							
+								console.log("Rows inside GPFS = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(GPFSObj[rows[k].name]);
+							} 	
+							
+							// Load Quantum Configuration
 							var quantumObj = jsonValue['quantum'];
 
 							if(quantumObj)
@@ -1732,13 +1760,8 @@
 								
 								$('.Quantum').hide();
 							}
-							var GPFSObj = jsonValue['gpfs'];
-							var rows = $('#GPFS input:text');
-							for(k=0;k<rows.length;k++)
-							{							
-								console.log("Rows inside GPFS = " + rows[k].name);	
-								$('#'+(rows[k].name)).val(GPFSObj[rows[k].name]);
-							} 							
+							
+						
 						
 							
 						}
