@@ -159,7 +159,7 @@
 			$('#description').val(this.getAttribute("desc"));
 			$('#name').val(this.getAttribute("cname"));
 					
-			//loadClusterConfiguration();
+			loadClusterConfiguration();
 			
 		});
 		
@@ -403,7 +403,7 @@
 	$("#deploymentTAB").hide();
 	$("#upgradeTAB").hide();		
 	
-	setTimeout(function() {clearAll(); }, 2000);	
+	//setTimeout(function() {clearAll(); }, 2000);	
 	
 	$('#HAConfigurataion input:checkbox').change(function () {
 
@@ -1582,11 +1582,10 @@
 		}	
 		});
 	
-	
 	$.couch.db("devops").view("data/by_clusterid", { key: currentID, success: function(data) {
 
 					var nodes = data.rows;
-					//console.log("nodes length : " + nodes.length);
+					console.log("nodes length : " + nodes.length);
 	
 					for(nodeI=0;nodeI<nodes.length;nodeI++)
 					{
@@ -1597,65 +1596,27 @@
 						//alert(jsonValue.type);
 						if(jsonValue.type == "cluster-basic-setting")
 						{
-							//console.log("Loading Basic Object");
+							console.log("Loading Basic Object");
 							loadedBaseObject = jsonValue;
 							/*var rows = $('#basicConfiguration select'); */ /*Commenting this out for now */
 
-							console.log(" Printing yum info " + jsonValue['yumpackages'] );
-							console.log(" Printing yum info " + jsonValue.yumpackages );
-
-							/*
-							for(i=0;i<rows.length;i++)
-							{
-								$('#'+(rows[i].name)).val(jsonValue[rows[i].name]);
-								
-								if(jsonValue[rows[i].name] =="quantum")
-								{
-									$('.Quantum').show();		
-									var quantumObj = jsonValue['quantum'];
-									
-									var input_rows = $('#Quantum input:text');
-									for(j=0;j<input_rows.length;j++)
-									{
-										$('#'+(input_rows[j].name)).val(quantumObj[input_rows[j].name]);
-									}
-									
-									//alert(quantumObj['enable_tunneling']);
-									if(quantumObj['enable_tunneling'] == 'true')
-									{
-										$('input:radio[name=enable_tunneling]:nth(0)').attr('checked',true);
-									}
-									else
-									{
-										$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
-									}
-									
-								}
-								else
-								{
-									$('.Quantum').hide();	
-								}															
-							}
-						
-							var networksObj = jsonValue['networks'];
-							
-							var rows = $('#OSOPS input:text');
-
+							// Load AMQP Configuration	
+							var messagingObj = jsonValue['ops-messaging'];
+							var rows = $('#amqpConfiguration input:text');
+													
 							for(k=0;k<rows.length;k++)
 							{
-								$('#'+(rows[k].name)).val(networksObj[rows[k].name]);
-							}								
-							
-							var glanceOjb = jsonValue['glance'];
-							
-							if(glanceOjb['image_upload'] == 'true')
-							{
-								$('input:radio[name=image_upload]:nth(0)').attr('checked',true);
+								console.log("Rows inside messagingObj = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(messagingObj[rows[k].name]);
+
+							}			
+							var rows = $('#amqpConfiguration select');
+							for(i=0;i<rows.length;i++)
+							{							
+								$('#'+(rows[i].name)).val(messagingObj[rows[i].name]);
 							}
-							else
-							{
-								$('input:radio[name=image_upload]:nth(1)').attr('checked',true);
-							} */	
+							
+							
 
 							var yumpackagesObj = jsonValue['yumpackages'];
 							var rows = $('#yumpackagesConfiguration input:text');
@@ -1664,13 +1625,7 @@
 								$('#'+(rows[k].name)).val(yumpackagesObj[rows[k].name]);
 							}
 
-							var messagingObj = jsonValue['ops-messaging'];
-							var rows = $('#amqpConfiguration input:text');
-							for(k=0;k<rows.length;k++)
-							{
-								$('#'+(rows[k].name)).val(messagingObj[rows[k].name]);
-
-							}	 
+	 
 							var databaseObj = jsonValue['ops-database'];
 							var rows = $('#databaseConfiguration input:text');
 							for(k=0;k<rows.length;k++)
@@ -1746,22 +1701,30 @@
 								$('#'+(rows[k].name)).val(vlansObj[rows[k].name]);
 							} 
 							var quantumObj = jsonValue['quantum'];
-							var rows = $('#Quantum input:text');
-							for(k=0;k<rows.length;k++)
+
+							if(quantumObj)
 							{
+								var rows = $('#Quantum input:text');
+								for(k=0;k<rows.length;k++)
+								{
+									console.log("Rows inside networks = " + rows[k].name);	
+									$('#'+(rows[k].name)).val(quantumObj[rows[k].name]);
+								} 
+								if(quantumObj['enable_tunneling'] == 'true')
+								{
+									$('input:radio[name=enable_tunneling]:nth(0)').attr('checked',true);
+								}
+								else
+								{
+									$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
+								}
 							
-								console.log("Rows inside networks = " + rows[k].name);	
-								$('#'+(rows[k].name)).val(quantumObj[rows[k].name]);
-							} 
-							if(quantumObj['enable_tunneling'] == 'true')
-							{
-								$('input:radio[name=enable_tunneling]:nth(0)').attr('checked',true);
 							}
 							else
 							{
-								$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
+								
+								$('.Quantum').hide();
 							}
-							
 							var GPFSObj = jsonValue['gpfs'];
 							var rows = $('#GPFS input:text');
 							for(k=0;k<rows.length;k++)
@@ -2577,6 +2540,8 @@ console.log("Delete Cluster _rev : " + revID);
 	
 	function clearAll()
 	{
+	
+		console.log("clearning");
 		$("form").each(function() {
 				if(this.id!="deployment")
 				{
@@ -2588,7 +2553,7 @@ console.log("Delete Cluster _rev : " + revID);
 		
 		// Clear Info Tab
 		$("#selectOptionLabel").text("");		
-		$('.newCluster').hide();
+		//$('.newCluster').hide();
 		$('.existingNode').hide();
 		
 		// Clearn Basic Configuration
