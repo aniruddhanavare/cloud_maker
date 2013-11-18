@@ -1757,6 +1757,13 @@
 								$('input:radio[name=enable_tunneling]:nth(1)').attr('checked',true);
 							}
 							
+							var GPFSObj = jsonValue['gpfs'];
+							var rows = $('#GPFS input:text');
+							for(k=0;k<rows.length;k++)
+							{							
+								console.log("Rows inside GPFS = " + rows[k].name);	
+								$('#'+(rows[k].name)).val(GPFSObj[rows[k].name]);
+							} 							
 						
 							
 						}
