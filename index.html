@@ -915,7 +915,7 @@
 			jsonPayload['ha']=haPayload;
 			jsonPayload['vips']=vipsPayload ;
 			jsonPayload['vipifs']=vipifsPayload;
-			jsonPayload['nodes']=nodesPayload;
+			jsonPayload['ha_nodes']=nodesPayload;
 			
 			return jsonPayload;
 
@@ -1772,7 +1772,7 @@
 							var haObj = jsonValue['ha'];
 							var vipsObj = jsonValue['vips'];
 							var vipifsObj = jsonValue['vipifs'];
-							var nodesObj = jsonValue['nodes'];
+							var nodesObj = jsonValue['ha_nodes'];
 
 							var all_keys = Object.keys(haObj);
 													
