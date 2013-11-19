@@ -900,7 +900,7 @@
 					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
 					
 					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"iptext").val();			
-					vipifsPayload[rows[i].name+"_vipif"]=$("#"+rows[i].name+"iftext").val();	
+					vipifsPayload[rows[i].name+"_vip_if"]=$("#"+rows[i].name+"iftext").val();	
 					
 					// Store value as ["192.168.122.13","192.168.122.14"]
 					nodesPayload[rows[i].name+"_nodes"]='["' + $("#"+rows[i].name+"text1").val() + '","' + $("#"+rows[i].name+"text2").val() +'"]';	
@@ -1797,7 +1797,7 @@
 									$('#'+(objName)+'text2').val(secValue.substr(0, secValue.length-2 ));
 									
 									$('#'+(objName)+'iptext').val(vipsObj[objName+"_vip"]);
-									$('#'+(objName)+'iftext').val(vipifsObj[objName+"_vipif"]);
+									$('#'+(objName)+'iftext').val(vipifsObj[objName+"_vip_if"]);
 								}
 								
 							}
