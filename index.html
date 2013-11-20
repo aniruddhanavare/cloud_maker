@@ -897,7 +897,7 @@
 				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
 				if(isEnabledCheck)
 				{
-					haPayload[rows[i].name+"_ha"]=isEnabledCheck;
+					haPayload[rows[i].name+"_cluster"]=isEnabledCheck;
 					
 					vipsPayload[rows[i].name+"_vip"]=$("#"+rows[i].name+"iptext").val();			
 					vipifsPayload[rows[i].name+"_vip_if"]=$("#"+rows[i].name+"iftext").val();	
@@ -907,7 +907,7 @@
 				}
 				else
 				{
-					haPayload[rows[i].name+"_ha"]='false';
+					haPayload[rows[i].name+"_cluster"]='false';
 					vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
 				}
 			}				
@@ -1782,7 +1782,7 @@
 								
 								if(value == 'true')
 								{																	
-									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_ha"));
+									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_cluster"));
 									//console.log("objName -> " + objName);		
 									
 									$('#'+objName+'').attr('checked', 'checked');
