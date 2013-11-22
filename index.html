@@ -892,6 +892,13 @@
 			var vipifsPayload = {};
 			var nodesPayload = {};
 			
+			// Default HA Metering Configuration Values
+			
+			haPayload["metering_api_cluster"]="false";
+			vipsPayload["metering_api_vip"]="192.168.122.265";			
+			vipifsPayload["metering_api_vip_if"]="eth0";				
+			nodesPayload["metering_api_nodes"]='["192.168.122.13", "192.168.122.14"]';	
+			
 			for(i=0;i<rows.length;i++)
 			{
 				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
@@ -1798,6 +1805,11 @@
 									
 									$('#'+(objName)+'iptext').val(vipsObj[objName+"_vip"]);
 									$('#'+(objName)+'iftext').val(vipifsObj[objName+"_vip_if"]);
+								}
+								else
+								{
+									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_cluster"));
+									$('#row'+objName).hide();
 								}
 								
 							}
@@ -3265,8 +3277,8 @@ console.log("Delete Cluster _rev : " + revID);
 									<TH align="center" width="10%">Image</TH>
 									<TH align="center" width="10%">Volume</TH>
 									<TH align="center" width="10%">Compute</TH>
-									<TH align="center" width="10%">Network API</TH>
-									<TH align="center" width="10%" class="rounded-right">Metering-API</TH>
+									<TH align="center" width="10%" class="rounded-right">Network API</TH>
+									<!--<TH align="center" width="10%" class="rounded-right">Metering-API</TH>-->
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%">HA Component</TD>
@@ -3284,8 +3296,8 @@ console.log("Delete Cluster _rev : " + revID);
 										name="compute" id="compute" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
 										name="network_api" id="network_api"  value="true" type="checkbox"></TD>
-									<TD align="center" width="10%"><input
-										name="metering_api" id="metering_api"  value="true" type="checkbox"></TD>
+									<!--<TD align="center" width="10%"><input
+										name="metering_api" id="metering_api"  value="true" type="checkbox"></TD>-->
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%" class="rounded-foot-left">Virtual IP</TD>
@@ -3394,7 +3406,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<input id="network_apiiftext" name="network_apiiftext" type="text" size="12">												
 										</div>
 									</TD>
-									<TD align="center" width="10%" class="rounded-foot-right">
+									<!--<TD align="center" width="10%" class="rounded-foot-right">
 										<div id="rowmetering_api">
 											<label id="metering_apiPrimaryHost"> Primary </label> 
 											<input id="metering_apitext1" name="metering_apitext1" type="text" size="12"> 
@@ -3408,7 +3420,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<label id="metering_apiVirtualIPF"> Interface </label>											
 											<input id="metering_apiiftext" name="metering_apiiftext" type="text" size="12">												
 										</div>
-									</TD>
+									</TD>-->
 								</TR>
 								
 							</TABLE>
