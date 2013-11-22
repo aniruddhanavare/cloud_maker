@@ -930,6 +930,9 @@
 	  
 	   function saveBasicConfigurationNew(id) {
  
+		var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+
 
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
@@ -946,7 +949,19 @@
 		var opsmessaging = {}
 		for(i=0;i<rows.length;i++)
 		{
-			opsmessaging[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					opsmessaging[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				opsmessaging[rows[i].name]=rows[i].value;
+			}
 		}
 		for(i=0;i<rows2.length;i++)
 		{
@@ -963,7 +978,19 @@
 		var opsdatabase = {}
 		for(i=0;i<rows.length;i++)
 		{
-			opsdatabase[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					opsdatabase[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				opsdatabase[rows[i].name]=rows[i].value;
+			}					
 		}
 		for(i=0;i<rows2.length;i++)
 		{
@@ -978,14 +1005,40 @@
 		var identitypayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			identitypayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					identitypayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				identitypayload[rows[i].name]=rows[i].value;
+			}		
+			
 		}
 		var rows = $('#imageConfiguration input:text');
 		var rows2 = $('#imageConfiguration input:radio');
 		var imagepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			imagepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					imagepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				imagepayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
@@ -999,30 +1052,70 @@
 		var computepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			computepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					computepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				computepayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			computepayload[rows2[i].name]=rows2[i].value;
 		}
-	var rows = $('#vncConfiguration input:text');
+		
+		var rows = $('#vncConfiguration input:text');
 		var rows2 = $('#vncConfiguration input:radio');
 		var vncpayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			vncpayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					vncpayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				vncpayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			vncpayload[rows2[i].name]=rows2[i].value;
 		}
 
-	var rows = $('#volumeConfiguration input:text');
+		var rows = $('#volumeConfiguration input:text');
 		var rows2 = $('#volumeConfiguration input:radio');
 		var volumepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			volumepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					volumepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				volumepayload[rows[i].name]=rows[i].value;
+			}			
+			
 
 		}
 		for(i=0;i<rows2 .length;i++)
@@ -1030,23 +1123,51 @@
 			volumepayload[rows2[i].name]=rows2[i].value;
 
 		}
-	var rows = $('#networkapiConfiguration input:text');
+		
+		var rows = $('#networkapiConfiguration input:text');
 		var rows2 = $('#networkapiConfiguration input:radio');
 		var networkapipayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			networkapipayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					networkapipayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				networkapipayload[rows[i].name]=rows[i].value;
+			}		
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			networkapipayload[rows2[i].name]=rows2[i].value;
 		}
-	var rows = $('#yumpackagesConfiguration input:text');
+		
+		var rows = $('#yumpackagesConfiguration input:text');
 		var rows2 = $('#yumpackagesConfiguration input:radio');
 		var yumpackagespayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			yumpackagespayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					yumpackagespayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				yumpackagespayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
