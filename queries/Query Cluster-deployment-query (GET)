@@ -1,0 +1,20 @@
+{
+   "_id": "_design/cluster-deployment-query",
+   "_rev": "1-8bf8ae3f3a9059a7e53eb4536f0ad773",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='cluster-deployment') {  emit(doc.cluster_name, doc); } }"
+       }
+   }
+}
+
+{
+   "_id": "f25a180e2e602da11532c22589011c7b",
+   "_rev": "2-b3c7f1ad025c994c91e95044c1ce1f63",
+   "type": "cluster-deployment",
+   "cluster_name": "mycluster",
+   "deployed_instance": "yes",
+   "instance_name": "myopenstack",
+   "deployment_status": "success"
+}

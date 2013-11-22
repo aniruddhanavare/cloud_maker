@@ -1,0 +1,16 @@
+{"total_rows":1,"offset":0,"rows":[
+{"id":"f25a180e2e602da11532c2258900ed93","key":"mycluster","value":{"_id":"f25a180e2e602da11532c2258900ed93","_rev":"4-6d8dfbd1ef720c3cb78b962ae5c487a9","type":"cluster","name":"mycluster","chef_server_ip":"172.16.0.8","chef_env_name":"grizzly","chef_path":"/root/openstackchef/openstack-installation","user_name":"root","ssh_key":"/root/.ssh/id_rsa"}}
+]}
+
+
+{
+   "_id": "_design/cluster-query",
+   "_rev": "1-ed93ccfeb466d171cfbd4e690ae3b397",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='cluster') {  emit(doc.name, doc); } }"
+       }
+   }
+}
+

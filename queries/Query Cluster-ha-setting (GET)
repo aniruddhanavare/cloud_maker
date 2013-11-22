@@ -1,0 +1,15 @@
+{"total_rows":1,"offset":0,"rows":[
+{"id":"f25a180e2e602da11532c2258900f8af","key":"mycluster","value":{"_id":"f25a180e2e602da11532c2258900f8af","_rev":"5-4850c64c9cac227e94161a46ec9ebff1","type":"cluster-ha-setting","cluster_name":"mycluster","hatype":"stingray","db":{"db2_primary_host":"172.16.1.188","db2_standby_host":"172.16.1.188"},"mq":{"qpid_nodes":"172.16.1.196,172.16.1.197"},"ha":{"db_ha":"false","mq_ha":"true","keystone_ha":"true","glance_api_ha":"false","glance_registry_ha":"false","cinder_api_ha":"false","nova_api_ha":"true","ec2_api_ha":"true","quantum_server_ha":"true"},"vips":{"db_vip":"172.16.1.172","mq_vip":"172.16.1.171","keystone_vip":"172.16.1.170","glance_api_vip":"172.16.1.170","glance_registry_vip":"172.16.1.170","cinder_api_vip":"172.16.1.170","nova_api_vip":"172.16.1.170","ec2_api_vip":"172.16.1.170","quantum_server_vip":"172.16.1.170"}}}
+]}
+
+
+{
+   "_id": "_design/cluster-ha-setting-query",
+   "_rev": "2-7f04a43ba71bc5e2e5545b8cb1fc6cb3",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='cluster-ha-setting') {  emit(doc.cluster_name, doc); } }"
+       }
+   }
+}
