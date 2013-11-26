@@ -1,0 +1,14 @@
+{
+   "_id": "_design/data",
+   "_rev": "1-36b0dce602bec42ef2086c13debcefb2",
+   "language": "javascript",
+   "views": {
+       "by_clusterid": {
+           "map": "function(doc) { if (doc.clusterid != null) emit(doc.clusterid, doc) }"
+       },
+	   "by_hostname": {
+           "map": "function(doc) { if (doc.hostname != null) emit(doc.hostname, doc) }"
+       }
+   }
+}
+

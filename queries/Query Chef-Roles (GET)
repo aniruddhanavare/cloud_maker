@@ -1,0 +1,137 @@
+
+Source
+
+{
+   "_id": "_design/chef-roles-query",
+   "_rev": "2-b64c2be017fe6809070c2b524069db75",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='chef-roles') {  emit(doc.type,doc); } }"
+       }
+   }
+}
+
+=================
+
+{
+   "_id": "f25a180e2e602da11532c2258901842b",
+   "_rev": "18-b792c1b1d9226632eddccfad2da827e3",
+   "type": "chef-roles",
+   "NONHA": {
+       "all": {
+           "all-in-one": "all-in-one"
+       },
+       "single-nova-network": {
+           "single-controller": "single-controller",
+           "nova-compute": "nova-compute",
+           "nova-network": "nova-network",
+           "cinder-volume": "cinder-volume"
+       },
+       "single-quantum": {
+           "single-controller": "single-controller",
+           "nova-compute": "nova-compute",
+           "cinder-volume": "cinder-volume",
+           "quantum-ovs-agent": "quantum-ovs-agent"
+       },
+       "multi-nova-network": {
+           "yum": "yum",
+           "base": "base",
+           "init-db": "init-db",
+           "init-mq": "init-mq",
+           "keystone": "keystone",
+           "glance": "glance",
+           "nova-api": "nova-api",
+           "ec2-api": "ec2-api",
+           "nova-scheduler": "nova-scheduler",
+           "nova-conductor": "nova-conductor",
+           "nova-compute": "nova-compute",
+           "nova-network": "nova-network",
+           "cinder-api": "cinder-api",
+           "cinder-controller": "cinder-controller",
+           "cinder-volume": "cinder-volume",
+           "os-dashboard": "os-dashboard"
+       },
+       "multi-quantum": {
+           "yum": "yum",
+           "base": "base",
+           "init-db": "init-db",
+           "init-mq": "init-mq",
+           "keystone": "keystone",
+           "glance": "glance",
+           "nova-api": "nova-api",
+           "ec2-api": "ec2-api",
+           "nova-scheduler": "nova-scheduler",
+           "nova-conductor": "nova-conductor",
+           "nova-compute": "nova-compute",
+           "quantum-server": "quantum-server",
+           "quantum-dhcp-agent": "quantum-dhcp-agent",
+           "quantum-ovs-agent": "quantum-ovs-agent",
+           "cinder-api": "cinder-api",
+           "cinder-controller": "cinder-controller",
+           "cinder-volume": "cinder-volume",
+           "os-dashboard": "os-dashboard"
+       }
+   },
+   "HA": {
+       "all-nova-network": {
+           "yum": "yum",
+           "base": "base",
+           "init-db": "init-db",
+           "join-db": "join-db",
+           "keystone-setup": "keystone-setup",
+           "keystone": "keystone",
+           "init-mq": "init-mq",
+           "join-mq": "join-mq",
+           "init-cluster": "init-cluster",
+           "keystone-ha": "keystone-ha",
+           "nova-api-ha": "nova-api-ha",
+           "ec2-api-ha": "ec2-api-ha",
+           "cinder-api-ha": "cinder-api-ha",
+           "join-cluster": "join-cluster",
+           "glance-setup": "glance-setup",
+           "glance": "glance",
+           "nova-setup": "nova-setup",
+           "nova-api": "nova-api",
+           "ec2-api": "ec2-api",
+           "nova-scheduler": "nova-scheduler",
+           "nova-conductor": "nova-conductor",
+           "cinder-setup": "cinder-setup",
+           "cinder-api": "cinder-api",
+           "cinder-scheduler": "cinder-scheduler",
+           "nova-compute": "nova-compute",
+           "nova-network": "nova-network"
+       },
+       "all-quantum": {
+           "yum": "yum",
+           "base": "base",
+           "init-db": "init-db",
+           "join-db": "join-db",
+           "keystone-setup": "keystone-setup",
+           "keystone": "keystone",
+           "init-mq": "init-mq",
+           "join-mq": "join-mq",
+           "init-cluster": "init-cluster",
+           "keystone-ha": "keystone-ha",
+           "quantum-server-ha": "quantum-server-ha",
+           "nova-api-ha": "nova-api-ha",
+           "ec2-api-ha": "ec2-api-ha",
+           "cinder-api-ha": "cinder-api-ha",
+           "join-cluster": "join-cluster",
+           "glance-setup": "glance-setup",
+           "glance": "glance",
+           "nova-setup": "nova-setup",
+           "nova-api": "nova-api",
+           "ec2-api": "ec2-api",
+           "nova-scheduler": "nova-scheduler",
+           "nova-conductor": "nova-conductor",
+           "nova-compute": "nova-compute",
+           "cinder-setup": "cinder-setup",
+           "cinder-api": "cinder-api",
+           "cinder-scheduler": "cinder-scheduler",
+           "quantum-server": "quantum-server",
+           "quantum-ovs-agent": "quantum-ovs-agent",
+           "quantum-dhcp-agent": "quantum-dhcp-agent"
+       }
+   }
+}

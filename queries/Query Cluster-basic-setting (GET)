@@ -1,0 +1,62 @@
+
+Source
+
+{
+   "_id": "_design/cluster-basic-setting-query",
+   "_rev": "2-b64c2be017fe6809070c2b524069db75",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='cluster-basic-setting') {  emit(doc.cluster_name, doc); } }"
+       }
+   }
+}
+
+=================
+
+{
+   "_id": "926ad821ae6f57ff2e7e8c08b00388b7",
+   "_rev": "5-acfde08178ec60afba3caad0990cefe7",
+   "type": "cluster-basic-setting",
+   "cluster_name": "mycluster",
+   "dbtype": "mysql",
+   "mqtype": "qpid",
+   "networktype": "quantum",
+   "quantum": {
+       "tenant_network_type": "gre",
+       "network_vlan_range": "520:550",
+       "bridge_mapping_nic": "eth1",
+       "floating_if": "eth0",
+       "enable_tunneling": "true",
+       "tunnel_id_range": "1:1000"
+   },
+   "networks": {
+       "pubnet": "172.16.0.0/16",
+       "novanet": "172.16.0.0/16",
+       "mgmtnet": "172.16.0.0/16",
+       "dns1": "172.16.0.1",
+       "bridge": "br-vmnet",
+       "bridgedev": "eth1",
+       "vmnet": "192.168.1.0/24",
+       "vmnetnum": "1",
+       "vmnetsize": "256",
+       "firewall_driver": "nova.virt.firewall.NoopFirewallDriver",
+       "network_manager": "nova.network.manager.FlatDHCPManager",
+       "vlan": {
+           "vlan_start": "520",
+           "vlan_end": "550",
+           "vlan_interface": "vlan1"
+       }
+   },
+   "glance": {
+       "image_upload": "true"
+   },
+   "gpfs": {
+       "gpfs_cluster_name": "gpfs_01"
+   },
+   "enable_iptables": "true",
+   "packageserver": "172.16.0.8",
+   "imageserver": "172.16.0.8"
+}
+
+

@@ -1,0 +1,10 @@
+{
+   "_id": "_design/action-query",
+   "_rev": "1-4b3c94629e0c2094f774fae6dca5307e",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='action') {  emit(doc.name, doc); } }"
+       }
+   }
+}

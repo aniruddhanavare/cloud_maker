@@ -1,0 +1,32 @@
+{"total_rows":3,"offset":0,"rows":[
+{"id":"f25a180e2e602da11532c2258900fc04","key":"mycluster","value":{"_id":"f25a180e2e602da11532c2258900fc04","_rev":"10-b1d059c82f943b89bc3a9f643db2729e","type":"node-role-mapping","cluster_name":"mycluster","hostname":"mysql-tt","role":["yum","base","init-db","keystone","init-mq","glance","quantum-server","nova-api","ec2-api","nova-scheduler","nova-conductor","cinder-api","cinder-scheduler"]}},
+{"id":"f25a180e2e602da11532c22589010b4d","key":"mycluster","value":{"_id":"f25a180e2e602da11532c22589010b4d","_rev":"6-a9578f273f80a9561b5c600bb0fd8797","type":"node-role-mapping","cluster_name":"mycluster","hostname":"devr1n31","role":["yum","base","nova-compute","quantum-ovs-agent","quantum-dhcp-agent"]}},
+
+{"id":"f25a180e2e602da11532c22589010ef7","key":"mycluster","value":{"_id":"f25a180e2e602da11532c22589010ef7","_rev":"9-5a8194c78bb5ab3f0829346fae0655a2","type":"node-role-mapping","cluster_name":"mycluster","hostname":"devr1n33","role":["yum","base","nova-compute","quantum-ovs-agent"]}}
+]}
+
+
+{
+    "_id": "f25a180e2e602da11532c22589010ef7",
+    "_rev": "9-5a8194c78bb5ab3f0829346fae0655a2",
+    "type": "node-role-mapping",
+    "cluster_name": "mycluster",
+    "hostname": "devr1n33",
+    "role": [
+        "yum",
+        "base",
+        "nova-compute",
+        "quantum-ovs-agent"
+    ]
+}
+
+{
+   "_id": "_design/node-role-mapping-query",
+   "_rev": "2-e3f914f22d3d0fde3f819697f1c224d1",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='node-role-mapping') {  emit(doc.cluster_name, doc); } }"
+       }
+   }
+}

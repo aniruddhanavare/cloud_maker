@@ -1,0 +1,38 @@
+{"total_rows":13,"offset":0,"rows":[
+{"id":"7d558d261f338829fb6ed36f9603f6e1","key":"172.16.1.151","value":{"_id":"7d558d261f338829fb6ed36f9603f6e1","_rev":"1-84f592655bfdbed9eecbdc3b22d676bb","type":"node","name":"172.16.1.151","install_nic":"eth0","install_ip":"172.16.1.151","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"7d558d261f338829fb6ed36f9603f726","key":"172.16.1.152","value":{"_id":"7d558d261f338829fb6ed36f9603f726","_rev":"1-6e0f945e1cd0086d3f0ec5748c5f9e40","type":"node","name":"172.16.1.152","install_nic":"eth0","install_ip":"172.16.1.152","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"7d558d261f338829fb6ed36f960406b4","key":"172.16.1.153","value":{"_id":"7d558d261f338829fb6ed36f960406b4","_rev":"1-4aae3fc0138b0bb18a16bc833791f6d1","type":"node","name":"172.16.1.153","install_nic":"eth0","install_ip":"172.16.1.153","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"7d558d261f338829fb6ed36f9604139d","key":"172.16.1.154","value":{"_id":"7d558d261f338829fb6ed36f9604139d","_rev":"1-60c8a87bee6f2d5d02f75762af082979","type":"node","name":"172.16.1.154","install_nic":"eth0","install_ip":"172.16.1.154","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"2ced7d3a6e9c61e6d6ed2d2c5d000547","key":"devr1n31","value":{"_id":"2ced7d3a6e9c61e6d6ed2d2c5d000547","_rev":"1-772293791666e5ed3d87fb90dcc9ab69","type":"node","name":"devr1n31","install_nic":"eth0","install_ip":"172.16.1.31","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"2ced7d3a6e9c61e6d6ed2d2c5d000613","key":"devr1n32","value":{"_id":"2ced7d3a6e9c61e6d6ed2d2c5d000613","_rev":"1-a2bf79b9f9891b3593514c9b61356cb3","type":"node","name":"devr1n32","install_nic":"eth0","install_ip":"172.16.1.32","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900df8f","key":"devr1n33","value":{"_id":"f25a180e2e602da11532c2258900df8f","_rev":"1-6adf7f5b0fb08d2757804a55e32c64f5","type":"node","name":"devr1n33","install_nic":"eth0","install_ip":"172.16.1.33","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c225890160ef","key":"justatest","value":{"_id":"f25a180e2e602da11532c225890160ef","_rev":"1-7f8aa89b8694146d6768691415ec1139","type":"node","name":"justatest","install_nic":"eth1","install_ip":"172.16.1.32","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900a563","key":"keystone-tt","value":{"_id":"f25a180e2e602da11532c2258900a563","_rev":"2-140c3ee1704444a4c9bda0f5c5ee7921","type":"node","name":"keystone-tt","install_nic":"eth0","install_ip":"172.16.1.151","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900957e","key":"mysql-tt","value":{"_id":"f25a180e2e602da11532c2258900957e","_rev":"2-4968a72e2c8854aa276dd0f7c66694d6","type":"node","name":"mysql-tt","install_nic":"eth0","install_ip":"172.16.1.150","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900d717","key":"novacontroller-tt","value":{"_id":"f25a180e2e602da11532c2258900d717","_rev":"1-2bd89ebe6adcc5b288877de900cbc087","type":"node","name":"novacontroller-tt","install_nic":"eth0","install_ip":"172.16.1.155","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900b274","key":"qpid-tt","value":{"_id":"f25a180e2e602da11532c2258900b274","_rev":"1-6b8d268e1bf7aaed6d49f1ebfda2ff80","type":"node","name":"qpid-tt","install_nic":"eth0","install_ip":"172.16.1.152","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}},
+
+{"id":"f25a180e2e602da11532c2258900c724","key":"quantum-tt","value":{"_id":"f25a180e2e602da11532c2258900c724","_rev":"2-284fb00bcb989388774bb7a3a3128e06","type":"node","name":"quantum-tt","install_nic":"eth0","install_ip":"172.16.1.154","install_gw":"172.16.0.1","install_nmask":"255.255.255.0"}}
+]}
+
+{
+   "_id": "_design/node-query",
+   "_rev": "3-284e67958591182127958419a0a8493a",
+   "language": "javascript",
+   "views": {
+       "all": {
+           "map": "function(doc) { if(doc.type=='node') {  emit(doc.name, doc); } }"
+       }
+   }
+}
