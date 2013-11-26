@@ -892,6 +892,13 @@
 			var vipifsPayload = {};
 			var nodesPayload = {};
 			
+			// Default HA Metering Configuration Values
+			
+			haPayload["metering_api_cluster"]="false";
+			vipsPayload["metering_api_vip"]="192.168.122.265";			
+			vipifsPayload["metering_api_vip_if"]="eth0";				
+			nodesPayload["metering_api_nodes"]='["192.168.122.13", "192.168.122.14"]';	
+			
 			for(i=0;i<rows.length;i++)
 			{
 				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
@@ -923,6 +930,9 @@
 	  
 	   function saveBasicConfigurationNew(id) {
  
+		var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+
 
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
@@ -939,7 +949,19 @@
 		var opsmessaging = {}
 		for(i=0;i<rows.length;i++)
 		{
-			opsmessaging[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					opsmessaging[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				opsmessaging[rows[i].name]=rows[i].value;
+			}
 		}
 		for(i=0;i<rows2.length;i++)
 		{
@@ -956,7 +978,19 @@
 		var opsdatabase = {}
 		for(i=0;i<rows.length;i++)
 		{
-			opsdatabase[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					opsdatabase[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				opsdatabase[rows[i].name]=rows[i].value;
+			}					
 		}
 		for(i=0;i<rows2.length;i++)
 		{
@@ -971,14 +1005,40 @@
 		var identitypayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			identitypayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					identitypayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				identitypayload[rows[i].name]=rows[i].value;
+			}		
+			
 		}
 		var rows = $('#imageConfiguration input:text');
 		var rows2 = $('#imageConfiguration input:radio');
 		var imagepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			imagepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					imagepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				imagepayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
@@ -992,30 +1052,70 @@
 		var computepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			computepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					computepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				computepayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			computepayload[rows2[i].name]=rows2[i].value;
 		}
-	var rows = $('#vncConfiguration input:text');
+		
+		var rows = $('#vncConfiguration input:text');
 		var rows2 = $('#vncConfiguration input:radio');
 		var vncpayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			vncpayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					vncpayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				vncpayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			vncpayload[rows2[i].name]=rows2[i].value;
 		}
 
-	var rows = $('#volumeConfiguration input:text');
+		var rows = $('#volumeConfiguration input:text');
 		var rows2 = $('#volumeConfiguration input:radio');
 		var volumepayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			volumepayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					volumepayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				volumepayload[rows[i].name]=rows[i].value;
+			}			
+			
 
 		}
 		for(i=0;i<rows2 .length;i++)
@@ -1023,23 +1123,51 @@
 			volumepayload[rows2[i].name]=rows2[i].value;
 
 		}
-	var rows = $('#networkapiConfiguration input:text');
+		
+		var rows = $('#networkapiConfiguration input:text');
 		var rows2 = $('#networkapiConfiguration input:radio');
 		var networkapipayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			networkapipayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					networkapipayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				networkapipayload[rows[i].name]=rows[i].value;
+			}		
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			networkapipayload[rows2[i].name]=rows2[i].value;
 		}
-	var rows = $('#yumpackagesConfiguration input:text');
+		
+		var rows = $('#yumpackagesConfiguration input:text');
 		var rows2 = $('#yumpackagesConfiguration input:radio');
 		var yumpackagespayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			yumpackagespayload[rows[i].name]=rows[i].value;
+			if(haEnabledCheck) // Don't save _host
+			{
+				var hostCnt=rows[i].name.indexOf("host");
+				
+				if(hostCnt==-1)
+				{
+					yumpackagespayload[rows[i].name]=rows[i].value;
+				}
+			}
+			else
+			{
+				yumpackagespayload[rows[i].name]=rows[i].value;
+			}			
+			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
@@ -1110,11 +1238,11 @@
 		networksPayload['network_manager']="nova.network.manager.FlatDHCPManager";
 		*/
 		
-		var vlanPayload = {};
+		/*var vlanPayload = {};
 		vlanPayload['vlan_start']=$("#vlan_start").val();
 		vlanPayload['vlan_end']=$("#vlan_end").val();
 		vlanPayload['vlan_interface']=$("#vlan_interface").val();
-		jsonPayload['vlans']=vlanPayload;
+		jsonPayload['vlans']=vlanPayload;*/
 
 
 		/*adding empty nova network config */
@@ -1709,12 +1837,12 @@
 							$('#networktype').val(jsonValue['networktype']);
 							
 							// Load VLAN Configuration
-							var vlansObj = jsonValue['vlans'];
+							/*var vlansObj = jsonValue['vlans'];
 							var rows = $('#Vlans input:text');
 							for(k=0;k<rows.length;k++)
 							{
 								$('#'+(rows[k].name)).val(vlansObj[rows[k].name]);
-							} 
+							} */
 							
 							
 							// Load GPFS Configuration						
@@ -1798,6 +1926,11 @@
 									
 									$('#'+(objName)+'iptext').val(vipsObj[objName+"_vip"]);
 									$('#'+(objName)+'iftext').val(vipifsObj[objName+"_vip_if"]);
+								}
+								else
+								{
+									var objName = 	all_keys[j].substr(0,all_keys[j].indexOf("_cluster"));
+									$('#row'+objName).hide();
 								}
 								
 							}
@@ -3116,7 +3249,7 @@ console.log("Delete Cluster _rev : " + revID);
 				</div>
 
 		<p></p>
-				<div id="Vlans" class="Vlans">
+				<!--<div id="Vlans" class="Vlans">
 					<table summary="Speadsheet"  width="60%" class="roundTable-left">
 						<TR>
 							<TH class="rounded-left">VLAN</TH>
@@ -3140,7 +3273,7 @@ console.log("Delete Cluster _rev : " + revID);
 				</div>
 
 
-					<p></p>
+					<p></p>-->
 				<div id="GPFS">
 					<table summary="Speadsheet"  width="60%" class="roundTable-left">
 						<TR>
@@ -3265,8 +3398,8 @@ console.log("Delete Cluster _rev : " + revID);
 									<TH align="center" width="10%">Image</TH>
 									<TH align="center" width="10%">Volume</TH>
 									<TH align="center" width="10%">Compute</TH>
-									<TH align="center" width="10%">Network API</TH>
-									<TH align="center" width="10%" class="rounded-right">Metering-API</TH>
+									<TH align="center" width="10%" class="rounded-right">Network API</TH>
+									<!--<TH align="center" width="10%" class="rounded-right">Metering-API</TH>-->
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%">HA Component</TD>
@@ -3284,8 +3417,8 @@ console.log("Delete Cluster _rev : " + revID);
 										name="compute" id="compute" value="true" type="checkbox"></TD>
 									<TD align="center" width="10%"><input
 										name="network_api" id="network_api"  value="true" type="checkbox"></TD>
-									<TD align="center" width="10%"><input
-										name="metering_api" id="metering_api"  value="true" type="checkbox"></TD>
+									<!--<TD align="center" width="10%"><input
+										name="metering_api" id="metering_api"  value="true" type="checkbox"></TD>-->
 								</TR>
 								<TR align="center">
 									<TD align="center" width="10%" class="rounded-foot-left">Virtual IP</TD>
@@ -3394,7 +3527,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<input id="network_apiiftext" name="network_apiiftext" type="text" size="12">												
 										</div>
 									</TD>
-									<TD align="center" width="10%" class="rounded-foot-right">
+									<!--<TD align="center" width="10%" class="rounded-foot-right">
 										<div id="rowmetering_api">
 											<label id="metering_apiPrimaryHost"> Primary </label> 
 											<input id="metering_apitext1" name="metering_apitext1" type="text" size="12"> 
@@ -3408,7 +3541,7 @@ console.log("Delete Cluster _rev : " + revID);
 											<label id="metering_apiVirtualIPF"> Interface </label>											
 											<input id="metering_apiiftext" name="metering_apiiftext" type="text" size="12">												
 										</div>
-									</TD>
+									</TD>-->
 								</TR>
 								
 							</TABLE>
