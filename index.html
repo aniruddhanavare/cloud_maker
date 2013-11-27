@@ -95,6 +95,7 @@
 		}
 	 
 	 });	 
+
 	 
 	 $("#createCluster").click(function(e){
 	 
@@ -136,6 +137,28 @@
 			
 		});
 		
+		$(document).on('click', '.chkNodeMapping', function(event){
+		
+			var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host","ec2_api_host"]};	
+				   
+			var basicObjName = nodeMappingOBJList[this.value];	
+			if(basicObjName)
+			{
+				//alert(basicObjName);
+				
+				
+				if(this.checked)
+				{					
+					$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+				}
+				else				
+				{
+					$('#'+basicObjName).val("");				
+				}
+			}				
+			 
+		});
+			
 		$(document).on('click', '.editCluster', function(event){
 		
 			//alert(this.id);
@@ -2146,7 +2169,7 @@
 									tableStr = tableStr.concat("<TD  align=\"center\" >");	
 								}
 								
-								tableStr = tableStr.concat("<input id=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" name=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" value=\""+(value)+"\" type=\"checkbox\">");
+								tableStr = tableStr.concat("<input ipAddress=\""+(jsonObject.key.replace(/\./g,"-"))+"\" id=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" name=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" value=\""+(value)+"\" type=\"checkbox\" class=\"chkNodeMapping\">");
 								tableStr = tableStr.concat("</TD>");
 							}
 							tableStr = tableStr.concat("</TR>");			
