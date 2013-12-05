@@ -167,6 +167,11 @@
 					if(this.checked)
 					{					
 						$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+						if(this.value =='os-compute-api')
+						{
+							var basicObjName1 = nodeMappingOBJList[this.value+"-1"];	
+							$('#'+basicObjName1).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+						}
 					}
 					else				
 					{
@@ -977,9 +982,6 @@
  
 		//var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
 			
-		var nodeMappingHAOBJList = {"ops-messaging":["mq"], "ops-database":["db"], "identity":["identity"], "image":["image"], "network-api":["network_api"], "volume":["volume"], "compute":["compute"]};	
-
-
 		var jsonPayload = {};
 		jsonPayload['type']='cluster-basic-setting';
 		jsonPayload['clusterid']=id;
