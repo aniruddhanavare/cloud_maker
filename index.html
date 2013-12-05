@@ -139,23 +139,45 @@
 		
 		$(document).on('click', '.chkNodeMapping', function(event){
 		
-			var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host","ec2_api_host"]};	
-				   
-			var basicObjName = nodeMappingOBJList[this.value];	
-			if(basicObjName)
-			{
-				//alert(basicObjName);
+			var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+			
+			if(haEnabledCheck)
+			{		
+				var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
 				
-				
-				if(this.checked)
-				{					
-					$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
-				}
+				var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
+
+				var basicObjName = nodeMappingOBJList[this.value];	
+				if(basicObjName)
+				{
+					//alert(basicObjName);
+					var haObjName = nodeMappingHAOBJList[this.value];	
+					console.log("haObjName : " + haObjName);
+					
+					var isHACheck = $('input:checkbox[name='+(haObjName)+']:checked').val();
+					console.log("isHACheck : " + isHACheck);
+					
+					if(isHACheck)
+					{
+						basicObjName = haObjName+'iptext';
+					}
+					
+					console.log("basicObjName : " + basicObjName);
+					
+					if(this.checked)
+					{					
+						$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+					}
+					else				
+					{
+						$('#'+basicObjName).val("");				
+					}
+				}	
 				else				
 				{
-					$('#'+basicObjName).val("");				
+					alert("Not Found");
 				}
-			}				
+			}			
 			 
 		});
 			
@@ -917,7 +939,7 @@
 			
 			// Default HA Metering Configuration Values
 			
-			haPayload["metering_api_cluster"]="false";
+			haPayload["metering_api_cluster"]="true";
 			vipsPayload["metering_api_vip"]="192.168.122.265";			
 			vipifsPayload["metering_api_vip_if"]="eth0";				
 			nodesPayload["metering_api_nodes"]='["192.168.122.13", "192.168.122.14"]';	
