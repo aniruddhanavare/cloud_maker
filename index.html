@@ -975,8 +975,9 @@
 	  
 	   function saveBasicConfigurationNew(id) {
  
-		var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
+		//var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
 			
+		var nodeMappingHAOBJList = {"ops-messaging":["mq"], "ops-database":["db"], "identity":["identity"], "image":["image"], "network-api":["network_api"], "volume":["volume"], "compute":["compute"]};	
 
 
 		var jsonPayload = {};
@@ -992,9 +993,10 @@
 		var rows2 = $('#amqpConfiguration input:radio');
 		var rows3 = $('#amqpConfiguration select');
 		var opsmessaging = {}
+		var isMQEnabled = $('input:checkbox[name=mq]:checked').val();	
 		for(i=0;i<rows.length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isMQEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1021,9 +1023,10 @@
 		var rows2 = $('#databaseConfiguration input:radio');
 		var rows3 = $('#databaseConfiguration select');
 		var opsdatabase = {}
+		var isDBEnabled = $('input:checkbox[name=db]:checked').val();
 		for(i=0;i<rows.length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isDBEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1048,9 +1051,10 @@
 
 		var rows = $('#identityConfiguration input:text');
 		var identitypayload = {}
+		var isIdentityEnabled = $('input:checkbox[name=identity]:checked').val();
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isIdentityEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1068,9 +1072,10 @@
 		var rows = $('#imageConfiguration input:text');
 		var rows2 = $('#imageConfiguration input:radio');
 		var imagepayload = {}
+		var isImageEnabled = $('input:checkbox[name=image]:checked').val();
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isImageEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1095,9 +1100,10 @@
 		var rows = $('#computeConfiguration input:text');
 		var rows2 = $('#computeConfiguration input:radio');
 		var computepayload = {}
+		var isComputeEnabled = $('input:checkbox[name=compute]:checked').val();
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isComputeEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1122,20 +1128,7 @@
 		var vncpayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
-			{
-				var hostCnt=rows[i].name.indexOf("host");
-				
-				if(hostCnt==-1)
-				{
-					vncpayload[rows[i].name]=rows[i].value;
-				}
-			}
-			else
-			{
-				vncpayload[rows[i].name]=rows[i].value;
-			}			
-			
+				vncpayload[rows[i].name]=rows[i].value;			
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
@@ -1145,9 +1138,10 @@
 		var rows = $('#volumeConfiguration input:text');
 		var rows2 = $('#volumeConfiguration input:radio');
 		var volumepayload = {}
+		var isVolumnEnabled = $('input:checkbox[name=volume]:checked').val();
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isVolumnEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1172,9 +1166,10 @@
 		var rows = $('#networkapiConfiguration input:text');
 		var rows2 = $('#networkapiConfiguration input:radio');
 		var networkapipayload = {}
+		var isNetworkAPIEnabled = $('input:checkbox[name=network_api]:checked').val();
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
+			if(isNetworkAPIEnabled) // Don't save _host
 			{
 				var hostCnt=rows[i].name.indexOf("host");
 				
@@ -1199,26 +1194,13 @@
 		var yumpackagespayload = {}
 		for(i=0;i<rows .length;i++)
 		{
-			if(haEnabledCheck) // Don't save _host
-			{
-				var hostCnt=rows[i].name.indexOf("host");
-				
-				if(hostCnt==-1)
-				{
-					yumpackagespayload[rows[i].name]=rows[i].value;
-				}
-			}
-			else
-			{
-				yumpackagespayload[rows[i].name]=rows[i].value;
-			}			
-			
+			yumpackagespayload[rows[i].name]=rows[i].value;
 		}
 		for(i=0;i<rows2 .length;i++)
 		{
 			yumpackagespayload[rows2[i].name]=rows2[i].value;
 		}
-	var rows = $('#Networks input:text');
+		var rows = $('#Networks input:text');
 		var rows2 = $('#Networks input:radio');
 		var networksPayload = {}
 		for(i=0;i<rows.length;i++)
