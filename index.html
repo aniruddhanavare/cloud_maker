@@ -143,44 +143,32 @@
 			
 			if(haEnabledCheck)
 			{		
-				//var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
 				
 				var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
 
-				var basicObjName = nodeMappingOBJList[this.value];	
-				if(basicObjName)
+				var haCheckBoxObj = nodeMappingHAOBJList[this.value];	
+				if(haCheckBoxObj)
 				{
-					//alert(basicObjName);
-					var haObjName = nodeMappingHAOBJList[this.value];	
-					console.log("haObjName : " + haObjName);
-					
-					var isHACheck = $('input:checkbox[name='+(haObjName)+']:checked').val();
-					console.log("isHACheck : " + isHACheck);
-					
-					if(isHACheck)
-					{
-						basicObjName = haObjName+'iptext';
-					}
-					
-					console.log("basicObjName : " + basicObjName);
+					var vipText = haCheckBoxObj+'iptext';
 					
 					if(this.checked)
-					{					
-						$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
-						if(this.value =='os-compute-api')
-						{
-							var basicObjName1 = nodeMappingOBJList[this.value+"-1"];	
-							$('#'+basicObjName1).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
-						}
-					}
-					else				
 					{
-						$('#'+basicObjName).val("");				
+						$('#'+haCheckBoxObj).attr('checked', 'checked');	
+						$('#row'+haCheckBoxObj).show();
+					
+						$('#'+vipText).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+					}
+					else
+					{
+						$('#'+haCheckBoxObj).removeAttr('checked');	
+						$('#row'+haCheckBoxObj).hide();
+						
+						$('#'+vipText).val("");	
 					}
 				}	
 				else				
 				{
-					//alert("Not Found");
+					console.log("No Action needed - HA");
 				}
 			}
 			else
