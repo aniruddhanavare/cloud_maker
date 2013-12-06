@@ -143,7 +143,7 @@
 			
 			if(haEnabledCheck)
 			{		
-				var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
+				//var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
 				
 				var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
 
@@ -180,9 +180,36 @@
 				}	
 				else				
 				{
-					alert("Not Found");
+					//alert("Not Found");
 				}
-			}			
+			}
+			else
+			{
+				console.log("Save to Basic");
+				var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
+				
+				var basicObjName = nodeMappingOBJList[this.value];	
+				if(basicObjName)
+				{
+					if(this.checked)
+					{					
+						$('#'+basicObjName).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+						if(this.value =='os-compute-api')
+						{
+							var basicObjName1 = nodeMappingOBJList[this.value+"-1"];	
+							$('#'+basicObjName1).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+						}
+					}
+					else				
+					{
+						$('#'+basicObjName).val("");				
+					}					
+				}
+				else
+				{
+					console.log("No Action needed - Basic");
+				}
+			}
 			 
 		});
 			
@@ -458,6 +485,16 @@
 	$("#node_role_mappingTAB").hide();
 	$("#deploymentTAB").hide();
 	$("#upgradeTAB").hide();		
+	
+	// Hide all host rows
+	
+	$("#").hide();		
+	
+	 var rows = $('.host_tr');
+	  rows.each(function() {
+		$(this).hide();		
+	  });
+	
 	
 	//setTimeout(function() {clearAll(); }, 2000);	
 	
@@ -2966,13 +3003,13 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 							<tr>
-								<td><label> AMQP Type: </label></td>
-								<td><select name="mqtype" id="mqtype">
+								<td class="rounded-foot-left"><label> AMQP Type: </label></td>
+								<td class="rounded-foot-right"><select name="mqtype" id="mqtype">
 										<option value="qpid">QPID</option>
 										<option value="rabbitmq">RabbitMQ</option>
 								</select></td>
 							</tr>
-							<TR>
+							<TR class="host_tr">
 							<TD class="rounded-foot-left" width="25%">AMQP Host</TD>
 							<TD class="rounded-foot-right"><input name="mqhost" id="mqhost" type="text"></TD>
 							</TR>
@@ -2997,7 +3034,7 @@ console.log("Delete Cluster _rev : " + revID);
 										<option value="db2">DB2</option>
 								</select></td>
 							</tr>
-							<TR>
+							<TR class="host_tr">
 							<TD width="25%">DB Host</TD>
 							<TD><input name="dbhost" id="dbhost" type="text"></TD>
 							</TR>
@@ -3026,10 +3063,10 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 							<TR>
-							<TD width="25%">Identity Bind Interface</TD>
-							<TD><input name="identity_bind_if" id="identity_bind_if" type="text"></TD>
+							<TD class="rounded-foot-left" width="25%">Identity Bind Interface</TD>
+							<TD class="rounded-foot-right"><input name="identity_bind_if" id="identity_bind_if" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD class="rounded-foot-left" width="25%">Identity Host</TD>
 							<TD class="rounded-foot-right"><input name="identity_host" id="identity_host" type="text"></TD>
 							</TR>
@@ -3053,7 +3090,7 @@ console.log("Delete Cluster _rev : " + revID);
 							<TD width="25%">Image Bind Interface</TD>
 							<TD><input name="image_bind_if" id="image_bind_if" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD width="25%">Image Host</TD>
 							<TD><input name="image_host" id="image_host" type="text"></TD>
 							</TR>
@@ -3092,11 +3129,11 @@ console.log("Delete Cluster _rev : " + revID);
 							<TD width="25%">Compute Bind Interface</TD>
 							<TD><input name="compute_bind_if" id="compute_bind_if" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD width="25%">Compute API Host</TD>
 							<TD><input name="compute_api_host" id="compute_api_host" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD width="25%">EC2 API Host</TD>
 							<TD><input name="ec2_api_host" id="ec2_api_host" type="text"></TD>
 							</TR>
@@ -3150,10 +3187,10 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 							<TR>
-							<TD width="25%">Volume Bind Interface</TD>
-							<TD><input name="volume_bind_if" id="volume_bind_if" type="text"></TD>
+							<TD class="rounded-foot-left"  width="25%">Volume Bind Interface</TD>
+							<TD  class="rounded-foot-right"><input name="volume_bind_if" id="volume_bind_if" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD class="rounded-foot-left" width="25%">Volume Host</TD>
 							<TD class="rounded-foot-right"><input name="volume_host" id="volume_host" type="text"></TD>
 							</TR>
@@ -3174,10 +3211,10 @@ console.log("Delete Cluster _rev : " + revID);
 							<TH class="rounded-right">&nbsp;</TH>
 						</TR>						
 							<TR>
-							<TD width="25%">N/W API Bind Interface</TD>
-							<TD><input name="network_api_bind_if" id="network_api_bind_if" type="text"></TD>
+							<TD class="rounded-foot-left" width="25%">N/W API Bind Interface</TD>
+							<TD class="rounded-foot-right"><input name="network_api_bind_if" id="network_api_bind_if" type="text"></TD>
 							</TR>
-							<TR>
+							<TR class="host_tr">
 							<TD class="rounded-foot-left" width="25%">N/W API Host</TD>
 							<TD class="rounded-foot-right"><input name="network_api_host" id="network_api_host" type="text"></TD>
 							</TR>
