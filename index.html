@@ -144,7 +144,7 @@
 			if(haEnabledCheck)
 			{		
 				
-				var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
+				/*var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
 
 				var haCheckBoxObj = nodeMappingHAOBJList[this.value];	
 				if(haCheckBoxObj)
@@ -169,7 +169,7 @@
 				else				
 				{
 					console.log("No Action needed - HA");
-				}
+				}*/
 			}
 			else
 			{
@@ -895,7 +895,7 @@
 	  
 	   function saveNodeRoleMappingNew(id,rowid) {
  
-		console.log("Entering saveNodeRoleMappingNew with id : " + id+ ", rowid : " + rowid );
+		//console.log("Entering saveNodeRoleMappingNew with id : " + id+ ", rowid : " + rowid );
 		var nodeName = rowid;
 		
 		//console.log("NodeName : -----------------> " + nodeName);
@@ -918,7 +918,7 @@
 
 			for(i=0;i<rows1.length;i++)
 			{
-				//console.log("rows1[i].name " + rows1[i].name);
+				//console.log("Node Mapping rows1[i].name " + rows1[i].name);
 				
 				var isEnabledCheck = $("input:checkbox[name='"+(rows1[i].name)+"']:checked").val();
 				
@@ -976,6 +976,7 @@
 			
 			for(i=0;i<rows.length;i++)
 			{
+				console.log("rows[i].name : "+ rows[i].name);
 				var isEnabledCheck = $('input:checkbox[name='+(rows[i].name)+']:checked').val();
 				if(isEnabledCheck)
 				{
@@ -990,7 +991,39 @@
 				else
 				{
 					haPayload[rows[i].name+"_cluster"]='false';
-					vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
+					//vipsPayload[rows[i].name+"_vip"]="0.0.0.0";
+					
+					// In case checkbox is not clicked, find out VIP from Node Role Mapping and save here
+
+					var nodeMappingHAOBJList = {"mq":["os-ops-messaging"], "db":["os-ops-database"], "identity":["os-identity"], "image":["os-image"], "network_api":["os-network-api"], "volume":["os-block-storage-api"], "compute":["os-compute-api"]};	
+										
+					var haNodeMapping = nodeMappingHAOBJList[rows[i].name];	
+					console.log("haNodeMapping : " + haNodeMapping);
+					if(haNodeMapping)
+					{
+						var nodeRows = $("*[id$='"+(haNodeMapping)+"']");
+						
+						console.log("nodeRows : " + nodeRows);
+						console.log("nodeRows size : " + nodeRows.length);
+						
+				
+						nodeRows.each(function() {
+						
+						var isNodeEnabledCheck = $('input:checkbox[name='+(this.name)+']:checked').val();
+						
+						if(isNodeEnabledCheck)
+						{
+							//console.log("Enabled : " + this.getAttribute("ipAddress"));
+							
+							vipsPayload[rows[i].name+"_vip"]=this.getAttribute("ipAddress").replace(/-/g,"\.");		
+						}
+						});
+					}
+					else
+					{
+						console.log("No Need to save");
+					}
+					
 				}
 			}				
 						
@@ -1247,8 +1280,8 @@
 
 			for(i=0;i<rows.length;i++)
 			{
-				console.log("Quantum Text : " + rows[i].name);
-				console.log("Quantum Text : " + rows[i].value);
+				//console.log("Quantum Text : " + rows[i].name);
+				//console.log("Quantum Text : " + rows[i].value);
 				quantumPayload[rows[i].name]=rows[i].value;
 			}
 	
@@ -1258,8 +1291,8 @@
 			
 			for(i=0;i<rows1.length;i++)
 			{
-				console.log("Quantum Radio : " + rows1[i].name);
-				console.log("Quantum Radio : " + rows1[i].value);
+				//console.log("Quantum Radio : " + rows1[i].name);
+				//console.log("Quantum Radio : " + rows1[i].value);
 				quantumPayload[rows1[i].name]=rows1[i].value;
 			}
 
@@ -2187,7 +2220,8 @@
 							
 							for (var j in all_keys) {
 								var value = nonhaObject[all_keys[j]];
-							
+								
+								//console.log(jsonObject.value.install_ip);
 								//console.log("j : " + j);
 								//console.log("all_keys : " + all_keys.length);
 
@@ -2200,7 +2234,7 @@
 									tableStr = tableStr.concat("<TD  align=\"center\" >");	
 								}
 								
-								tableStr = tableStr.concat("<input ipAddress=\""+(jsonObject.key.replace(/\./g,"-"))+"\" id=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" name=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" value=\""+(value)+"\" type=\"checkbox\" class=\"chkNodeMapping\">");
+								tableStr = tableStr.concat("<input ipAddress=\""+(jsonObject.value.install_ip.replace(/\./g,"-"))+"\" id=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" name=\""+(jsonObject.key.replace(/\./g,"-"))+(value)+"\" value=\""+(value)+"\" type=\"checkbox\" class=\"chkNodeMapping\">");
 								tableStr = tableStr.concat("</TD>");
 							}
 							tableStr = tableStr.concat("</TR>");			
