@@ -137,14 +137,14 @@
 			
 		});
 		
-		$(document).on('click', '.chkNodeMapping', function(event){
+		/*$(document).on('click', '.chkNodeMapping', function(event){
 		
 			var haEnabledCheck = $('input:checkbox[name=haEnabledCheck]:checked').val();
 			
 			if(haEnabledCheck)
 			{		
 				
-				/*var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
+				var nodeMappingHAOBJList = {"os-ops-messaging":["mq"], "os-ops-database":["db"], "os-identity":["identity"], "os-image":["image"], "os-network-api":["network_api"], "os-block-storage-api":["volume"], "os-compute-api":["compute"]};	
 
 				var haCheckBoxObj = nodeMappingHAOBJList[this.value];	
 				if(haCheckBoxObj)
@@ -169,7 +169,7 @@
 				else				
 				{
 					console.log("No Action needed - HA");
-				}*/
+				}
 			}
 			else
 			{
@@ -199,7 +199,7 @@
 				}
 			}
 			 
-		});
+		});*/
 			
 		$(document).on('click', '.editCluster', function(event){
 		
@@ -568,11 +568,60 @@
 		startUpgrade(cluster_name);
 	 });	 
 	 
+	 function prepareBasicConfiguration(){
+		
+		console.log("Entering prepareBasicConfiguration");
+		
+		var nodeMappingBasicOBJList = {"mq":["os-ops-messaging"], "db":["os-ops-database"], "identity":["os-identity"], "image":["os-image"], "network_api":["os-network-api"], "volume":["os-block-storage-api"], "compute":["os-compute-api"]};	
+
+		var nodeMappingOBJList = {"os-ops-messaging":["mqhost"], "os-ops-database":["dbhost"], "os-identity":["identity_host"], "os-image":["image_host"], "os-network-api":["network_api_host"], "os-block-storage-api":["volume_host"], "os-compute-api":["compute_api_host"], "os-compute-api-1":["ec2_api_host"]};	
+		
+		var all_keys = Object.keys(nodeMappingBasicOBJList);
+													
+		for (var j in all_keys) {
+		
+			console.log("all_keys[j] : " + all_keys[j]);
+			var value = nodeMappingBasicOBJList[all_keys[j]];
+			
+			console.log(value[0]);
+			
+			var nodeRows = $("*[id$='"+(value[0])+"']");
+			
+			console.log("nodeRows : " + nodeRows);
+			console.log("nodeRows size : " + nodeRows.length);
+			
+			nodeRows.each(function() {
+			
+			var isNodeEnabledCheck = $('input:checkbox[name='+(this.name)+']:checked').val();
+			if(isNodeEnabledCheck)
+			{
+				console.log("Enabled : " + this.getAttribute("ipAddress"));
+				$('#'+nodeMappingOBJList[value[0]]).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+				
+				if(value[0] =='os-compute-api')
+				{
+					var basicObjName1 = nodeMappingOBJList[value[0]+"-1"];	
+					$('#'+basicObjName1).val(this.getAttribute("ipAddress").replace(/-/g,"\."));
+				}				
+			}
+			});			
+			
+		}	 
+	 }
+	 
 	 $("#startDeployment").click(function(e){
 
-	 
+		// Prepare Basic Configuration Controls for IP Address
+		
+		var haEnabledCheckNew = $('input:checkbox[name=haEnabledCheck]:checked').val();
+		console.log("haEnabledCheckNew : "+ haEnabledCheckNew);	
+		if(!haEnabledCheckNew)
+		{
+			prepareBasicConfiguration();
+		}
+		
 			// Save Info Tab
-		console.log("isNew : "+ isNew);	
+		console.log("isNew ->: "+ isNew);	
 		isDeployOnly = false;
 		if(isNew)
 		{
